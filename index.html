@@ -3,560 +3,318 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pasiya Bot Platform | Free AI Bot Builder & Control Center</title>
-<meta name="description" content="Completely free AI Bot building platform. Create, test and deploy powerful bots using only free services.">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<title>PASIYA MAX // ULTIMATE FREE AI COMMAND CENTER</title>
+<meta name="description" content="The most complete free AI Bot Builder + Free Tools universe. Animated cyber interface.">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #05080f;
-  --card: #0d1320;
-  --card2: #111827;
-  --accent: #00e5ff;
-  --accent2: #7c3aed;
-  --text: #e2e8f0;
-  --muted: #94a3b8;
-  --success: #22c55e;
-  --border: rgba(0,229,255,0.12);
-}
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',system-ui,sans-serif}
-body{background:var(--bg);color:var(--text);line-height:1.6;overflow-x:hidden}
-header{position:fixed;top:0;width:100%;z-index:1000;background:rgba(5,8,15,0.92);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;justify-content:space-between;align-items:center}
-.logo{font-size:22px;font-weight:800;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-nav{display:flex;gap:8px;flex-wrap:wrap}
-nav a{color:var(--muted);text-decoration:none;padding:7px 12px;border-radius:8px;font-size:13px;font-weight:500;transition:.25s}
-nav a:hover{color:#fff;background:rgba(0,229,255,0.1)}
-.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:120px 20px 80px;background:radial-gradient(ellipse at 50% 0%,#0f1c3a 0%,var(--bg) 60%)}
-.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,229,255,0.1);border:1px solid rgba(0,229,255,0.25);color:var(--accent);padding:6px 14px;border-radius:50px;font-size:12px;font-weight:600;margin-bottom:20px}
-.hero h1{font-size:clamp(34px,6vw,58px);font-weight:800;line-height:1.15;margin-bottom:16px}
-.hero h1 span{background:linear-gradient(90deg,var(--accent),#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero p{max-width:620px;color:var(--muted);font-size:17px;margin-bottom:32px}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 24px;border-radius:12px;font-weight:600;font-size:14px;text-decoration:none;transition:.25s;border:none;cursor:pointer}
-.btn-primary{background:linear-gradient(135deg,var(--accent),#0891b2);color:#000}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,229,255,0.35)}
-.btn-secondary{background:transparent;border:1px solid rgba(0,229,255,0.4);color:var(--accent)}
-.btn-secondary:hover{background:rgba(0,229,255,0.08)}
-section{padding:70px 20px;max-width:1200px;margin:0 auto}
-section h2{font-size:28px;font-weight:700;margin-bottom:8px;text-align:center}
-section .sub{text-align:center;color:var(--muted);margin-bottom:36px;font-size:15px}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;transition:.3s;text-decoration:none;color:inherit;display:block}
-.card:hover{border-color:rgba(0,229,255,0.4);transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,0.3)}
-.card .icon{font-size:28px;margin-bottom:10px}
-.card h3{font-size:16px;font-weight:600;margin-bottom:6px;color:var(--accent)}
-.card p{font-size:13px;color:var(--muted);line-height:1.5}
-.panel{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:24px}
-.panel h3{font-size:18px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
-label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
-input,select,textarea{width:100%;background:#0a0f1a;border:1px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-size:14px;outline:none;transition:.2s}
-input:focus,select:focus,textarea:focus{border-color:var(--accent)}
-textarea{min-height:100px;resize:vertical}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:700px){.row{grid-template-columns:1fr}}
-.chat-box{background:#0a0f1a;border:1px solid var(--border);border-radius:14px;height:340px;overflow-y:auto;padding:16px;margin-bottom:12px;display:flex;flex-direction:column;gap:10px}
-.msg{max-width:85%;padding:10px 14px;border-radius:12px;font-size:14px;line-height:1.5}
-.msg.user{align-self:flex-end;background:rgba(0,229,255,0.15);border:1px solid rgba(0,229,255,0.25)}
-.msg.bot{align-self:flex-start;background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.25)}
-.msg.system{align-self:center;font-size:12px;color:var(--muted);background:transparent;border:none}
-.chat-input{display:flex;gap:10px}
-.chat-input input{flex:1}
-.status-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:6px}
-.status-dot.on{background:var(--success);box-shadow:0 0 8px var(--success)}
-.status-dot.off{background:#ef4444}
-.steps{display:grid;gap:12px;counter-reset:step}
-.step{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px 16px 16px 50px;position:relative}
-.step::before{counter-increment:step;content:counter(step);position:absolute;left:14px;top:14px;width:26px;height:26px;background:rgba(0,229,255,0.15);color:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
-.step h4{font-size:15px;margin-bottom:4px}
-.step p{font-size:13px;color:var(--muted)}
-.tag{display:inline-block;background:rgba(0,229,255,0.1);color:var(--accent);font-size:11px;padding:3px 8px;border-radius:6px;margin-right:4px;margin-bottom:4px}
-footer{text-align:center;padding:50px 20px;border-top:1px solid var(--border);color:var(--muted);font-size:13px}
-footer a{color:var(--accent);text-decoration:none}
-.hidden{display:none}
-.alert{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);color:#86efac;padding:12px 16px;border-radius:10px;font-size:13px;margin-bottom:16px}
+:root{--c:#00f0ff;--p:#b026ff;--g:#00ff9d;--r:#ff2a6d;--bg:#010308;--t:#d0e0f0;--m:#6a7a8a}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--t);font-family:'Rajdhani',sans-serif;overflow-x:hidden;min-height:100vh}
+
+/* ANIMATED MULTI-LAYER BACKGROUND */
+.bg-anim{position:fixed;inset:0;z-index:-3;background:linear-gradient(125deg,#010308,#0a0520,#001a2e,#0d0221,#010308);background-size:400% 400%;animation:bgShift 18s ease infinite}
+@keyframes bgShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.bg-grid{position:fixed;inset:0;z-index:-2;background-image:linear-gradient(rgba(0,240,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,240,255,.04) 1px,transparent 1px);background-size:50px 50px;animation:gridMove 30s linear infinite}
+@keyframes gridMove{0%{transform:translateY(0)}100%{transform:translateY(50px)}}
+.bg-glow{position:fixed;width:600px;height:600px;border-radius:50%;filter:blur(120px);opacity:.15;z-index:-1;animation:floatGlow 12s ease-in-out infinite}
+.bg-glow.g1{background:var(--c);top:-10%;left:-10%}
+.bg-glow.g2{background:var(--p);bottom:-15%;right:-10%;animation-delay:-6s}
+@keyframes floatGlow{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(40px,-30px) scale(1.15)}}
+.scanlines{position:fixed;inset:0;z-index:9998;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,240,255,.02) 2px,rgba(0,240,255,.02) 4px)}
+
+header{position:fixed;top:0;width:100%;z-index:1000;background:rgba(1,3,8,.92);backdrop-filter:blur(14px);border-bottom:1px solid rgba(0,240,255,.2);padding:11px 18px;display:flex;justify-content:space-between;align-items:center}
+.logo{font-family:'Orbitron',sans-serif;font-size:15px;font-weight:800;letter-spacing:2px;color:var(--c);text-shadow:0 0 15px rgba(0,240,255,.6)}
+.logo b{color:var(--p);text-shadow:0 0 15px rgba(176,38,255,.5)}
+nav{display:flex;gap:3px;flex-wrap:wrap}
+nav a{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m);text-decoration:none;padding:5px 8px;border:1px solid transparent;border-radius:3px;transition:.2s;letter-spacing:.5px}
+nav a:hover{color:var(--c);border-color:rgba(0,240,255,.3);background:rgba(0,240,255,.06);text-shadow:0 0 8px var(--c)}
+
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:100px 18px 50px;position:relative}
+.status{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--g);letter-spacing:3px;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.status i{width:8px;height:8px;border-radius:50%;background:var(--g);box-shadow:0 0 12px var(--g);animation:blink 1.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.hero h1{font-family:'Orbitron',sans-serif;font-size:clamp(26px,5.5vw,48px);font-weight:900;letter-spacing:2px;line-height:1.25;margin-bottom:12px}
+.hero h1 .c{color:var(--c);text-shadow:0 0 40px rgba(0,240,255,.5)}
+.hero h1 .p{color:var(--p);text-shadow:0 0 40px rgba(176,38,255,.4)}
+.hero p{max-width:540px;font-size:14px;color:var(--m);margin-bottom:26px;line-height:1.7}
+.btns{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.btn{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:600;letter-spacing:1.5px;padding:12px 20px;border-radius:4px;text-decoration:none;transition:.25s;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:7px}
+.btn-c{background:linear-gradient(135deg,var(--c),#0099bb);color:#000;box-shadow:0 0 25px rgba(0,240,255,.35)}
+.btn-c:hover{transform:translateY(-2px);box-shadow:0 0 40px rgba(0,240,255,.55)}
+.btn-g{background:transparent;border:1px solid var(--c);color:var(--c)}
+.btn-g:hover{background:rgba(0,240,255,.08);box-shadow:0 0 15px rgba(0,240,255,.2)}
+
+section{padding:45px 16px;max-width:1180px;margin:0 auto}
+.st{font-family:'Orbitron',sans-serif;font-size:16px;font-weight:700;letter-spacing:2px;color:var(--c);text-align:center;margin-bottom:5px;text-shadow:0 0 20px rgba(0,240,255,.35)}
+.ss{text-align:center;font-size:11px;color:var(--m);margin-bottom:24px;font-family:'Share Tech Mono',monospace;letter-spacing:1px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(185px,1fr));gap:11px}
+.card{background:rgba(6,12,24,.85);border:1px solid rgba(0,240,255,.12);border-radius:6px;padding:15px;text-decoration:none;color:inherit;transition:.3s;position:relative;overflow:hidden;backdrop-filter:blur(4px)}
+.card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--c),transparent);opacity:0;transition:.3s}
+.card:hover{border-color:rgba(0,240,255,.45);transform:translateY(-4px);box-shadow:0 10px 30px rgba(0,0,0,.5),0 0 20px rgba(0,240,255,.15)}
+.card:hover::after{opacity:1}
+.card .ic{font-size:22px;margin-bottom:7px;filter:drop-shadow(0 0 6px rgba(0,240,255,.3))}
+.card h3{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:600;letter-spacing:1px;color:var(--c);margin-bottom:3px}
+.card p{font-size:11px;color:var(--m);line-height:1.4}
+.tag{display:inline-block;font-family:'Share Tech Mono',monospace;font-size:8px;padding:2px 5px;border:1px solid rgba(0,240,255,.3);color:var(--c);border-radius:2px;margin-top:5px;margin-right:2px}
+
+.panel{background:rgba(6,12,24,.9);border:1px solid rgba(0,240,255,.15);border-radius:8px;padding:18px;margin-bottom:14px;position:relative;backdrop-filter:blur(6px)}
+.panel::before{content:'';position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(180deg,var(--c),var(--p));border-radius:8px 0 0 8px}
+.panel h3{font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:1.5px;color:var(--c);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+label{display:block;font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--m);letter-spacing:1px;margin-bottom:3px}
+input,select,textarea{width:100%;background:#02060f;border:1px solid rgba(0,240,255,.15);border-radius:4px;padding:10px 11px;color:var(--t);font-size:12px;font-family:'Share Tech Mono',monospace;outline:none;transition:.2s}
+input:focus,select:focus,textarea:focus{border-color:var(--c);box-shadow:0 0 12px rgba(0,240,255,.15)}
+textarea{min-height:70px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:700px){.row{grid-template-columns:1fr}nav{display:none}}
+.chat{background:#02060f;border:1px solid rgba(0,240,255,.12);border-radius:6px;height:280px;overflow-y:auto;padding:11px;margin-bottom:8px;display:flex;flex-direction:column;gap:7px}
+.msg{max-width:88%;padding:7px 11px;border-radius:5px;font-size:11px;line-height:1.5;font-family:'Share Tech Mono',monospace}
+.msg.user{align-self:flex-end;background:rgba(0,240,255,.1);border:1px solid rgba(0,240,255,.25);color:var(--c)}
+.msg.bot{align-self:flex-start;background:rgba(176,38,255,.1);border:1px solid rgba(176,38,255,.25);color:#e0b0ff}
+.msg.sys{align-self:center;font-size:10px;color:var(--m);border:none;background:transparent}
+.cin{display:flex;gap:7px}
+.cin input{flex:1}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.dot.on{background:var(--g);box-shadow:0 0 10px var(--g)}
+.dot.off{background:var(--r);box-shadow:0 0 10px var(--r)}
+
+.steps{display:grid;gap:8px;counter-reset:s}
+.step{background:rgba(8,14,28,.8);border:1px solid rgba(0,240,255,.1);border-radius:5px;padding:12px 12px 12px 44px;position:relative}
+.step::before{counter-increment:s;content:counter(s);position:absolute;left:10px;top:10px;width:22px;height:22px;background:rgba(0,240,255,.1);border:1px solid rgba(0,240,255,.25);color:var(--c);border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700}
+.step h4{font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:1px;color:var(--c);margin-bottom:2px}
+.step p{font-size:11px;color:var(--m)}
+.term{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--g);opacity:.8;margin-bottom:3px}
+
+footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
+footer a{color:var(--c);text-decoration:none}
 </style>
 </head>
 <body>
+<div class="bg-anim"></div>
+<div class="bg-grid"></div>
+<div class="bg-glow g1"></div>
+<div class="bg-glow g2"></div>
+<div class="scanlines"></div>
 
 <header>
-  <div class="logo">Pasiya Bot Platform</div>
+  <div class="logo">PASIYA <b>MAX</b> // CMD</div>
   <nav>
-    <a href="#home">Home</a>
-    <a href="#builder">Bot Builder</a>
-    <a href="#llms">Free LLMs</a>
-    <a href="#hosting">Free Hosting</a>
-    <a href="#tools">Tools</a>
-    <a href="#social">Social</a>
-    <a href="#websites">Websites</a>
-    <a href="#guide">Guide</a>
+    <a href="#home">HOME</a><a href="#core">BOT_CORE</a><a href="#llm">LLMs</a><a href="#ai">AI</a>
+    <a href="#auto">AUTO</a><a href="#host">HOST</a><a href="#dev">DEV</a>
+    <a href="#social">SOCIAL</a><a href="#web">WEB</a><a href="#guide">GUIDE</a>
   </nav>
 </header>
 
-<!-- HERO -->
 <section class="hero" id="home">
-  <div class="badge">⚡ 100% Free • No Credit Card • Self-Host Ready</div>
-  <h1>Build Powerful AI Bots<br><span>Using Only Free Services</span></h1>
-  <p>Complete free platform to create, test and deploy AI bots. Connect free LLMs, free hosting, free memory and free automation — all in one place.</p>
-  <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center">
-    <a href="#builder" class="btn btn-primary">🚀 Open Bot Builder</a>
-    <a href="#guide" class="btn btn-secondary">📖 Full Guide</a>
+  <div class="status"><i></i> SYSTEM ONLINE // FREE NODES ACTIVE // v3.0</div>
+  <h1><span class="c">ULTIMATE FREE</span><br><span class="p">AI COMMAND CENTER</span></h1>
+  <p>The most complete free cybernetic hub. Build AI bots, access free LLMs, automation, hosting, creative AI and hundreds of tools — all from one glowing interface. Zero cost. Forever.</p>
+  <div class="btns">
+    <a href="#core" class="btn btn-c">▶ INIT BOT CORE</a>
+    <a href="#guide" class="btn btn-g">// PROTOCOL</a>
   </div>
 </section>
 
-<!-- BOT BUILDER -->
-<section id="builder">
-  <h2>🤖 Free AI Bot Builder</h2>
-  <p class="sub">Test your bot instantly. Add your free API key (Groq / Google AI Studio) and start chatting.</p>
-
+<section id="core">
+  <div class="st">◆ BOT CORE // NEURAL INTERFACE</div>
+  <p class="ss">Inject free API key → Activate → Communicate with your AI</p>
   <div class="panel">
-    <h3>⚙️ Bot Configuration</h3>
+    <h3>⚙ CONFIG MATRIX</h3>
     <div class="row">
-      <div>
-        <label>Bot Name</label>
-        <input type="text" id="botName" value="Pasiya Assistant" placeholder="My AI Bot">
-      </div>
-      <div>
-        <label>Free LLM Provider</label>
+      <div><label>BOT_ID</label><input id="botName" value="PASIYA_ASSISTANT_01"></div>
+      <div><label>PROVIDER</label>
         <select id="provider">
-          <option value="groq">Groq (Recommended - Very Fast & Free)</option>
-          <option value="google">Google AI Studio (Gemini Free)</option>
-          <option value="openrouter">OpenRouter (Free models)</option>
+          <option value="groq">GROQ // ULTRA FAST FREE</option>
+          <option value="google">GOOGLE AI // GEMINI FREE</option>
+          <option value="openrouter">OPENROUTER // FREE MODELS</option>
         </select>
       </div>
     </div>
-    <div style="margin-top:14px">
-      <label>API Key (Free) — Stored only in your browser</label>
-      <input type="password" id="apiKey" placeholder="Paste your free API key here">
+    <div style="margin-top:10px"><label>API_KEY (LOCAL STORAGE ONLY)</label><input type="password" id="apiKey" placeholder="paste free key..."></div>
+    <div style="margin-top:10px"><label>SYSTEM_PROMPT</label><textarea id="systemPrompt">You are PASIYA ASSISTANT, an advanced robotic AI created by Pasindu Dananjaya. You are precise, helpful and friendly. Help users build free AI systems.</textarea></div>
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-c" onclick="saveConfig()">💾 SAVE</button>
+      <button class="btn btn-g" onclick="clearChat()">⌫ CLEAR</button>
     </div>
-    <div style="margin-top:14px">
-      <label>System Prompt (Bot Personality)</label>
-      <textarea id="systemPrompt">You are Pasiya Assistant, a helpful, smart and friendly AI bot created by Pasindu Dananjaya. Answer clearly and helpfully in the user's language.</textarea>
-    </div>
-    <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap">
-      <button class="btn btn-primary" onclick="saveConfig()">💾 Save Config</button>
-      <button class="btn btn-secondary" onclick="clearChat()">🗑️ Clear Chat</button>
-    </div>
-    <div id="configStatus" style="margin-top:12px;font-size:13px;color:var(--muted)"></div>
+    <div id="cfg" style="margin-top:8px;font-size:10px;font-family:'Share Tech Mono',monospace;color:var(--m)"></div>
   </div>
-
   <div class="panel">
-    <h3>
-      <span class="status-dot" id="statusDot"></span>
-      Live Bot Chat
-    </h3>
-    <div class="chat-box" id="chatBox">
-      <div class="msg system">Add a free API key above and start chatting with your bot.</div>
-    </div>
-    <div class="chat-input">
-      <input type="text" id="userInput" placeholder="Type a message to your bot..." onkeydown="if(event.key==='Enter')sendMessage()">
-      <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+    <h3><span class="dot" id="dot"></span> NEURAL LINK // LIVE</h3>
+    <div class="chat" id="chat"><div class="msg sys">// Awaiting API key...</div></div>
+    <div class="cin">
+      <input id="inp" placeholder="transmit..." onkeydown="if(event.key==='Enter')send()">
+      <button class="btn btn-c" onclick="send()">SEND</button>
     </div>
   </div>
 </section>
 
-<!-- FREE LLMs -->
-<section id="llms">
-  <h2>🧠 Best Free LLM Providers</h2>
-  <p class="sub">Get free API keys from these platforms and paste them in the Bot Builder above</p>
+<section id="llm">
+  <div class="st">◆ NEURAL PROVIDERS</div>
+  <p class="ss">Free LLM power sources</p>
   <div class="grid">
-    <a class="card" href="https://console.groq.com" target="_blank">
-      <div class="icon">⚡</div>
-      <h3>Groq</h3>
-      <p>Extremely fast free inference. Best choice for free bots. Llama 3, Mixtral, Gemma.</p>
-      <div style="margin-top:10px"><span class="tag">Free Tier</span><span class="tag">Very Fast</span></div>
-    </a>
-    <a class="card" href="https://aistudio.google.com" target="_blank">
-      <div class="icon">✨</div>
-      <h3>Google AI Studio</h3>
-      <p>Free Gemini models. Generous free quota. Great for quality responses.</p>
-      <div style="margin-top:10px"><span class="tag">Free</span><span class="tag">Gemini</span></div>
-    </a>
-    <a class="card" href="https://openrouter.ai" target="_blank">
-      <div class="icon">🔀</div>
-      <h3>OpenRouter</h3>
-      <p>Access many free models through one API. Good free credits.</p>
-      <div style="margin-top:10px"><span class="tag">Free Models</span></div>
-    </a>
-    <a class="card" href="https://huggingface.co" target="_blank">
-      <div class="icon">🤗</div>
-      <h3>Hugging Face</h3>
-      <p>Free inference API + thousands of open models.</p>
-      <div style="margin-top:10px"><span class="tag">Open Source</span></div>
-    </a>
-    <a class="card" href="https://console.anthropic.com" target="_blank">
-      <div class="icon">🧠</div>
-      <h3>Anthropic</h3>
-      <p>Claude free credits sometimes available. High quality.</p>
-    </a>
-    <a class="card" href="https://cohere.com" target="_blank">
-      <div class="icon">📘</div>
-      <h3>Cohere</h3>
-      <p>Free tier for trial and small projects.</p>
-    </a>
+    <a class="card" href="https://console.groq.com" target="_blank"><div class="ic">⚡</div><h3>GROQ</h3><p>Fastest free inference</p><span class="tag">FREE</span><span class="tag">FAST</span></a>
+    <a class="card" href="https://aistudio.google.com" target="_blank"><div class="ic">✨</div><h3>GOOGLE AI</h3><p>Gemini free tier</p><span class="tag">GEMINI</span></a>
+    <a class="card" href="https://openrouter.ai" target="_blank"><div class="ic">🔀</div><h3>OPENROUTER</h3><p>Multi free models</p></a>
+    <a class="card" href="https://huggingface.co" target="_blank"><div class="ic">🤗</div><h3>HUGGING FACE</h3><p>Open models + API</p></a>
+    <a class="card" href="https://together.ai" target="_blank"><div class="ic">🤝</div><h3>TOGETHER</h3><p>Free open LLM credits</p></a>
+    <a class="card" href="https://cohere.com" target="_blank"><div class="ic">📘</div><h3>COHERE</h3><p>Free trial available</p></a>
+    <a class="card" href="https://chatgpt.com" target="_blank"><div class="ic">💬</div><h3>CHATGPT</h3><p>Free AI chat</p></a>
+    <a class="card" href="https://claude.ai" target="_blank"><div class="ic">🧠</div><h3>CLAUDE</h3><p>Anthropic free tier</p></a>
+    <a class="card" href="https://gemini.google.com" target="_blank"><div class="ic">🌟</div><h3>GEMINI</h3><p>Google free chat</p></a>
+    <a class="card" href="https://grok.com" target="_blank"><div class="ic">🚀</div><h3>GROK</h3><p>xAI free chat</p></a>
+    <a class="card" href="https://www.perplexity.ai" target="_blank"><div class="ic">🔍</div><h3>PERPLEXITY</h3><p>AI search free</p></a>
+    <a class="card" href="https://poe.com" target="_blank"><div class="ic">💭</div><h3>POE</h3><p>Multi-bot free</p></a>
   </div>
 </section>
 
-<!-- FREE HOSTING FOR BOTS -->
-<section id="hosting">
-  <h2>☁️ Free Hosting for Your Bots</h2>
-  <p class="sub">Deploy your bots 24/7 using these free platforms</p>
+<section id="ai">
+  <div class="st">◆ CREATIVE AI MODULES</div>
+  <p class="ss">Image • Video • Audio • Design</p>
   <div class="grid">
-    <a class="card" href="https://replit.com" target="_blank">
-      <div class="icon">💻</div>
-      <h3>Replit</h3>
-      <p>Best for beginners. Run Python/Node bots free. Always-on with hacker plan or keep-alive.</p>
-    </a>
-    <a class="card" href="https://railway.app" target="_blank">
-      <div class="icon">🚂</div>
-      <h3>Railway</h3>
-      <p>Free monthly credit. Great for Discord/Telegram bots.</p>
-    </a>
-    <a class="card" href="https://render.com" target="_blank">
-      <div class="icon">🚀</div>
-      <h3>Render</h3>
-      <p>Free web services. Good for simple bot APIs.</p>
-    </a>
-    <a class="card" href="https://fly.io" target="_blank">
-      <div class="icon">🕊️</div>
-      <h3>Fly.io</h3>
-      <p>Free allowance for small apps and bots.</p>
-    </a>
-    <a class="card" href="https://botpress.com" target="_blank">
-      <div class="icon">🤖</div>
-      <h3>Botpress Cloud</h3>
-      <p>Free plan to build and host chatbots with visual builder.</p>
-    </a>
-    <a class="card" href="https://n8n.io" target="_blank">
-      <div class="icon">🔄</div>
-      <h3>n8n (Self-host)</h3>
-      <p>Self-host free automation + AI agents on free VPS or Railway.</p>
-    </a>
+    <a class="card" href="https://leonardo.ai" target="_blank"><div class="ic">🎨</div><h3>LEONARDO</h3><p>AI images free</p></a>
+    <a class="card" href="https://ideogram.ai" target="_blank"><div class="ic">🖼️</div><h3>IDEOGRAM</h3><p>Text-in-image AI</p></a>
+    <a class="card" href="https://www.bing.com/images/create" target="_blank"><div class="ic">🪄</div><h3>BING CREATE</h3><p>Free DALL·E</p></a>
+    <a class="card" href="https://suno.com" target="_blank"><div class="ic">🎵</div><h3>SUNO</h3><p>AI music free</p></a>
+    <a class="card" href="https://elevenlabs.io" target="_blank"><div class="ic">🎤</div><h3>ELEVENLABS</h3><p>AI voice free</p></a>
+    <a class="card" href="https://runwayml.com" target="_blank"><div class="ic">🎬</div><h3>RUNWAY</h3><p>AI video</p></a>
+    <a class="card" href="https://pika.art" target="_blank"><div class="ic">🎥</div><h3>PIKA</h3><p>AI video gen</p></a>
+    <a class="card" href="https://www.remove.bg" target="_blank"><div class="ic">✂️</div><h3>REMOVE.BG</h3><p>BG remover</p></a>
+    <a class="card" href="https://www.canva.com" target="_blank"><div class="ic">🖌️</div><h3>CANVA</h3><p>Design + AI</p></a>
+    <a class="card" href="https://clipdrop.co" target="_blank"><div class="ic">📸</div><h3>CLIPDROP</h3><p>AI image tools</p></a>
+    <a class="card" href="https://huggingface.co/spaces" target="_blank"><div class="ic">🧪</div><h3>HF SPACES</h3><p>Free AI demos</p></a>
+    <a class="card" href="https://firefly.adobe.com" target="_blank"><div class="ic">🔥</div><h3>FIREFLY</h3><p>Adobe free AI</p></a>
   </div>
 </section>
 
-<!-- FREE TOOLS FOR BOT POWER -->
-<section id="tools">
-  <h2>🛠️ Free Tools to Make Your Bot Powerful</h2>
-  <p class="sub">Connect these free services to give your bot memory, tools and superpowers</p>
+<section id="auto">
+  <div class="st">◆ AUTOMATION & AGENTS</div>
+  <p class="ss">Workflow + AI agent engines</p>
   <div class="grid">
-    <a class="card" href="https://supabase.com" target="_blank">
-      <div class="icon">🗄️</div>
-      <h3>Supabase</h3>
-      <p>Free database + auth. Store bot memory and user data.</p>
-    </a>
-    <a class="card" href="https://upstash.com" target="_blank">
-      <div class="icon">⚡</div>
-      <h3>Upstash Redis</h3>
-      <p>Free Redis for fast bot memory and rate limiting.</p>
-    </a>
-    <a class="card" href="https://www.mongodb.com/atlas" target="_blank">
-      <div class="icon">🍃</div>
-      <h3>MongoDB Atlas</h3>
-      <p>Free cloud database for bot data.</p>
-    </a>
-    <a class="card" href="https://telegram.org" target="_blank">
-      <div class="icon">✈️</div>
-      <h3>Telegram Bot API</h3>
-      <p>Completely free. Best platform to deploy free bots.</p>
-    </a>
-    <a class="card" href="https://discord.com/developers" target="_blank">
-      <div class="icon">💬</div>
-      <h3>Discord Developer</h3>
-      <p>Free Discord bots with rich features.</p>
-    </a>
-    <a class="card" href="https://console.cloudinary.com" target="_blank">
-      <div class="icon">🖼️</div>
-      <h3>Cloudinary</h3>
-      <p>Free image & media storage for bots.</p>
-    </a>
-    <a class="card" href="https://www.emailjs.com" target="_blank">
-      <div class="icon">📧</div>
-      <h3>EmailJS</h3>
-      <p>Send emails from bot for free.</p>
-    </a>
-    <a class="card" href="https://cron-job.org" target="_blank">
-      <div class="icon">⏰</div>
-      <h3>cron-job.org</h3>
-      <p>Free cron jobs to keep bots alive or run scheduled tasks.</p>
-    </a>
+    <a class="card" href="https://n8n.io" target="_blank"><div class="ic">🔄</div><h3>N8N</h3><p>Self-host automation</p><span class="tag">POWER</span></a>
+    <a class="card" href="https://www.make.com" target="_blank"><div class="ic">🛠️</div><h3>MAKE</h3><p>Visual free plan</p></a>
+    <a class="card" href="https://zapier.com" target="_blank"><div class="ic">⚡</div><h3>ZAPIER</h3><p>Free automation</p></a>
+    <a class="card" href="https://pipedream.com" target="_blank"><div class="ic">🚀</div><h3>PIPEDREAM</h3><p>Dev workflows</p></a>
+    <a class="card" href="https://botpress.com" target="_blank"><div class="ic">🤖</div><h3>BOTPRESS</h3><p>Free chatbot builder</p></a>
+    <a class="card" href="https://flowiseai.com" target="_blank"><div class="ic">🌊</div><h3>FLOWISE</h3><p>Open AI agents</p></a>
+    <a class="card" href="https://ifttt.com" target="_blank"><div class="ic">🔗</div><h3>IFTTT</h3><p>Simple free</p></a>
+    <a class="card" href="https://www.activepieces.com" target="_blank"><div class="ic">🧩</div><h3>ACTIVEPIECES</h3><p>Open Zapier alt</p></a>
   </div>
 </section>
 
-<!-- FULL GUIDE -->
-<section id="guide">
-  <h2>📖 Complete Free Bot Creation Guide</h2>
-  <p class="sub">Follow these steps to create a real powerful free bot</p>
-
-  <div class="steps">
-    <div class="step">
-      <h4>Get a Free LLM API Key</h4>
-      <p>Go to <strong>console.groq.com</strong> → Sign up → Create API Key. This is the fastest free option.</p>
-    </div>
-    <div class="step">
-      <h4>Test Your Bot Here</h4>
-      <p>Paste the API key in the Bot Builder above, set a system prompt, and chat. This confirms everything works.</p>
-    </div>
-    <div class="step">
-      <h4>Create Telegram or Discord Bot</h4>
-      <p>For Telegram: Talk to @BotFather → /newbot → Get token.<br>For Discord: discord.com/developers → New Application → Bot → Token.</p>
-    </div>
-    <div class="step">
-      <h4>Write Simple Bot Code</h4>
-      <p>Use Python (python-telegram-bot or discord.py) + your free Groq/Gemini key. Many free templates exist on GitHub.</p>
-    </div>
-    <div class="step">
-      <h4>Deploy Free 24/7</h4>
-      <p>Upload code to <strong>Replit</strong> or <strong>Railway</strong>. Use free keep-alive methods or free cron services.</p>
-    </div>
-    <div class="step">
-      <h4>Add Memory & Tools (Optional)</h4>
-      <p>Connect free Supabase or Upstash Redis so your bot can remember conversations and become much smarter.</p>
-    </div>
-  </div>
-
-  <div class="panel" style="margin-top:30px">
-    <h3>💡 Recommended Free Stack for Strong Bots</h3>
-    <p style="font-size:14px;color:var(--muted);line-height:1.8">
-      <strong>Brain:</strong> Groq (Llama 3.1 / Mixtral) or Google Gemini<br>
-      <strong>Interface:</strong> Telegram Bot (completely free)<br>
-      <strong>Hosting:</strong> Replit or Railway free tier<br>
-      <strong>Memory:</strong> Supabase free database or Upstash Redis<br>
-      <strong>Automation:</strong> n8n self-hosted or Make free plan<br>
-      <strong>Keep Alive:</strong> cron-job.org free
-    </p>
+<section id="host">
+  <div class="st">◆ HOSTING • DB • BACKEND</div>
+  <p class="ss">Deploy & store free</p>
+  <div class="grid">
+    <a class="card" href="https://replit.com" target="_blank"><div class="ic">💻</div><h3>REPLIT</h3><p>IDE + bot host</p></a>
+    <a class="card" href="https://railway.app" target="_blank"><div class="ic">🚂</div><h3>RAILWAY</h3><p>Free credit</p></a>
+    <a class="card" href="https://render.com" target="_blank"><div class="ic">🚀</div><h3>RENDER</h3><p>Free services</p></a>
+    <a class="card" href="https://vercel.com" target="_blank"><div class="ic">▲</div><h3>VERCEL</h3><p>Frontend free</p></a>
+    <a class="card" href="https://netlify.com" target="_blank"><div class="ic">🌐</div><h3>NETLIFY</h3><p>Static + functions</p></a>
+    <a class="card" href="https://supabase.com" target="_blank"><div class="ic">🗄️</div><h3>SUPABASE</h3><p>DB + Auth free</p></a>
+    <a class="card" href="https://upstash.com" target="_blank"><div class="ic">⚡</div><h3>UPSTASH</h3><p>Free Redis</p></a>
+    <a class="card" href="https://neon.tech" target="_blank"><div class="ic">🐘</div><h3>NEON</h3><p>Free Postgres</p></a>
+    <a class="card" href="https://www.mongodb.com/atlas" target="_blank"><div class="ic">🍃</div><h3>MONGODB</h3><p>Free Atlas</p></a>
+    <a class="card" href="https://fly.io" target="_blank"><div class="ic">🕊️</div><h3>FLY.IO</h3><p>Free apps</p></a>
+    <a class="card" href="https://cron-job.org" target="_blank"><div class="ic">⏰</div><h3>CRON-JOB</h3><p>Keep-alive free</p></a>
+    <a class="card" href="https://github.com" target="_blank"><div class="ic">🐙</div><h3>GITHUB</h3><p>Code + Pages</p></a>
   </div>
 </section>
 
+<section id="dev">
+  <div class="st">◆ DEVELOPER & PRODUCTIVITY</div>
+  <p class="ss">Build faster for free</p>
+  <div class="grid">
+    <a class="card" href="https://code.visualstudio.com" target="_blank"><div class="ic">📝</div><h3>VS CODE</h3><p>Free editor</p></a>
+    <a class="card" href="https://cursor.com" target="_blank"><div class="ic">🤖</div><h3>CURSOR</h3><p>AI code editor</p></a>
+    <a class="card" href="https://www.postman.com" target="_blank"><div class="ic">📬</div><h3>POSTMAN</h3><p>API testing</p></a>
+    <a class="card" href="https://hoppscotch.io" target="_blank"><div class="ic">🚀</div><h3>HOPPSCOTCH</h3><p>Free API client</p></a>
+    <a class="card" href="https://www.notion.so" target="_blank"><div class="ic">📚</div><h3>NOTION</h3><p>Free workspace</p></a>
+    <a class="card" href="https://trello.com" target="_blank"><div class="ic">📌</div><h3>TRELLO</h3><p>Free boards</p></a>
+    <a class="card" href="https://drive.google.com" target="_blank"><div class="ic">📂</div><h3>GDRIVE</h3><p>Free storage</p></a>
+    <a class="card" href="https://www.figma.com" target="_blank"><div class="ic">🎨</div><h3>FIGMA</h3><p>Free design</p></a>
+    <a class="card" href="https://codepen.io" target="_blank"><div class="ic">🖊️</div><h3>CODEPEN</h3><p>Frontend lab</p></a>
+    <a class="card" href="https://replit.com" target="_blank"><div class="ic">💻</div><h3>REPLIT</h3><p>Online IDE</p></a>
+    <a class="card" href="https://stackoverflow.com" target="_blank"><div class="ic">❓</div><h3>STACKOVERFLOW</h3><p>Dev Q&A</p></a>
+    <a class="card" href="https://dev.to" target="_blank"><div class="ic">📰</div><h3>DEV.TO</h3><p>Dev community</p></a>
+  </div>
+</section>
 
-<!-- SOCIAL NEXUS -->
 <section id="social">
-  <h2>🚀 Social Nexus</h2>
-  <p class="sub">All my social media & channels in one place</p>
+  <div class="st">◆ SOCIAL NEXUS</div>
+  <p class="ss">All channels // one center</p>
   <div class="grid">
-    <a class="card" href="https://www.instagram.com/pasindu5598" target="_blank"><div class="icon">📸</div><h3>Instagram</h3><p>@pasindu5598</p></a>
-    <a class="card" href="https://www.facebook.com/share/18xRGhYVUo/" target="_blank"><div class="icon">📘</div><h3>Facebook</h3><p>My Facebook Page</p></a>
-    <a class="card" href="https://youtube.com/@pasya" target="_blank"><div class="icon">▶️</div><h3>YouTube</h3><p>@pasya</p></a>
-    <a class="card" href="https://whatsapp.com/channel/0029VaPASIAMAX" target="_blank"><div class="icon">💬</div><h3>WA Channel</h3><p>WhatsApp Channel</p></a>
-    <a class="card" href="https://chat.whatsapp.com/KjhsWakBQoUI4SEEvZXAsO" target="_blank"><div class="icon">💬</div><h3>WA Group</h3><p>WhatsApp Group</p></a>
-    <a class="card" href="https://s.imoim.net/KNdKwX?ISCI=001102" target="_blank"><div class="icon">📱</div><h3>Imo</h3><p>Imo Profile</p></a>
-    <a class="card" href="https://tiktok.com/@pasindudananjaya619" target="_blank"><div class="icon">🎵</div><h3>TikTok</h3><p>@pasindudananjaya619</p></a>
-    <a class="card" href="https://linkedin.com/in/pasindu-dananjaya-41044831b" target="_blank"><div class="icon">💼</div><h3>LinkedIn</h3><p>Profile</p></a>
-    <a class="card" href="https://linkedin.com/in/groups/22101008" target="_blank"><div class="icon">💼</div><h3>LinkedIn Group</h3><p>Group</p></a>
-    <a class="card" href="https://x.com/PasinduDan98554" target="_blank"><div class="icon">🐦</div><h3>X / Twitter</h3><p>@PasinduDan98554</p></a>
-    <a class="card" href="https://invite.viber.com/?g2=AQBWlEwa+DKVDFaaTbesR5FqD2IQZhFjhhQdN/vdsaml9xVUCL8RnDHcFy6kno0U" target="_blank"><div class="icon">💜</div><h3>Viber Channel</h3><p>Viber</p></a>
-    <a class="card" href="https://t.me/goldenbotmdchannel" target="_blank"><div class="icon">📢</div><h3>Telegram 1</h3><p>@goldenbotmdchannel</p></a>
-    <a class="card" href="https://t.me/GOLDENBOTMDOfficial" target="_blank"><div class="icon">📢</div><h3>Telegram 2</h3><p>@GOLDENBOTMDOfficial</p></a>
-    <a class="card" href="https://substack.com/@providentangulus513520?utm_source=notes-invite-friends-item&r=8k4znf" target="_blank"><div class="icon">❤️</div><h3>Support</h3><p>Support me</p></a>
-    <a class="card" href="https://bsky.app/profile/pasiyaa.bsky.social" target="_blank"><div class="icon">🦋</div><h3>BlueSky</h3><p>@pasiyaa.bsky.social</p></a>
-    <a class="card" href="https://pin.it/F2gCbUrGu" target="_blank"><div class="icon">📌</div><h3>Pinterest 1</h3><p>Pinterest</p></a>
-    <a class="card" href="https://pin.it/4KIZAKMw9" target="_blank"><div class="icon">📌</div><h3>Pinterest 2</h3><p>Pinterest</p></a>
-    <a class="card" href="https://www.reddit.com/u/New_Car_5251/s/q8UKRVv3mi" target="_blank"><div class="icon">🤖</div><h3>Reddit</h3><p>Profile</p></a>
+    <a class="card" href="https://www.instagram.com/pasindu5598" target="_blank"><div class="ic">📸</div><h3>INSTAGRAM</h3><p>@pasindu5598</p></a>
+    <a class="card" href="https://www.facebook.com/share/18xRGhYVUo/" target="_blank"><div class="ic">📘</div><h3>FACEBOOK</h3><p>Page</p></a>
+    <a class="card" href="https://youtube.com/@pasya" target="_blank"><div class="ic">▶️</div><h3>YOUTUBE</h3><p>@pasya</p></a>
+    <a class="card" href="https://whatsapp.com/channel/0029VaPASIAMAX" target="_blank"><div class="ic">💬</div><h3>WA CHANNEL</h3><p>WhatsApp</p></a>
+    <a class="card" href="https://chat.whatsapp.com/KjhsWakBQoUI4SEEvZXAsO" target="_blank"><div class="ic">💬</div><h3>WA GROUP</h3><p>Group</p></a>
+    <a class="card" href="https://tiktok.com/@pasindudananjaya619" target="_blank"><div class="ic">🎵</div><h3>TIKTOK</h3><p>@pasindudananjaya619</p></a>
+    <a class="card" href="https://linkedin.com/in/pasindu-dananjaya-41044831b" target="_blank"><div class="ic">💼</div><h3>LINKEDIN</h3><p>Profile</p></a>
+    <a class="card" href="https://x.com/PasinduDan98554" target="_blank"><div class="ic">🐦</div><h3>X / TWITTER</h3><p>@PasinduDan98554</p></a>
+    <a class="card" href="https://t.me/goldenbotmdchannel" target="_blank"><div class="ic">📢</div><h3>TELEGRAM 1</h3><p>Channel</p></a>
+    <a class="card" href="https://t.me/GOLDENBOTMDOfficial" target="_blank"><div class="ic">📢</div><h3>TELEGRAM 2</h3><p>Official</p></a>
+    <a class="card" href="https://bsky.app/profile/pasiyaa.bsky.social" target="_blank"><div class="ic">🦋</div><h3>BLUESKY</h3><p>@pasiyaa</p></a>
+    <a class="card" href="https://www.reddit.com/u/New_Car_5251/s/q8UKRVv3mi" target="_blank"><div class="ic">🤖</div><h3>REDDIT</h3><p>Profile</p></a>
   </div>
 </section>
 
-<!-- WEB ARCHITECTURE -->
-<section id="websites">
-  <h2>🌐 Web Architecture</h2>
-  <p class="sub">All my websites, apps and projects</p>
+<section id="web">
+  <div class="st">◆ WEB ARCHITECTURE</div>
+  <p class="ss">All projects & deployments</p>
   <div class="grid">
-    <a class="card" href="https://mamageblog.blogspot.com" target="_blank"><div class="icon">🌐</div><h3>Blog</h3><p>Blogger Blog</p></a>
-    <a class="card" href="https://mamageblogcom.wordpress.com" target="_blank"><div class="icon">🌐</div><h3>WordPress</h3><p>WordPress Website</p></a>
-    <a class="card" href="https://github.com/pasindudananjaya92-bot" target="_blank"><div class="icon">💻</div><h3>GitHub</h3><p>All my repositories</p></a>
-    <a class="card" href="https://untitled-633289052791.asia-southeast1.run.app" target="_blank"><div class="icon">🌐</div><h3>My Website</h3><p>Main Website</p></a>
-    <a class="card" href="https://pasiya-ai-sheets-assistant-633289052791.asia-southeast1.run.app" target="_blank"><div class="icon">📊</div><h3>AI Sheets Assistant</h3><p>Pasiya AI Sheets</p></a>
-    <a class="card" href="https://ais-pre-3ddlqepwpyu636xvlehlf7-874547715851.asia-east1.run.app" target="_blank"><div class="icon">🤖</div><h3>AI Web App 1</h3><p>AI Application</p></a>
-    <a class="card" href="https://pasiyamax.vercel.app" target="_blank"><div class="icon">▲</div><h3>Pasiya Max Vercel</h3><p>Vercel App</p></a>
-    <a class="card" href="https://ais-pre-nzc4syj5f6rwruajdox4xy-874547715851.asia-east1.run.app" target="_blank"><div class="icon">🤖</div><h3>AI Web App 2</h3><p>AI Application</p></a>
-    <a class="card" href="https://pasindudananjaya.substack.com" target="_blank"><div class="icon">📝</div><h3>Substack</h3><p>My Publication</p></a>
+    <a class="card" href="https://mamageblog.blogspot.com" target="_blank"><div class="ic">🌐</div><h3>BLOG</h3><p>Blogger</p></a>
+    <a class="card" href="https://mamageblogcom.wordpress.com" target="_blank"><div class="ic">🌐</div><h3>WORDPRESS</h3><p>Site</p></a>
+    <a class="card" href="https://github.com/pasindudananjaya92-bot" target="_blank"><div class="ic">💻</div><h3>GITHUB</h3><p>All repos</p></a>
+    <a class="card" href="https://pasiyamax.vercel.app" target="_blank"><div class="ic">▲</div><h3>PASIYA MAX</h3><p>Vercel</p></a>
+    <a class="card" href="https://pasindudananjaya.substack.com" target="_blank"><div class="ic">📝</div><h3>SUBSTACK</h3><p>Publication</p></a>
+    <a class="card" href="https://untitled-633289052791.asia-southeast1.run.app" target="_blank"><div class="ic">🌐</div><h3>MAIN SITE</h3><p>Primary</p></a>
+    <a class="card" href="https://pasiya-ai-sheets-assistant-633289052791.asia-southeast1.run.app" target="_blank"><div class="ic">📊</div><h3>AI SHEETS</h3><p>Assistant</p></a>
+    <a class="card" href="https://pasindudananjaya92-bot.github.io/pasiya-bot-platform/" target="_blank"><div class="ic">🤖</div><h3>THIS CENTER</h3><p>Command</p></a>
   </div>
 </section>
 
+<section id="guide">
+  <div class="st">◆ DEPLOYMENT PROTOCOL</div>
+  <p class="ss">Build a real free AI bot — 6 steps</p>
+  <div class="steps">
+    <div class="step"><h4>ACQUIRE KEY</h4><p>console.groq.com → free API key</p></div>
+    <div class="step"><h4>TEST HERE</h4><p>Paste key → chat with your bot in this center</p></div>
+    <div class="step"><h4>CHANNEL BOT</h4><p>Telegram @BotFather or Discord Developer → token</p></div>
+    <div class="step"><h4>CODE</h4><p>Python + free Groq/Gemini. Templates on GitHub</p></div>
+    <div class="step"><h4>DEPLOY 24/7</h4><p>Replit / Railway + cron-job.org keep-alive</p></div>
+    <div class="step"><h4>MEMORY</h4><p>Free Supabase or Upstash Redis</p></div>
+  </div>
+  <div class="panel" style="margin-top:20px">
+    <h3>💡 FREE POWER STACK</h3>
+    <div class="term">> BRAIN ........ Groq / Gemini</div>
+    <div class="term">> INTERFACE .... Telegram Bot</div>
+    <div class="term">> HOSTING ...... Replit / Railway</div>
+    <div class="term">> MEMORY ....... Supabase / Upstash</div>
+    <div class="term">> AUTO ......... n8n / Make</div>
+    <div class="term">> KEEP_ALIVE ... cron-job.org</div>
+  </div>
+</section>
 
 <footer>
-  <p><strong>Pasiya Bot Platform</strong></p>
-  <p style="margin-top:6px">Built for creators who want powerful AI bots without paying</p>
-  <p style="margin-top:14px">
-    <a href="https://github.com/pasindudananjaya92-bot" target="_blank">GitHub</a> · 
-    <a href="https://pasindudananjaya.substack.com" target="_blank">Blog</a>
-  </p>
-  <p style="margin-top:18px;font-size:12px">© 2026 Pasindu Dananjaya · 100% Free Services Only</p>
+  <div style="color:var(--g);margin-bottom:6px">PASIYA MAX // ULTIMATE FREE AI COMMAND CENTER</div>
+  <div>100% Free Services • No Credit Card • Animated Cyber Interface</div>
+  <div style="margin-top:12px"><a href="https://github.com/pasindudananjaya92-bot">GITHUB</a> · <a href="https://pasindudananjaya.substack.com">BLOG</a> · <a href="https://youtube.com/@pasya">YOUTUBE</a></div>
+  <div style="margin-top:14px;opacity:.5">© 2026 PASINDU DANANJAYA // STATUS: ONLINE</div>
 </footer>
 
 <script>
-// ========== CONFIG & STORAGE ==========
-const CONFIG_KEY = 'pasiya_bot_config';
-
-function saveConfig() {
-  const config = {
-    botName: document.getElementById('botName').value.trim() || 'Pasiya Assistant',
-    provider: document.getElementById('provider').value,
-    apiKey: document.getElementById('apiKey').value.trim(),
-    systemPrompt: document.getElementById('systemPrompt').value.trim()
-  };
-  localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
-  document.getElementById('configStatus').textContent = '✅ Config saved in your browser';
-  document.getElementById('configStatus').style.color = '#22c55e';
-  updateStatusDot();
-}
-
-function loadConfig() {
-  const raw = localStorage.getItem(CONFIG_KEY);
-  if (!raw) return;
-  try {
-    const config = JSON.parse(raw);
-    document.getElementById('botName').value = config.botName || '';
-    document.getElementById('provider').value = config.provider || 'groq';
-    document.getElementById('apiKey').value = config.apiKey || '';
-    document.getElementById('systemPrompt').value = config.systemPrompt || '';
-    updateStatusDot();
-  } catch(e) {}
-}
-
-function updateStatusDot() {
-  const key = document.getElementById('apiKey').value.trim();
-  const dot = document.getElementById('statusDot');
-  if (key) {
-    dot.className = 'status-dot on';
-  } else {
-    dot.className = 'status-dot off';
-  }
-}
-
-// ========== CHAT ==========
-let messages = [];
-
-function addMessage(role, text) {
-  const box = document.getElementById('chatBox');
-  const div = document.createElement('div');
-  div.className = 'msg ' + role;
-  div.textContent = text;
-  box.appendChild(div);
-  box.scrollTop = box.scrollHeight;
-}
-
-function clearChat() {
-  messages = [];
-  document.getElementById('chatBox').innerHTML = '<div class="msg system">Chat cleared. Ready for new conversation.</div>';
-}
-
-async function sendMessage() {
-  const input = document.getElementById('userInput');
-  const text = input.value.trim();
-  if (!text) return;
-
-  const apiKey = document.getElementById('apiKey').value.trim();
-  if (!apiKey) {
-    addMessage('system', '⚠️ Please add a free API key first (Groq recommended).');
-    return;
-  }
-
-  input.value = '';
-  addMessage('user', text);
-  messages.push({ role: 'user', content: text });
-
-  const thinking = document.createElement('div');
-  thinking.className = 'msg bot';
-  thinking.textContent = 'Thinking...';
-  thinking.id = 'thinking';
-  document.getElementById('chatBox').appendChild(thinking);
-
-  try {
-    const provider = document.getElementById('provider').value;
-    const systemPrompt = document.getElementById('systemPrompt').value.trim();
-    let reply = '';
-
-    if (provider === 'groq') {
-      reply = await callGroq(apiKey, systemPrompt, messages);
-    } else if (provider === 'google') {
-      reply = await callGoogle(apiKey, systemPrompt, messages);
-    } else {
-      reply = await callOpenRouter(apiKey, systemPrompt, messages);
-    }
-
-    document.getElementById('thinking')?.remove();
-    addMessage('bot', reply);
-    messages.push({ role: 'assistant', content: reply });
-  } catch (err) {
-    document.getElementById('thinking')?.remove();
-    addMessage('system', '❌ Error: ' + (err.message || 'Something went wrong. Check your API key and free quota.'));
-  }
-}
-
-// ========== FREE API CALLS ==========
-async function callGroq(apiKey, systemPrompt, msgs) {
-  const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + apiKey
-    },
-    body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        ...msgs
-      ],
-      temperature: 0.7,
-      max_tokens: 1024
-    })
-  });
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    throw new Error(err.error?.message || 'Groq API error');
-  }
-  const data = await response.json();
-  return data.choices[0].message.content;
-}
-
-async function callGoogle(apiKey, systemPrompt, msgs) {
-  // Google AI Studio (Gemini)
-  const contents = msgs.map(m => ({
-    role: m.role === 'assistant' ? 'model' : 'user',
-    parts: [{ text: m.content }]
-  }));
-  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      system_instruction: { parts: [{ text: systemPrompt }] },
-      contents: contents,
-      generationConfig: { temperature: 0.7, maxOutputTokens: 1024 }
-    })
-  });
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    throw new Error(err.error?.message || 'Google AI error');
-  }
-  const data = await response.json();
-  return data.candidates[0].content.parts[0].text;
-}
-
-async function callOpenRouter(apiKey, systemPrompt, msgs) {
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ' + apiKey
-    },
-    body: JSON.stringify({
-      model: 'meta-llama/llama-3.1-8b-instruct:free',
-      messages: [
-        { role: 'system', content: systemPrompt },
-        ...msgs
-      ]
-    })
-  });
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    throw new Error(err.error?.message || 'OpenRouter error');
-  }
-  const data = await response.json();
-  return data.choices[0].message.content;
-}
-
-// Init
-loadConfig();
-updateStatusDot();
-document.getElementById('apiKey').addEventListener('input', updateStatusDot);
+const K='pasiya_v3';
+function saveConfig(){const c={botName:document.getElementById('botName').value.trim()||'PASIYA_ASSISTANT_01',provider:document.getElementById('provider').value,apiKey:document.getElementById('apiKey').value.trim(),systemPrompt:document.getElementById('systemPrompt').value.trim()};localStorage.setItem(K,JSON.stringify(c));document.getElementById('cfg').textContent='>> CONFIG SAVED';document.getElementById('cfg').style.color='#00ff9d';upd()}
+function loadConfig(){const r=localStorage.getItem(K);if(!r)return;try{const c=JSON.parse(r);document.getElementById('botName').value=c.botName||'';document.getElementById('provider').value=c.provider||'groq';document.getElementById('apiKey').value=c.apiKey||'';document.getElementById('systemPrompt').value=c.systemPrompt||'';upd()}catch(e){}}
+function upd(){document.getElementById('dot').className=document.getElementById('apiKey').value.trim()?'dot on':'dot off'}
+let msgs=[];
+function add(role,t){const b=document.getElementById('chat');const d=document.createElement('div');d.className='msg '+role;d.textContent=t;b.appendChild(d);b.scrollTop=b.scrollHeight}
+function clearChat(){msgs=[];document.getElementById('chat').innerHTML='<div class="msg sys">// Log cleared</div>'}
+async function send(){const i=document.getElementById('inp');const t=i.value.trim();if(!t)return;const key=document.getElementById('apiKey').value.trim();if(!key){add('sys','// Inject free API key first');return}i.value='';add('user',t);msgs.push({role:'user',content:t});const th=document.createElement('div');th.className='msg bot';th.textContent='// processing...';th.id='th';document.getElementById('chat').appendChild(th);try{const p=document.getElementById('provider').value;const sp=document.getElementById('systemPrompt').value.trim();let r='';if(p==='groq')r=await groq(key,sp,msgs);else if(p==='google')r=await google(key,sp,msgs);else r=await or(key,sp,msgs);document.getElementById('th')?.remove();add('bot',r);msgs.push({role:'assistant',content:r})}catch(e){document.getElementById('th')?.remove();add('sys','// ERROR: '+(e.message||'check key'))}}
+async function groq(k,s,m){const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+k},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:[{role:'system',content:s},...m],temperature:0.7,max_tokens:1024})});if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error?.message||'Groq error')}return(await r.json()).choices[0].message.content}
+async function google(k,s,m){const c=m.map(x=>({role:x.role==='assistant'?'model':'user',parts:[{text:x.content}]}));const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+k,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system_instruction:{parts:[{text:s}]},contents:c,generationConfig:{temperature:0.7,maxOutputTokens:1024}})});if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error?.message||'Google error')}return(await r.json()).candidates[0].content.parts[0].text}
+async function or(k,s,m){const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+k},body:JSON.stringify({model:'meta-llama/llama-3.1-8b-instruct:free',messages:[{role:'system',content:s},...m]})});if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error?.message||'OR error')}return(await r.json()).choices[0].message.content}
+loadConfig();upd();document.getElementById('apiKey').addEventListener('input',upd);
 </script>
-
 </body>
 </html>
