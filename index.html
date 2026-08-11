@@ -102,6 +102,33 @@ textarea{min-height:70px;resize:vertical}
 .quick-tags button{font-family:'Share Tech Mono',monospace;font-size:10px;padding:6px 10px;background:rgba(0,240,255,.06);border:1px solid rgba(0,240,255,.25);color:var(--c);border-radius:4px;cursor:pointer;transition:.2s}
 .quick-tags button:hover{background:rgba(0,240,255,.15);box-shadow:0 0 10px rgba(0,240,255,.2)}
 
+
+.msg{position:relative;white-space:pre-wrap;word-break:break-word;max-width:95%}
+.msg.bot{max-width:95%}
+.msg .copy-reply{position:absolute;top:4px;right:4px;font-size:9px;padding:3px 6px;background:rgba(0,240,255,.12);border:1px solid rgba(0,240,255,.3);color:var(--c);border-radius:3px;cursor:pointer;font-family:'Share Tech Mono',monospace;opacity:.7}
+.msg .copy-reply:hover{opacity:1}
+.code-wrap{margin:8px 0;border:1px solid rgba(0,240,255,.25);border-radius:6px;overflow:hidden;background:#02060f}
+.code-head{display:flex;justify-content:space-between;align-items:center;padding:4px 8px;background:rgba(0,240,255,.08);font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--c)}
+.code-head button{background:rgba(0,240,255,.15);border:1px solid rgba(0,240,255,.35);color:var(--c);padding:3px 8px;border-radius:3px;cursor:pointer;font-size:9px;font-family:'Share Tech Mono',monospace}
+.code-head button:hover{background:rgba(0,240,255,.3)}
+.code-wrap pre{margin:0;padding:10px;overflow-x:auto;font-size:11px;line-height:1.45;color:#b8f0ff;font-family:'Share Tech Mono',monospace;white-space:pre}
+.msg-html{white-space:normal}
+.msg-html p{margin:0 0 8px}
+.msg-html ul,.msg-html ol{margin:0 0 8px 18px}
+.msg-html a{color:var(--c)}
+.specials{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:10px}
+.specials button{font-family:'Share Tech Mono',monospace;font-size:10px;padding:10px 8px;background:rgba(0,240,255,.06);border:1px solid rgba(0,240,255,.22);color:var(--c);border-radius:5px;cursor:pointer;text-align:left;transition:.2s;line-height:1.4}
+.specials button:hover{background:rgba(0,240,255,.14);box-shadow:0 0 12px rgba(0,240,255,.15)}
+.specials button b{display:block;font-family:'Orbitron',sans-serif;font-size:10px;margin-bottom:3px;letter-spacing:.5px}
+.img-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.img-row input[type=file]{font-size:10px;color:var(--m)}
+
+
+.gh-form label{margin-top:8px}
+.gh-form textarea{min-height:90px}
+.gh-note{font-size:10px;color:var(--m);margin-top:10px;line-height:1.6;font-family:'Share Tech Mono',monospace}
+.gh-note code{color:var(--c);font-size:9px}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -124,8 +151,8 @@ footer a{color:var(--c);text-decoration:none}
   <div class="logo">PASIYA <b>MAX</b> // CMD</div>
   <nav>
     <a href="#home">HOME</a><a href="#core">BOT_CORE</a><a href="#llm">LLMs</a><a href="#ai">AI</a>
-    <a href="#desk">DESK</a><a href="#n8n">N8N</a><a href="#auto">AUTO</a><a href="#host">HOST</a><a href="#dev">DEV</a>
-    <a href="#social">SOCIAL</a><a href="#web">WEB</a><a href="#guide">GUIDE</a>
+    <a href="#desk">DESK</a><a href="#tools-plus">TOOLS+</a><a href="#n8n">N8N</a><a href="#auto">AUTO</a><a href="#host">HOST</a><a href="#dev">DEV</a>
+    <a href="#social">SOCIAL</a><a href="#web">WEB</a><a href="#github-auto">GITHUB</a><a href="#guide">GUIDE</a>
   </nav>
 </header>
 
@@ -190,6 +217,14 @@ WEBSITE KNOWLEDGE (you must know this):
 9) WEB ARCHITECTURE — Owner projects: Blog, WordPress, GitHub, Pasiya Max Vercel, Substack, AI Sheets Assistant, this Command Center.
 
 10) FREE POWER STACK — Brain: Groq/Gemini | Interface: Telegram | Hosting: Replit/Railway | Memory: Supabase/Upstash | Auto: n8n/Make | Keep-alive: cron-job.org
+
+POWER CAPABILITIES:
+- When user asks for code, always put full code in markdown fences (```language ... ```) so the website shows a Copy button.
+- Give long, complete answers when needed. Do not unnecessarily shorten.
+- If user sends a URL, analyze purpose, pros/cons, risks, and how it relates to free tools on this site.
+- If user describes an image or sends image URL context, describe what you can infer and suggest free tools (Remove.bg, Canva, Leonardo, etc.).
+- For "fix/improve my site" requests: give exact steps and code snippets they can copy; you cannot edit the live GitHub file directly.
+- Prefer practical step-by-step instructions using only free services listed on this platform.
 
 RULES:
 - Explain how to use each section step by step when asked.
@@ -276,6 +311,33 @@ RULES:
       <button class="btn btn-c" onclick="runDesk()">GO</button>
     </div>
     <div id="deskOut" style="margin-top:12px;font-size:12px;font-family:'Share Tech Mono',monospace;color:var(--m);line-height:1.6;min-height:20px"></div>
+  </div>
+</section>
+
+
+<section id="tools-plus">
+  <div class="st">◆ BOT POWER TOOLS</div>
+  <p class="ss">Copy-ready code • URL analysis • Special actions • Long answers</p>
+  <div class="panel">
+    <h3>🛠 SPECIAL OPTIONS</h3>
+    <p style="font-size:11px;color:var(--m);margin-bottom:10px;font-family:'Share Tech Mono',monospace;line-height:1.6">
+      One-tap actions for you and visitors. Bot replies support <b style="color:var(--c)">code boxes + Copy button</b>, long text, and structured answers.
+    </p>
+    <div class="specials">
+      <button type="button" onclick="specialAction('site')"><b>SITE GUIDE</b>Explain this whole website</button>
+      <button type="button" onclick="specialAction('stack')"><b>FREE STACK</b>Best free tools path</button>
+      <button type="button" onclick="specialAction('n8n')"><b>N8N HELP</b>How connected bot works</button>
+      <button type="button" onclick="specialAction('code')"><b>CODE HELP</b>Ask for copy-ready code</button>
+      <button type="button" onclick="specialAction('url')"><b>ANALYZE URL</b>Paste link in chat after</button>
+      <button type="button" onclick="exportChats()"><b>EXPORT CHAT</b>Download chat text</button>
+      <button type="button" onclick="clearAllChats()"><b>CLEAR CHATS</b>Reset all chat logs</button>
+      <button type="button" onclick="document.getElementById('n8n').scrollIntoView({behavior:'smooth'})"><b>PUBLIC BOT</b>No API key chat</button>
+    </div>
+    <div class="img-row">
+      <span style="font-size:10px;color:var(--m);font-family:'Share Tech Mono',monospace">Image URL for bot:</span>
+      <input id="imgUrlInp" placeholder="https://...image.jpg" style="flex:1;min-width:160px">
+      <button class="btn btn-g" type="button" onclick="sendImageUrlToBot()">Send to N8N Bot</button>
+    </div>
   </div>
 </section>
 
@@ -421,6 +483,87 @@ RULES:
   </div>
 </section>
 
+
+<section id="github-auto">
+  <div class="st">◆ GITHUB API AUTOMATION</div>
+  <p class="ss">Feedback → Issue • Bug report • File update via n8n + GitHub token</p>
+
+  <div class="panel gh-form">
+    <h3>📝 FEEDBACK → GITHUB ISSUE</h3>
+    <p class="desk-hint">Sends to your n8n workflow → creates issue on pasiya-bot-platform repo</p>
+    <label>TITLE</label>
+    <input id="ghTitle" placeholder="Short title...">
+    <label>MESSAGE / BUG DETAILS</label>
+    <textarea id="ghBody" placeholder="Describe feedback or bug..."></textarea>
+    <label>YOUR NAME (optional)</label>
+    <input id="ghName" placeholder="Visitor name">
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-c" type="button" onclick="submitGitHubIssue()">CREATE ISSUE</button>
+      <button class="btn btn-g" type="button" onclick="submitBugReport()">SITE BUG REPORT</button>
+    </div>
+    <div id="ghStatus" class="gh-note"></div>
+  </div>
+
+  <div class="panel">
+    <h3>⚙️ N8N WEBHOOK URLS (SAVE ONCE)</h3>
+    <p class="desk-hint">Create 2 workflows in n8n (or one with Switch). Paste Production webhook URLs here. Saved in this browser only.</p>
+    <label>ISSUE WEBHOOK (action=create_issue)</label>
+    <input id="ghIssueHook" placeholder="https://pasiyamax.app.n8n.cloud/webhook/....">
+    <label>FILE UPDATE WEBHOOK (action=update_file) — admin only</label>
+    <input id="ghFileHook" placeholder="https://pasiyamax.app.n8n.cloud/webhook/....">
+    <div style="margin-top:10px">
+      <button class="btn btn-c" type="button" onclick="saveGhHooks()">💾 SAVE HOOKS</button>
+    </div>
+    <div id="ghHookStatus" class="gh-note"></div>
+  </div>
+
+  <div class="panel">
+    <h3>📋 N8N + GITHUB SETUP (DO THIS ONCE)</h3>
+    <div class="gh-note">
+      <b style="color:var(--c)">A) GitHub Token</b><br>
+      GitHub → Settings → Developer settings → Personal access tokens<br>
+      Repo: pasindudananjaya92-bot/pasiya-bot-platform<br>
+      Permissions: Issues (read/write), Contents (read/write if file update)<br><br>
+      <b style="color:var(--c)">B) Workflow 1 — Create Issue</b><br>
+      1. Webhook node (POST recommended) path e.g. github-issue<br>
+      2. GitHub node → Create Issue<br>
+      &nbsp;&nbsp;owner: pasindudananjaya92-bot<br>
+      &nbsp;&nbsp;repo: pasiya-bot-platform<br>
+      &nbsp;&nbsp;title: {{ $json.body.title || $json.title || $json.query.title }}<br>
+      &nbsp;&nbsp;body: {{ $json.body.body || $json.body || $json.query.body }}<br>
+      3. Publish → copy Production URL → paste above<br><br>
+      <b style="color:var(--c)">C) Workflow 2 — File Update (careful)</b><br>
+      1. Webhook receives: path, content_base64, message<br>
+      2. HTTP Request GET file → read sha<br>
+      3. HTTP Request PUT contents API with sha + content<br>
+      4. Only use from admin browser. Never public without secret.<br><br>
+      <b style="color:var(--c)">D) Bot command</b><br>
+      Type in N8N chat: <code>site bug report: your text</code><br>
+      Or use SITE BUG REPORT button above.
+    </div>
+    <div class="specials" style="margin-top:12px">
+      <button type="button" onclick="specialAction('n8n')"><b>N8N HELP</b>Open public bot help</button>
+      <button type="button" onclick="window.open('https://github.com/pasindudananjaya92-bot/pasiya-bot-platform/issues','_blank')"><b>VIEW ISSUES</b>Open GitHub issues</button>
+      <button type="button" onclick="document.getElementById('github-auto').scrollIntoView({behavior:'smooth'})"><b>THIS PANEL</b>GitHub automation</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>🔐 FILE UPDATE (ADMIN)</h3>
+    <p class="desk-hint">Updates a repo file via n8n. Requires FILE UPDATE webhook + GitHub token with Contents write.</p>
+    <label>FILE PATH</label>
+    <input id="ghPath" value="README.md" placeholder="README.md">
+    <label>COMMIT MESSAGE</label>
+    <input id="ghCommit" value="Update via Pasiya Max automation" placeholder="commit message">
+    <label>NEW FILE CONTENT</label>
+    <textarea id="ghContent" placeholder="New file text..."></textarea>
+    <div style="margin-top:10px">
+      <button class="btn btn-c" type="button" onclick="submitFileUpdate()">UPDATE FILE VIA N8N</button>
+    </div>
+    <div id="ghFileStatus" class="gh-note"></div>
+  </div>
+</section>
+
 <footer>
   <div style="color:var(--g);margin-bottom:6px">PASIYA MAX // ULTIMATE FREE AI COMMAND CENTER</div>
   <div>100% Free Services • No Credit Card • Animated Cyber Interface</div>
@@ -547,6 +690,180 @@ function runDesk(){
   var sec=document.getElementById('n8n');
   if(sec)sec.scrollIntoView({behavior:'smooth'});
   if(n8){n8.value=(i.value||'').trim();setTimeout(function(){if(typeof sendN8n==='function')sendN8n()},400)}
+}
+
+
+function escapeHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function formatBotHtml(text){
+  var s=String(text||'');
+  // Extract fenced code blocks
+  var parts=[], last=0, re=/```([\w+-]*)\n?([\s\S]*?)```/g, m, i=0;
+  while((m=re.exec(s))){
+    if(m.index>last) parts.push({t:'text',v:s.slice(last,m.index)});
+    parts.push({t:'code',lang:m[1]||'code',v:m[2]});
+    last=m.index+m[0].length;
+  }
+  if(last<s.length) parts.push({t:'text',v:s.slice(last)});
+  if(!parts.length) parts=[{t:'text',v:s}];
+  var html='';
+  parts.forEach(function(p,idx){
+    if(p.t==='code'){
+      var id='code_'+Date.now()+'_'+idx;
+      html+='<div class="code-wrap"><div class="code-head"><span>'+escapeHtml(p.lang)+'</span><button type="button" onclick="copyCode(\''+id+'\',this)">COPY</button></div><pre id="'+id+'">'+escapeHtml(p.v.replace(/\n$/,''))+'</pre></div>';
+    } else {
+      var t=escapeHtml(p.v);
+      t=t.replace(/(https?:\/\/[^\s<]+)/g,'<a href="$1" target="_blank" rel="noopener">$1</a>');
+      t=t.replace(/\n/g,'<br>');
+      html+='<div>'+t+'</div>';
+    }
+  });
+  return html;
+}
+function copyCode(id,btn){
+  var el=document.getElementById(id);
+  if(!el)return;
+  var text=el.innerText||el.textContent||'';
+  function ok(){if(btn){var o=btn.textContent;btn.textContent='COPIED';setTimeout(function(){btn.textContent=o},1200)}}
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(ok).catch(function(){fallbackCopy(text);ok();});
+  } else {fallbackCopy(text);ok();}
+}
+function fallbackCopy(text){
+  var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy')}catch(e){}
+  document.body.removeChild(ta);
+}
+function addRich(boxId, role, text){
+  var box=document.getElementById(boxId);if(!box)return;
+  var d=document.createElement('div');
+  d.className='msg '+role+(role==='bot'?' msg-html':'');
+  if(role==='bot'){
+    d.innerHTML=formatBotHtml(text)+'<button type="button" class="copy-reply" onclick="copyReply(this)">COPY</button>';
+    d.setAttribute('data-raw', text);
+  } else {
+    d.textContent=text;
+  }
+  box.appendChild(d);box.scrollTop=box.scrollHeight;
+}
+function copyReply(btn){
+  var msg=btn.parentElement;var raw=msg.getAttribute('data-raw')||msg.innerText;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(raw).then(function(){btn.textContent='OK';setTimeout(function(){btn.textContent='COPY'},1000)});
+  } else {fallbackCopy(raw);btn.textContent='OK';setTimeout(function(){btn.textContent='COPY'},1000)}
+}
+// Override simple addMessage / addN8n to rich versions where possible
+var _origAdd=typeof add==='function'?add:null;
+function add(role,t){
+  if(role==='bot'){addRich('chat',role,t);return}
+  var b=document.getElementById('chat');if(!b)return;
+  var d=document.createElement('div');d.className='msg '+role;d.textContent=t;b.appendChild(d);b.scrollTop=b.scrollHeight;
+}
+function addN8n(role,t){
+  if(role==='bot'){addRich('n8nChat',role,t);return}
+  var b=document.getElementById('n8nChat');if(!b)return;
+  var d=document.createElement('div');d.className='msg '+role;d.textContent=t;b.appendChild(d);b.scrollTop=b.scrollHeight;
+}
+async function enrichWithUrl(text){
+  var m=String(text).match(/https?:\/\/[^\s]+/);
+  if(!m) return text;
+  var url=m[0].replace(/[.,)\]>]+$/,'');
+  try{
+    var prox='https://api.allorigins.win/raw?url='+encodeURIComponent(url);
+    var r=await fetch(prox,{signal:AbortSignal.timeout?AbortSignal.timeout(8000):undefined});
+    if(!r.ok) return text+'\n\n[URL detected: '+url+' — could not fetch page text; analyze from URL knowledge.]';
+    var body=await r.text();
+    body=body.replace(/<script[\s\S]*?<\/script>/gi,' ').replace(/<style[\s\S]*?<\/style>/gi,' ').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,4000);
+    return text+'\n\n---\nFETCHED PAGE TEXT (truncated) FROM '+url+':\n'+body+'\n---\nPlease analyze this page in detail: purpose, pros, cons, risks, and useful free tools from Pasiya Max related to it.';
+  }catch(e){
+    return text+'\n\n[URL: '+url+' — fetch failed; give best analysis from the link and context.]';
+  }
+}
+// Patch send() to enrich URLs for BOT CORE
+var _send = typeof send==='function'?send:null;
+async function send(){
+  const i=document.getElementById('inp');const t=i.value.trim();if(!t)return;
+  const key=document.getElementById('apiKey').value.trim();
+  if(!key){add('sys','// Inject free API key first');return}
+  i.value='';add('user',t);
+  var payload=t;
+  if(/https?:\/\//i.test(t)){payload=await enrichWithUrl(t)}
+  msgs.push({role:'user',content:payload});
+  const th=document.createElement('div');th.className='msg bot';th.textContent='// processing...';th.id='th';
+  document.getElementById('chat').appendChild(th);
+  try{
+    const p=document.getElementById('provider').value;const sp=document.getElementById('systemPrompt').value.trim();
+    let r='';
+    if(p==='groq')r=await groq(key,sp,msgs);else if(p==='google')r=await google(key,sp,msgs);else r=await or(key,sp,msgs);
+    document.getElementById('th')?.remove();add('bot',r);msgs.push({role:'assistant',content:r});
+  }catch(e){document.getElementById('th')?.remove();add('sys','// ERROR: '+(e.message||'check key'))}
+}
+// Patch sendN8n similarly
+async function sendN8n(){
+  const i=document.getElementById('n8nInp');const t=(i&&i.value||'').trim();if(!t)return;
+  i.value='';addN8n('user',t);
+  const st=document.getElementById('n8nStatus');if(st){st.textContent='>> sending to n8n...';st.style.color='#00f0ff'}
+  const th=document.createElement('div');th.className='msg bot';th.textContent='// n8n processing...';th.id='n8nth';
+  document.getElementById('n8nChat').appendChild(th);
+  var q=t;
+  if(/https?:\/\//i.test(t)){q=await enrichWithUrl(t)}
+  try{
+    const url = N8N_WEBHOOK + '?chatInput=' + encodeURIComponent(q) + '&message=' + encodeURIComponent(q) + '&text=' + encodeURIComponent(q);
+    const r = await fetch(url, { method: 'GET', mode: 'cors' });
+    let reply = '';
+    const ct = r.headers.get('content-type')||'';
+    if(ct.includes('application/json')){
+      const j = await r.json();
+      reply = (typeof j === 'string') ? j : (j.output || j.text || j.message || j.reply || j.response || j.data || JSON.stringify(j));
+    } else { reply = await r.text(); }
+    document.getElementById('n8nth')?.remove();
+    if(!r.ok) throw new Error(reply || ('HTTP '+r.status));
+    addN8n('bot', reply || '// empty response from n8n');
+    if(st){st.textContent='>> n8n ok';st.style.color='#00ff9d'}
+  }catch(e){
+    document.getElementById('n8nth')?.remove();
+    addN8n('sys', '// ERROR: ' + (e.message||'CORS or workflow not active'));
+    if(st){st.textContent='>> failed';st.style.color='#ff2a6d'}
+  }
+}
+function specialAction(type){
+  var map={
+    site:'Explain the entire Pasiya Max website in detail: every section, how visitors should use BOT CORE vs N8N public bot, free tools, and the free power stack. Use Sinhala if appropriate.',
+    stack:'Give the best complete free stack to build and run a powerful AI bot 24/7 with no credit card. Step by step.',
+    n8n:'Explain how the connected n8n bot on this site works (webhook, Groq, no API key for visitors) and how to improve it.',
+    code:'I need copy-ready code. Prefer full files in markdown code fences. Ask me what language/feature if unclear — for now give a useful free Telegram bot + Groq example outline.',
+    url:'I will paste a URL next. When I send it, analyze it deeply: purpose, pros, cons, safety, and related free tools on this platform.'
+  };
+  var msg=map[type];if(!msg)return;
+  var n8=document.getElementById('n8nInp');
+  var sec=document.getElementById('n8n');
+  if(sec)sec.scrollIntoView({behavior:'smooth'});
+  if(n8){n8.value=msg;setTimeout(function(){sendN8n()},300)}
+}
+function sendImageUrlToBot(){
+  var u=(document.getElementById('imgUrlInp')&&document.getElementById('imgUrlInp').value||'').trim();
+  if(!u){alert('Paste an image URL first');return}
+  var n8=document.getElementById('n8nInp');
+  var sec=document.getElementById('n8n');
+  if(sec)sec.scrollIntoView({behavior:'smooth'});
+  if(n8){
+    n8.value='Analyze this image URL in detail (describe what you see or infer, quality, possible use cases, and free tools on Pasiya Max to edit/improve similar images): '+u;
+    setTimeout(function(){sendN8n()},300);
+  }
+}
+function exportChats(){
+  var a=document.getElementById('chat'), b=document.getElementById('n8nChat');
+  var t='=== BOT CORE ===\n'+(a?a.innerText:'')+'\n\n=== N8N BOT ===\n'+(b?b.innerText:'');
+  var blob=new Blob([t],{type:'text/plain'});
+  var url=URL.createObjectURL(blob);
+  var l=document.createElement('a');l.href=url;l.download='pasiya-chats.txt';l.click();
+  URL.revokeObjectURL(url);
+}
+function clearAllChats(){
+  msgs=[];
+  var a=document.getElementById('chat');if(a)a.innerHTML='<div class="msg sys">// Chat cleared</div>';
+  var b=document.getElementById('n8nChat');if(b)b.innerHTML='<div class="msg sys">// n8n chat cleared</div>';
 }
 
 loadConfig();upd();document.getElementById('apiKey').addEventListener('input',upd);
