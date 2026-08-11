@@ -100,7 +100,7 @@ footer a{color:var(--c);text-decoration:none}
   <div class="logo">PASIYA <b>MAX</b> // CMD</div>
   <nav>
     <a href="#home">HOME</a><a href="#core">BOT_CORE</a><a href="#llm">LLMs</a><a href="#ai">AI</a>
-    <a href="#auto">AUTO</a><a href="#host">HOST</a><a href="#dev">DEV</a>
+    <a href="#n8n">N8N</a><a href="#auto">AUTO</a><a href="#host">HOST</a><a href="#dev">DEV</a>
     <a href="#social">SOCIAL</a><a href="#web">WEB</a><a href="#guide">GUIDE</a>
   </nav>
 </header>
@@ -186,11 +186,41 @@ footer a{color:var(--c);text-decoration:none}
   </div>
 </section>
 
+
+<section id="n8n">
+  <div class="st">◆ N8N // CONNECTED WORKFLOW</div>
+  <p class="ss">Your n8n Cloud + Groq LLM • Webhook linked</p>
+  <div class="panel">
+    <h3>🔗 PASIYAMAX N8N CLOUD</h3>
+    <p style="font-size:12px;color:var(--m);margin-bottom:12px;font-family:'Share Tech Mono',monospace">
+      Instance: pasiyamax.app.n8n.cloud<br>
+      Workflow: Webhook → Basic LLM Chain → Groq Chat Model<br>
+      Status: Production webhook linked
+    </p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      <a class="btn btn-c" href="https://pasiyamax.app.n8n.cloud" target="_blank">Open n8n Dashboard</a>
+      <a class="btn btn-g" href="https://pasiyamax.app.n8n.cloud/workflow/5qTtWBfdNWkoP2it" target="_blank">Open Workflow</a>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>⚡ N8N BOT // WEBHOOK CHAT</h3>
+    <p style="font-size:11px;color:var(--m);margin-bottom:10px;font-family:'Share Tech Mono',monospace">
+      Messages go to your n8n Production Webhook → Groq replies
+    </p>
+    <div class="chat" id="n8nChat"><div class="msg sys">// n8n webhook ready. Type a message...</div></div>
+    <div class="cin">
+      <input id="n8nInp" placeholder="message to n8n bot..." onkeydown="if(event.key==='Enter')sendN8n()">
+      <button class="btn btn-c" onclick="sendN8n()">SEND</button>
+    </div>
+    <div id="n8nStatus" style="margin-top:8px;font-size:10px;font-family:'Share Tech Mono',monospace;color:var(--m)"></div>
+  </div>
+</section>
+
 <section id="auto">
   <div class="st">◆ AUTOMATION & AGENTS</div>
   <p class="ss">Workflow + AI agent engines</p>
   <div class="grid">
-    <a class="card" href="https://n8n.io" target="_blank"><div class="ic">🔄</div><h3>N8N</h3><p>Self-host automation</p><span class="tag">POWER</span></a>
+    <a class="card" href="https://pasiyamax.app.n8n.cloud" target="_blank"><div class="ic">🔄</div><h3>N8N (MY CLOUD)</h3><p>pasiyamax.app.n8n.cloud</p><span class="tag">CONNECTED</span></a>
     <a class="card" href="https://www.make.com" target="_blank"><div class="ic">🛠️</div><h3>MAKE</h3><p>Visual free plan</p></a>
     <a class="card" href="https://zapier.com" target="_blank"><div class="ic">⚡</div><h3>ZAPIER</h3><p>Free automation</p></a>
     <a class="card" href="https://pipedream.com" target="_blank"><div class="ic">🚀</div><h3>PIPEDREAM</h3><p>Dev workflows</p></a>
@@ -314,6 +344,42 @@ async function send(){const i=document.getElementById('inp');const t=i.value.tri
 async function groq(k,s,m){const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+k},body:JSON.stringify({model:'llama-3.3-70b-versatile',messages:[{role:'system',content:s},...m],temperature:0.7,max_tokens:1024})});if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error?.message||'Groq error')}return(await r.json()).choices[0].message.content}
 async function google(k,s,m){const c=m.map(x=>({role:x.role==='assistant'?'model':'user',parts:[{text:x.content}]}));const r=await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key='+k,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({system_instruction:{parts:[{text:s}]},contents:c,generationConfig:{temperature:0.7,maxOutputTokens:1024}})});if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error?.message||'Google error')}return(await r.json()).candidates[0].content.parts[0].text}
 async function or(k,s,m){const r=await fetch('https://openrouter.ai/api/v1/chat/completions',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+k},body:JSON.stringify({model:'meta-llama/llama-3.1-8b-instruct:free',messages:[{role:'system',content:s},...m]})});if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error?.message||'OR error')}return(await r.json()).choices[0].message.content}
+
+const N8N_WEBHOOK = 'https://pasiyamax.app.n8n.cloud/webhook/edd1abad-75c2-46d0-8081-950f29803003';
+function addN8n(role,t){const b=document.getElementById('n8nChat');if(!b)return;const d=document.createElement('div');d.className='msg '+role;d.textContent=t;b.appendChild(d);b.scrollTop=b.scrollHeight}
+async function sendN8n(){
+  const i=document.getElementById('n8nInp');
+  const t=(i&&i.value||'').trim();
+  if(!t)return;
+  i.value='';
+  addN8n('user',t);
+  const st=document.getElementById('n8nStatus');
+  if(st){st.textContent='>> sending to n8n...';st.style.color='#00f0ff'}
+  const th=document.createElement('div');th.className='msg bot';th.textContent='// n8n processing...';th.id='n8nth';
+  document.getElementById('n8nChat').appendChild(th);
+  try{
+    // GET webhook with common query param names
+    const url = N8N_WEBHOOK + '?chatInput=' + encodeURIComponent(t) + '&message=' + encodeURIComponent(t) + '&text=' + encodeURIComponent(t);
+    const r = await fetch(url, { method: 'GET', mode: 'cors' });
+    let reply = '';
+    const ct = r.headers.get('content-type')||'';
+    if(ct.includes('application/json')){
+      const j = await r.json();
+      reply = (typeof j === 'string') ? j : (j.output || j.text || j.message || j.reply || j.response || j.data || JSON.stringify(j));
+    } else {
+      reply = await r.text();
+    }
+    document.getElementById('n8nth')?.remove();
+    if(!r.ok) throw new Error(reply || ('HTTP '+r.status));
+    addN8n('bot', reply || '// empty response from n8n');
+    if(st){st.textContent='>> n8n ok';st.style.color='#00ff9d'}
+  }catch(e){
+    document.getElementById('n8nth')?.remove();
+    addN8n('sys', '// ERROR: ' + (e.message||'CORS or workflow not active. Open n8n → Publish workflow → check Production URL'));
+    if(st){st.textContent='>> failed — publish workflow & allow CORS if needed';st.style.color='#ff2a6d'}
+  }
+}
+
 loadConfig();upd();document.getElementById('apiKey').addEventListener('input',upd);
 </script>
 </body>
