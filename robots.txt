@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://pasindudananjaya92-bot.github.io/pasiya-bot-platform/sitemap.xml
