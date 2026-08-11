@@ -85,11 +85,35 @@ textarea{min-height:70px;resize:vertical}
 .step p{font-size:11px;color:var(--m)}
 .term{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--g);opacity:.8;margin-bottom:3px}
 
+
+#preloader{position:fixed;inset:0;z-index:100000;background:#010308;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .6s,visibility .6s}
+#preloader.hide{opacity:0;visibility:hidden;pointer-events:none}
+#preloader .ring{width:54px;height:54px;border:3px solid rgba(0,240,255,.15);border-top-color:var(--c);border-radius:50%;animation:spin 0.8s linear infinite;box-shadow:0 0 20px rgba(0,240,255,.3)}
+@keyframes spin{to{transform:rotate(360deg)}}
+#preloader .ptxt{margin-top:16px;font-family:'Orbitron',sans-serif;font-size:11px;letter-spacing:3px;color:var(--c);text-shadow:0 0 12px rgba(0,240,255,.5)}
+#preloader .psub{margin-top:6px;font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
+.stats-bar{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:22px}
+.stat{background:rgba(6,12,24,.85);border:1px solid rgba(0,240,255,.2);border-radius:6px;padding:10px 16px;text-align:center;min-width:110px}
+.stat .n{font-family:'Orbitron',sans-serif;font-size:18px;color:var(--c);text-shadow:0 0 12px rgba(0,240,255,.4)}
+.stat .l{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--m);letter-spacing:1px;margin-top:2px}
+.desk{margin-top:8px}
+.desk-hint{font-size:11px;color:var(--m);margin-bottom:10px;font-family:'Share Tech Mono',monospace;line-height:1.6}
+.quick-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.quick-tags button{font-family:'Share Tech Mono',monospace;font-size:10px;padding:6px 10px;background:rgba(0,240,255,.06);border:1px solid rgba(0,240,255,.25);color:var(--c);border-radius:4px;cursor:pointer;transition:.2s}
+.quick-tags button:hover{background:rgba(0,240,255,.15);box-shadow:0 0 10px rgba(0,240,255,.2)}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
 </head>
 <body>
+
+<div id="preloader">
+  <div class="ring"></div>
+  <div class="ptxt">PASIYA MAX</div>
+  <div class="psub">initializing command center...</div>
+</div>
+
 <div class="bg-anim"></div>
 <div class="bg-grid"></div>
 <div class="bg-glow g1"></div>
@@ -100,7 +124,7 @@ footer a{color:var(--c);text-decoration:none}
   <div class="logo">PASIYA <b>MAX</b> // CMD</div>
   <nav>
     <a href="#home">HOME</a><a href="#core">BOT_CORE</a><a href="#llm">LLMs</a><a href="#ai">AI</a>
-    <a href="#n8n">N8N</a><a href="#auto">AUTO</a><a href="#host">HOST</a><a href="#dev">DEV</a>
+    <a href="#desk">DESK</a><a href="#n8n">N8N</a><a href="#auto">AUTO</a><a href="#host">HOST</a><a href="#dev">DEV</a>
     <a href="#social">SOCIAL</a><a href="#web">WEB</a><a href="#guide">GUIDE</a>
   </nav>
 </header>
@@ -109,6 +133,13 @@ footer a{color:var(--c);text-decoration:none}
   <div class="status"><i></i> SYSTEM ONLINE // FREE NODES ACTIVE // v3.0</div>
   <h1><span class="c">ULTIMATE FREE</span><br><span class="p">AI COMMAND CENTER</span></h1>
   <p>The most complete free cybernetic hub. Build AI bots, access free LLMs, automation, hosting, creative AI and hundreds of tools — all from one glowing interface. Zero cost. Forever.</p>
+  
+  <div class="stats-bar">
+    <div class="stat"><div class="n" id="visitCount">—</div><div class="l">TOTAL VISITS</div></div>
+    <div class="stat"><div class="n" id="todayCount">—</div><div class="l">TODAY</div></div>
+    <div class="stat"><div class="n" id="onlineStat">LIVE</div><div class="l">SYSTEM</div></div>
+  </div>
+
   <div class="btns">
     <a href="#core" class="btn btn-c">▶ INIT BOT CORE</a>
     <a href="#guide" class="btn btn-g">// PROTOCOL</a>
@@ -130,8 +161,41 @@ footer a{color:var(--c);text-decoration:none}
         </select>
       </div>
     </div>
-    <div style="margin-top:10px"><label>API_KEY (LOCAL STORAGE ONLY)</label><input type="password" id="apiKey" placeholder="paste free key..."></div>
-    <div style="margin-top:10px"><label>SYSTEM_PROMPT</label><textarea id="systemPrompt">You are PASIYA ASSISTANT, an advanced robotic AI created by Pasindu Dananjaya. You are precise, helpful and friendly. Help users build free AI systems.</textarea></div>
+    <div style="margin-top:10px"><label>API_KEY (LOCAL STORAGE ONLY)</label><input type="password" id="apiKey" placeholder="paste free key once — saved automatically"><p style="font-size:10px;color:var(--m);margin-top:6px;font-family:'Share Tech Mono',monospace">
+Key saves in THIS browser only (localStorage). Paste once → chat anytime on this device.<br>
+Visitors: use <b style="color:var(--c)">N8N BOT</b> section below — no API key needed.
+</p></div>
+    <div style="margin-top:10px"><label>SYSTEM_PROMPT</label><textarea id="systemPrompt">You are PASIYA ASSISTANT, the official AI guide for the PASIYA MAX // Ultimate Free AI Command Center website (https://pasindudananjaya92-bot.github.io/pasiya-bot-platform/).
+
+You help visitors understand and use this free platform. Always answer clearly. Prefer Sinhala if the user writes in Sinhala, otherwise English.
+
+WEBSITE KNOWLEDGE (you must know this):
+
+1) BOT CORE — Live AI chat on this site. Users paste a free API key (Groq / Google AI / OpenRouter) and chat. Key is stored only in their browser.
+
+2) N8N CONNECTED WORKFLOW — Already connected to pasiyamax.app.n8n.cloud. Webhook → Basic LLM Chain → Groq. Visitors can chat in the N8N section WITHOUT pasting any API key (uses the owner's n8n Groq setup).
+
+3) FREE LLM PROVIDERS — Groq (console.groq.com), Google AI Studio / Gemini, OpenRouter, Hugging Face, Together AI, Cohere, ChatGPT, Claude, Grok, Perplexity, Poe.
+
+4) CREATIVE AI — Leonardo, Ideogram, Bing Create, Suno, ElevenLabs, Runway, Pika, Remove.bg, Canva, Clipdrop, HF Spaces, Adobe Firefly.
+
+5) AUTOMATION — n8n (connected), Make, Zapier, Pipedream, Botpress, Flowise, IFTTT, Activepieces.
+
+6) HOSTING & BACKEND — Replit, Railway, Render, Vercel, Netlify, Supabase, Upstash, Neon, MongoDB Atlas, Fly.io, cron-job.org, GitHub Pages.
+
+7) DEVELOPER TOOLS — VS Code, Cursor, Postman, Hoppscotch, Notion, Trello, Google Drive, Figma, CodePen, StackOverflow, DEV.to.
+
+8) SOCIAL NEXUS — Instagram, Facebook, YouTube, WhatsApp, TikTok, LinkedIn, X, Telegram, BlueSky, Reddit (owner: Pasindu Dananjaya).
+
+9) WEB ARCHITECTURE — Owner projects: Blog, WordPress, GitHub, Pasiya Max Vercel, Substack, AI Sheets Assistant, this Command Center.
+
+10) FREE POWER STACK — Brain: Groq/Gemini | Interface: Telegram | Hosting: Replit/Railway | Memory: Supabase/Upstash | Auto: n8n/Make | Keep-alive: cron-job.org
+
+RULES:
+- Explain how to use each section step by step when asked.
+- Never ask users to share API keys with you in chat.
+- For public chat without a key, guide them to the N8N Bot section on this same website.
+- Be helpful, precise, friendly. You represent Pasiya Max platform by Pasindu Dananjaya.</textarea></div>
     <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn btn-c" onclick="saveConfig()">💾 SAVE</button>
       <button class="btn btn-g" onclick="clearChat()">⌫ CLEAR</button>
@@ -187,15 +251,47 @@ footer a{color:var(--c);text-decoration:none}
 </section>
 
 
+
+<section id="desk">
+  <div class="st">◆ AI SERVICE DESK</div>
+  <p class="ss">Type what you need • Auto-routes to the right free service or N8N bot</p>
+  <div class="panel desk">
+    <h3>🎛 WHAT DO YOU NEED?</h3>
+    <p class="desk-hint">
+      Example: "n8n bot", "deploy vercel", "free image ai", "how to use groq", "supabase database"<br>
+      Matched locally when possible • Otherwise sent to N8N public bot automatically
+    </p>
+    <div class="quick-tags">
+      <button type="button" onclick="deskQuick('n8n bot chat')">n8n bot</button>
+      <button type="button" onclick="deskQuick('how to get groq api key')">groq key</button>
+      <button type="button" onclick="deskQuick('deploy on vercel free')">vercel deploy</button>
+      <button type="button" onclick="deskQuick('free ai image generator')">ai images</button>
+      <button type="button" onclick="deskQuick('what is this website')">about site</button>
+      <button type="button" onclick="deskQuick('free hosting for bots')">bot hosting</button>
+      <button type="button" onclick="deskQuick('supabase free database')">supabase</button>
+      <button type="button" onclick="deskQuick('automation with make or n8n')">automation</button>
+    </div>
+    <div class="cin">
+      <input id="deskInp" placeholder="type your need in Sinhala or English..." onkeydown="if(event.key==='Enter')runDesk()">
+      <button class="btn btn-c" onclick="runDesk()">GO</button>
+    </div>
+    <div id="deskOut" style="margin-top:12px;font-size:12px;font-family:'Share Tech Mono',monospace;color:var(--m);line-height:1.6;min-height:20px"></div>
+  </div>
+</section>
+
 <section id="n8n">
-  <div class="st">◆ N8N // CONNECTED WORKFLOW</div>
-  <p class="ss">Your n8n Cloud + Groq LLM • Webhook linked</p>
+  <div class="st">◆ N8N BOT // PUBLIC AI ASSISTANT</div>
+  <p class="ss">No API key needed • Powered by n8n Cloud + Groq • Live on this website</p>
   <div class="panel">
-    <h3>🔗 PASIYAMAX N8N CLOUD</h3>
-    <p style="font-size:12px;color:var(--m);margin-bottom:12px;font-family:'Share Tech Mono',monospace">
-      Instance: pasiyamax.app.n8n.cloud<br>
-      Workflow: Webhook → Basic LLM Chain → Groq Chat Model<br>
-      Status: Production webhook linked
+    <h3>🔗 HOW THIS BOT WORKS</h3>
+    <p style="font-size:12px;color:var(--m);margin-bottom:12px;line-height:1.7;font-family:'Share Tech Mono',monospace">
+      This is the <b style="color:var(--c)">public chat bot</b> of Pasiya Max Platform.<br><br>
+      • Visitors can chat <b style="color:var(--g)">without any API key</b><br>
+      • Message → n8n Production Webhook → Groq LLM → Reply<br>
+      • Instance: pasiyamax.app.n8n.cloud<br>
+      • Workflow: Webhook → Basic LLM Chain → Groq Chat Model<br>
+      • Status: <b style="color:var(--g)">CONNECTED & LIVE</b><br><br>
+      Use this section for public users. For private bot with your own key, use BOT CORE above.
     </p>
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
       <a class="btn btn-c" href="https://pasiyamax.app.n8n.cloud" target="_blank">Open n8n Dashboard</a>
@@ -203,9 +299,9 @@ footer a{color:var(--c);text-decoration:none}
     </div>
   </div>
   <div class="panel">
-    <h3>⚡ N8N BOT // WEBHOOK CHAT</h3>
+    <h3>⚡ CHAT WITH N8N BOT</h3>
     <p style="font-size:11px;color:var(--m);margin-bottom:10px;font-family:'Share Tech Mono',monospace">
-      Messages go to your n8n Production Webhook → Groq replies
+      Type below • No key required • Sinhala & English supported • Ask about this website or anything
     </p>
     <div class="chat" id="n8nChat"><div class="msg sys">// n8n webhook ready. Type a message...</div></div>
     <div class="cin">
@@ -334,8 +430,8 @@ footer a{color:var(--c);text-decoration:none}
 
 <script>
 const K='pasiya_v3';
-function saveConfig(){const c={botName:document.getElementById('botName').value.trim()||'PASIYA_ASSISTANT_01',provider:document.getElementById('provider').value,apiKey:document.getElementById('apiKey').value.trim(),systemPrompt:document.getElementById('systemPrompt').value.trim()};localStorage.setItem(K,JSON.stringify(c));document.getElementById('cfg').textContent='>> CONFIG SAVED';document.getElementById('cfg').style.color='#00ff9d';upd()}
-function loadConfig(){const r=localStorage.getItem(K);if(!r)return;try{const c=JSON.parse(r);document.getElementById('botName').value=c.botName||'';document.getElementById('provider').value=c.provider||'groq';document.getElementById('apiKey').value=c.apiKey||'';document.getElementById('systemPrompt').value=c.systemPrompt||'';upd()}catch(e){}}
+function saveConfig(){const c={botName:document.getElementById('botName').value.trim()||'PASIYA_ASSISTANT_01',provider:document.getElementById('provider').value,apiKey:document.getElementById('apiKey').value.trim(),systemPrompt:document.getElementById('systemPrompt').value.trim()};localStorage.setItem(K,JSON.stringify(c));document.getElementById('cfg').textContent='>> SAVED — key kept in this browser. Reopen site anytime and chat.';document.getElementById('cfg').style.color='#00ff9d';upd()}
+function loadConfig(){const r=localStorage.getItem(K);if(!r)return;try{const c=JSON.parse(r);document.getElementById('botName').value=c.botName||'';document.getElementById('provider').value=c.provider||'groq';document.getElementById('apiKey').value=c.apiKey||'';if(c.systemPrompt)document.getElementById('systemPrompt').value=c.systemPrompt;upd();if(c.apiKey){const cfg=document.getElementById('cfg');if(cfg){cfg.textContent='>> KEY SAVED IN THIS BROWSER — no need to paste again';cfg.style.color='#00ff9d'}}}catch(e){}}
 function upd(){document.getElementById('dot').className=document.getElementById('apiKey').value.trim()?'dot on':'dot off'}
 let msgs=[];
 function add(role,t){const b=document.getElementById('chat');const d=document.createElement('div');d.className='msg '+role;d.textContent=t;b.appendChild(d);b.scrollTop=b.scrollHeight}
@@ -378,6 +474,79 @@ async function sendN8n(){
     addN8n('sys', '// ERROR: ' + (e.message||'CORS or workflow not active. Open n8n → Publish workflow → check Production URL'));
     if(st){st.textContent='>> failed — publish workflow & allow CORS if needed';st.style.color='#ff2a6d'}
   }
+}
+
+
+// Preloader
+window.addEventListener('load',function(){
+  setTimeout(function(){
+    var p=document.getElementById('preloader');
+    if(p)p.classList.add('hide');
+  },1200);
+});
+
+// Visitor counter (global via countapi + local today)
+(async function(){
+  var vc=document.getElementById('visitCount');
+  var tc=document.getElementById('todayCount');
+  try{
+    var r=await fetch('https://api.countapi.xyz/hit/pasiya-max-cmd/visits');
+    var j=await r.json();
+    if(vc&&j.value!=null)vc.textContent=j.value.toLocaleString();
+  }catch(e){
+    var n=parseInt(localStorage.getItem('pasiya_local_hits')||'0',10)+1;
+    localStorage.setItem('pasiya_local_hits',String(n));
+    if(vc)vc.textContent=String(n)+'+';
+  }
+  var day=new Date().toISOString().slice(0,10);
+  var key='pasiya_day_'+day;
+  var d=parseInt(localStorage.getItem(key)||'0',10)+1;
+  localStorage.setItem(key,String(d));
+  if(tc)tc.textContent=String(d);
+})();
+
+function deskQuick(t){
+  var i=document.getElementById('deskInp');
+  if(i){i.value=t;runDesk()}
+}
+function deskMsg(t,ok){
+  var o=document.getElementById('deskOut');
+  if(!o)return;
+  o.style.color=ok?'#00ff9d':'#00f0ff';
+  o.innerHTML=t;
+}
+function runDesk(){
+  var i=document.getElementById('deskInp');
+  var q=(i&&i.value||'').trim().toLowerCase();
+  if(!q){deskMsg('// type something first',false);return}
+  // Local smart routes
+  var routes=[
+    {k:['n8n','webhook','public bot'], go:'#n8n', t:'Opening N8N Public Bot — no API key needed.'},
+    {k:['groq','api key','bot core','llm key'], go:'#core', t:'Opening BOT CORE — paste free Groq key once, then chat.'},
+    {k:['vercel','netlify','deploy site'], go:'#host', t:'Opening Hosting section — Vercel / Netlify / Railway free deploy.'},
+    {k:['replit','railway','render','hosting','host bot'], go:'#host', t:'Opening free hosting tools for bots & apps.'},
+    {k:['image','leonardo','ideogram','canva','firefly','remove.bg'], go:'#ai', t:'Opening Creative AI modules for images & design.'},
+    {k:['video','runway','pika','suno','music','voice','eleven'], go:'#ai', t:'Opening Creative AI for video / music / voice.'},
+    {k:['supabase','database','mongo','neon','upstash','redis'], go:'#host', t:'Opening free database & backend tools.'},
+    {k:['make','zapier','automation','flowise','botpress'], go:'#auto', t:'Opening Automation & Agents.'},
+    {k:['social','instagram','youtube','telegram'], go:'#social', t:'Opening Social Nexus.'},
+    {k:['about','what is this','website','meka mokakda','මේක','සයිට්'], go:'#guide', t:'Opening guide — this is Pasiya Max free AI command center.'}
+  ];
+  for(var r=0;r<routes.length;r++){
+    var hit=routes[r].k.some(function(w){return q.indexOf(w)>=0});
+    if(hit){
+      deskMsg('>> '+routes[r].t,true);
+      var el=document.querySelector(routes[r].go);
+      if(el)el.scrollIntoView({behavior:'smooth'});
+      return;
+    }
+  }
+  // Fallback: send to N8N bot
+  deskMsg('>> No local match — sending to N8N public bot...',true);
+  var n8=document.getElementById('n8nInp');
+  var sec=document.getElementById('n8n');
+  if(sec)sec.scrollIntoView({behavior:'smooth'});
+  if(n8){n8.value=(i.value||'').trim();setTimeout(function(){if(typeof sendN8n==='function')sendN8n()},400)}
 }
 
 loadConfig();upd();document.getElementById('apiKey').addEventListener('input',upd);
