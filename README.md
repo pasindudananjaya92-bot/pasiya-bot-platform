@@ -1,60 +1,61 @@
- # 🤖 Pasiya Bot Platform
+# PASIYA MAX // Ultimate Free AI Command Center
 
-**Completely Free AI Bot Builder & Control Center**
+[![Live Site](https://img.shields.io/badge/Live-GitHub%20Pages-00f0ff?style=flat-square)](https://pasindudananjaya92-bot.github.io/pasiya-bot-platform/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg?style=flat-square)](LICENSE)
+[![HTML](https://img.shields.io/badge/Stack-HTML%20%2B%20n8n-b026ff?style=flat-square)](#architecture)
 
-Create, test and deploy powerful AI bots using only free services.  
-No credit card required.
+**Completely free** AI bot hub + public n8n assistant + free-tools directory.  
+No credit card required for the core experience.
 
----
+## Live website
 
-## 🌐 Live Website
+**https://pasindudananjaya92-bot.github.io/pasiya-bot-platform/**
 
-**[https://pasindudananjaya92-bot.github.io/pasiya-bot-platform/](https://pasindudananjaya92-bot.github.io/pasiya-bot-platform/)**
+## Features
 
----
+- **BOT CORE** — Chat with Groq / Gemini / OpenRouter (API key saved in your browser only)
+- **N8N Public Bot** — Chat without an API key (owner-connected n8n + Groq)
+- **AI Service Desk** — Type what you need; routes to the right section or n8n
+- **Code Copy** — Bot code blocks include one-tap COPY
+- **URL helper** — Optional page-text enrichment for link analysis
+- **GitHub Automation UI** — Feedback / bug → n8n → GitHub Issues; optional file update workflow
+- **Visitor stats + preloader** — Lightweight client analytics
+- **Free tool directories** — LLMs, creative AI, automation, hosting, dev tools
+- **Social Nexus + Web Architecture** — Owner channels and projects
 
-## ✨ Features
+## Quick start (users)
 
-- 🤖 **Live Bot Builder** – Chat with your AI bot instantly
-- 🧠 **Free LLM Providers** – Groq, Google AI Studio, OpenRouter
-- ☁️ **Free Hosting Guides** – Replit, Railway, Render, Botpress
-- 🛠️ **Free Tools** – Supabase, Upstash, Telegram, Discord, n8n
-- 🚀 **Social Nexus** – All my social media in one place
-- 🌐 **Web Architecture** – All my websites & projects
-- 📖 **Complete Guide** – Step-by-step bot creation
+1. Open the [live site](https://pasindudananjaya92-bot.github.io/pasiya-bot-platform/)
+2. Public chat → **N8N BOT** (no key)
+3. Private chat → **BOT CORE** → free key from [console.groq.com](https://console.groq.com) → Save once
 
----
+## Quick start (developers)
 
-## 🆓 100% Free Stack
+```bash
+git clone https://github.com/pasindudananjaya92-bot/pasiya-bot-platform.git
+cd pasiya-bot-platform
+# open index.html in a browser
+```
 
-| Purpose          | Free Service              |
-|------------------|---------------------------|
-| Brain (LLM)      | Groq / Google AI Studio   |
-| Chat Interface   | Telegram Bot              |
-| Hosting          | Replit / Railway          |
-| Memory           | Supabase / Upstash Redis  |
-| Automation       | n8n / Make                |
-| Keep Alive       | cron-job.org              |
+## Architecture
 
----
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
-## 🚀 How to use
+n8n + GitHub setup: [docs/N8N_GITHUB.md](docs/N8N_GITHUB.md).
 
-1. Open the [Live Website](https://pasindudananjaya92-bot.github.io/pasiya-bot-platform/)
-2. Get a free API key from [console.groq.com](https://console.groq.com)
-3. Paste the key in Bot Builder
-4. Start chatting with your bot
+## Security
 
----
+See [SECURITY.md](SECURITY.md). Never commit tokens or `service_role` keys.
 
-## 👤 Author
+## Contributing
 
-**Pasindu Dananjaya**
+See [CONTRIBUTING.md](CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
-- GitHub: [pasindudananjaya92-bot](https://github.com/pasindudananjaya92-bot)
-- Blog: [Substack](https://pasindudananjaya.substack.com)
-- YouTube: [@pasya](https://youtube.com/@pasya)
+## Author
 
----
+**Pasindu Dananjaya**  
+GitHub: [pasindudananjaya92-bot](https://github.com/pasindudananjaya92-bot)
 
-⭐ If you like this project, give it a star!  
+## License
+
+MIT — see [LICENSE](LICENSE).
