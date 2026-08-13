@@ -1,0 +1,23 @@
+Upload on GitHub (Create new file) - paste content, use EXACT name:
+
+1. File name: .gitignore
+   Content: gitignore.txt
+
+2. File name: .github/ISSUE_TEMPLATE/bug_report.md
+   Content: bug_report.md
+
+3. File name: .github/ISSUE_TEMPLATE/feature_request.md
+   Content: feature_request.md
+
+4. File name: .github/PULL_REQUEST_TEMPLATE.md
+   Content: PULL_REQUEST_TEMPLATE.md
+
+5. File name: docs/N8N_GITHUB.md
+   Content: N8N_GITHUB.md
+
+OR upload the folder structure from this zip keeping paths:
+  .gitignore
+  .github/ISSUE_TEMPLATE/bug_report.md
+  .github/ISSUE_TEMPLATE/feature_request.md
+  .github/PULL_REQUEST_TEMPLATE.md
+  docs/N8N_GITHUB.md
