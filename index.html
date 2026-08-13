@@ -200,6 +200,24 @@ textarea{min-height:70px;resize:vertical}
 .workspace-grid a:hover{border-color:var(--c);color:var(--c);box-shadow:0 0 14px rgba(0,240,255,.2)}
 .workspace-grid a b{display:block;font-family:'Orbitron',sans-serif;font-size:11px;margin-bottom:4px;color:var(--c)}
 
+
+.brand-logo{display:flex;align-items:center;gap:10px}
+.brand-logo svg{width:36px;height:36px;filter:drop-shadow(0 0 8px rgba(0,240,255,.6))}
+.bridge-hero{
+  border:1px solid rgba(0,240,255,.25);border-radius:12px;padding:22px 18px;
+  background:linear-gradient(135deg,rgba(0,240,255,.08),rgba(176,38,255,.08),rgba(1,3,8,.9));
+  margin-bottom:16px;text-align:center}
+.bridge-hero h1{font-family:'Orbitron',sans-serif;font-size:clamp(18px,4vw,28px);color:var(--c);
+  text-shadow:0 0 20px rgba(0,240,255,.4);margin:10px 0}
+.bridge-hero p{color:var(--m);font-size:13px;line-height:1.6;max-width:640px;margin:0 auto}
+.bridge-steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:16px}
+.bridge-steps .step{
+  border:1px solid rgba(0,240,255,.2);border-radius:8px;padding:12px;background:rgba(0,0,0,.25);text-align:left}
+.bridge-steps .step b{display:block;font-family:'Orbitron',sans-serif;font-size:11px;color:var(--c);margin-bottom:6px}
+.svc-table{width:100%;border-collapse:collapse;font-size:12px;font-family:'Share Tech Mono',monospace}
+.svc-table th,.svc-table td{border:1px solid rgba(0,240,255,.15);padding:8px;text-align:left}
+.svc-table th{color:var(--c);background:rgba(0,240,255,.06)}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -700,6 +718,68 @@ RULES:
 </section>
 
 
+
+
+<section id="page-bridge" class="page-view" data-page="bridge">
+  <div class="bridge-hero">
+    <span class="brand-logo" style="justify-content:center;display:flex">
+      <svg viewBox="0 0 64 64" width="56" height="56" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="pg2" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#00f0ff"/><stop offset="1" stop-color="#b026ff"/></linearGradient></defs><rect x="4" y="4" width="56" height="56" rx="12" fill="#010308" stroke="url(#pg2)" stroke-width="2"/><path d="M18 40 V24 h10 a8 8 0 0 1 0 16 H18 z" fill="none" stroke="#00f0ff" stroke-width="3"/><circle cx="42" cy="32" r="9" fill="none" stroke="#b026ff" stroke-width="3"/><circle cx="42" cy="32" r="3" fill="#00ff9d"/></svg>
+    </span>
+    <h1>PASIYA MAX // CONTROL BRIDGE</h1>
+    <p>
+      International free-service control center. Visitors use this hub to discover, connect and operate
+      free AI, automation, hosting and data tools — without paying for a closed platform.
+      Your link becomes the middle layer between people and free infrastructure (n8n, Make, Groq, Vercel, MongoDB, GitHub…).
+    </p>
+    <div class="bridge-steps">
+      <div class="step"><b>1. ENTER</b>Open this site (Vercel / GitHub Pages)</div>
+      <div class="step"><b>2. CHOOSE</b>Public N8N bot or BOT CORE with free key</div>
+      <div class="step"><b>3. CONNECT</b>Workspace launches free panels</div>
+      <div class="step"><b>4. AUTOMATE</b>Feedback → Mongo + Make + n8n</div>
+      <div class="step"><b>5. SHARE</b>Send your hub link to users worldwide</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>🌍 WHY VISITORS NEED THIS HUB</h3>
+    <p class="desk-hint" style="line-height:1.7">
+      Most free tools are scattered. Pasiya Max gathers them into one cyber command UI,
+      with a public bot (no API key), private bot (user key), automation bridges, and guides.
+      You do not host every backend yourself — you <b style="color:var(--c)">route people</b> to free tiers and your connected n8n/Make/Vercel stack.
+    </p>
+  </div>
+
+  <div class="panel">
+    <h3>🔌 SERVICE BRIDGE MAP</h3>
+    <table class="svc-table">
+      <thead><tr><th>Need</th><th>Free path via this hub</th><th>Open</th></tr></thead>
+      <tbody>
+        <tr><td>Chat AI (no key)</td><td>N8N Public Bot → Groq on your n8n</td><td><a href="#page-n8n" onclick="return goPage('n8n')" style="color:var(--c)">N8N Bot</a></td></tr>
+        <tr><td>Chat AI (own key)</td><td>BOT CORE → Groq / Gemini / OpenRouter</td><td><a href="#page-bots" onclick="return goPage('bots')" style="color:var(--c)">AI Bots</a></td></tr>
+        <tr><td>Automation</td><td>n8n Cloud + Make webhook</td><td><a href="#page-workspace" onclick="return goPage('workspace')" style="color:var(--c)">Workspace</a></td></tr>
+        <tr><td>Save feedback</td><td>Vercel API → MongoDB + Make + n8n</td><td><a href="#page-feedback" onclick="return goPage('feedback')" style="color:var(--c)">Feedback</a></td></tr>
+        <tr><td>Host site / API</td><td>GitHub Pages + Vercel</td><td><a href="https://pasiya-bot-platform.vercel.app" target="_blank" style="color:var(--c)">Vercel</a></td></tr>
+        <tr><td>Deploy bots 24/7</td><td>Replit / Railway + cron-job.org guide</td><td><a href="#page-workspace" onclick="return goPage('workspace')" style="color:var(--c)">Workspace</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="panel">
+    <h3>🛡 OPERATOR CHECKLIST (YOU)</h3>
+    <p class="desk-hint">
+      1) Keep n8n workflow Published<br>
+      2) Vercel MONGODB_URI set + Redeploy<br>
+      3) Make scenario ON<br>
+      4) Share link: <code>https://pasiya-bot-platform.vercel.app</code><br>
+      5) Settings menu → save webhook URLs on your browser
+    </p>
+    <div class="follow-bar" style="margin-top:12px">
+      <a href="#page-settings" onclick="return goPage('settings')">Open Settings</a>
+      <a href="#page-workspace" onclick="return goPage('workspace')">Open Workspace</a>
+      <a href="#page-n8n" onclick="return goPage('n8n')">Public Bot</a>
+    </div>
+  </div>
+</section>
 
 <section id="page-workspace" class="page-view" data-page="workspace">
   <div class="st">◆ FREE WORKSPACE // CONNECTED SERVICES</div>
@@ -1234,6 +1314,7 @@ function handleImage(input, which){
 
 
 const PAGE_MAP = {
+  bridge: ['page-bridge'],
   home: ['home','hero',null],
   bots: ['core'],
   n8n: ['n8n'],
@@ -1331,6 +1412,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
 document.addEventListener('DOMContentLoaded', function(){
+  var br=document.getElementById('page-bridge'); if(br){br.classList.add('page-view'); br.classList.remove('active');}
   var w=document.getElementById('page-workspace');
   var s=document.getElementById('page-settings');
   if(w){w.classList.add('page-view'); w.classList.remove('active');}
