@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PASIYA NEXUS // Free AI Control App by Pasiya Max</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#00f0ff">
 <meta property="og:title" content="PASIYA MAX // Free AI Command Center">
@@ -274,6 +275,19 @@ textarea{min-height:70px;resize:vertical}
 .trust-grid .t .l{font-size:10px;color:var(--m);margin-top:4px;font-family:'Share Tech Mono',monospace}
 .header .logo{display:flex;align-items:center;gap:8px}
 
+
+.modal-bg{position:fixed;inset:0;z-index:200000;background:rgba(0,0,0,.72);display:none;align-items:center;justify-content:center;padding:16px}
+.modal-bg.show{display:flex}
+.modal{
+  width:min(420px,100%);background:linear-gradient(160deg,#071018,#0a0520);border:1px solid rgba(0,240,255,.35);
+  border-radius:12px;padding:20px;box-shadow:0 0 40px rgba(0,240,255,.2);text-align:center}
+.modal h3{font-family:'Orbitron',sans-serif;font-size:14px;color:var(--c);margin-bottom:10px}
+.modal p{font-size:13px;color:var(--t);line-height:1.55;margin-bottom:14px}
+.modal .row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.auth-box input{width:100%;margin:6px 0;padding:10px;border-radius:6px;border:1px solid rgba(0,240,255,.25);
+  background:rgba(0,0,0,.35);color:var(--t);font-family:'Share Tech Mono',monospace}
+.user-chip{font-family:'Share Tech Mono',monospace;font-size:10px;color:#00ff9d;margin-left:6px}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -314,7 +328,7 @@ footer a{color:var(--c);text-decoration:none}
   <a class="nav-item" href="#page-settings" data-page="settings" onclick="return goPage('settings',this)"><span class="ic">⚙</span> Settings</a>
   <a class="nav-item" href="#" onclick="shareHub();return false;"><span class="ic">📤</span> Share Hub Link</a>
   <div class="nav-title" style="margin-top:14px">QUICK LAUNCH</div>
-  <a class="nav-item" href="https://console.groq.com" target="_blank" rel="noopener"><span class="ic">🔑</span> Groq Keys</a>
+  <a class="nav-item" href="https://console.groq.com" data-allow="Groq Console" target="_blank" rel="noopener"><span class="ic">🔑</span> Groq Keys</a>
   <a class="nav-item" href="https://pasiyamax.app.n8n.cloud" target="_blank" rel="noopener"><span class="ic">☁</span> n8n Cloud</a>
   <a class="nav-item" href="https://www.make.com" target="_blank" rel="noopener"><span class="ic">🔗</span> Make.com</a>
   <a class="nav-item" href="https://pasiya-bot-platform.vercel.app" target="_blank" rel="noopener"><span class="ic">▲</span> Vercel Live</a>
@@ -664,7 +678,7 @@ RULES:
     <a class="card" href="https://render.com" target="_blank"><div class="ic">🚀</div><h3>RENDER</h3><p>Free services</p></a>
     <a class="card" href="https://vercel.com" target="_blank"><div class="ic">▲</div><h3>VERCEL</h3><p>Frontend free</p></a>
     <a class="card" href="https://netlify.com" target="_blank"><div class="ic">🌐</div><h3>NETLIFY</h3><p>Static + functions</p></a>
-    <a class="card" href="https://supabase.com" target="_blank"><div class="ic">🗄️</div><h3>SUPABASE</h3><p>DB + Auth free</p></a>
+    <a class="card" href="https://supabase.com" data-allow="Supabase" target="_blank"><div class="ic">🗄️</div><h3>SUPABASE</h3><p>DB + Auth free</p></a>
     <a class="card" href="https://upstash.com" target="_blank"><div class="ic">⚡</div><h3>UPSTASH</h3><p>Free Redis</p></a>
     <a class="card" href="https://neon.tech" target="_blank"><div class="ic">🐘</div><h3>NEON</h3><p>Free Postgres</p></a>
     <a class="card" href="https://www.mongodb.com/atlas" target="_blank"><div class="ic">🍃</div><h3>MONGODB</h3><p>Free Atlas</p></a>
@@ -856,6 +870,92 @@ RULES:
 
 
 
+
+
+<section id="page-auth" class="page-view" data-page="auth">
+  <div class="st">◆ ACCESS // ACCOUNT GATE</div>
+  <p class="ss">Google or Email via Supabase free auth • Optional for browsing • Required for My Space</p>
+
+  <div class="panel auth-box">
+    <h3>🔐 SIGN IN / CREATE ACCOUNT</h3>
+    <p class="desk-hint">Operator must set Supabase URL + anon key in Settings once. Then users can sign in with Google or email magic link.</p>
+    <div id="authLoggedOut">
+      <button class="btn btn-c" type="button" onclick="authGoogle()" style="width:100%;margin:8px 0">Continue with Google</button>
+      <p class="desk-hint" style="text-align:center;margin:10px 0">— or email —</p>
+      <input id="authEmail" type="email" placeholder="you@email.com">
+      <div class="row" style="margin-top:8px">
+        <button class="btn btn-g" type="button" onclick="authEmailMagic()">Email magic link</button>
+      </div>
+      <div id="authStatus" class="gh-note"></div>
+    </div>
+    <div id="authLoggedIn" style="display:none">
+      <p class="desk-hint">Signed in as <b id="authUserLabel" style="color:var(--c)"></b></p>
+      <div class="follow-bar">
+        <a href="#page-myspace" onclick="return goPage('myspace')">Open My Space</a>
+        <a href="#" onclick="authSignOut();return false;">Sign out</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>📦 PLANS (FREE HUB)</h3>
+    <div class="workspace-grid">
+      <div class="guide-card" style="margin:0"><h4>FREE</h4><p class="desk-hint">Public bot, tools map, guides, templates. No card.</p></div>
+      <div class="guide-card" style="margin:0"><h4>MEMBER</h4><p class="desk-hint">Account + My Space link + saved preferences (Supabase).</p></div>
+      <div class="guide-card" style="margin:0"><h4>LATER</h4><p class="desk-hint">Paid tiers only if you add Stripe later — not required now.</p></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>OPERATOR SETUP (ONCE)</h3>
+    <ol class="desk-hint" style="margin-left:18px;line-height:1.7">
+      <li>Create free project at <a href="https://supabase.com" target="_blank" rel="noopener" style="color:var(--c)">supabase.com</a></li>
+      <li>Enable Auth → Google provider + Email</li>
+      <li>Add redirect URL: your Vercel site URL</li>
+      <li>Settings page → paste Project URL + anon public key → SAVE</li>
+      <li>Never put service_role key in this website</li>
+    </ol>
+  </div>
+</section>
+
+<section id="page-myspace" class="page-view" data-page="myspace">
+  <div class="st">◆ MY SPACE // YOUR HUB LINK</div>
+  <p class="ss">Personal return link for signed-in members</p>
+  <div class="panel">
+    <h3>YOUR ACCESS LINK</h3>
+    <p class="desk-hint">Save this link. Opening it brings you back to Pasiya Nexus signed-in area.</p>
+    <pre id="mySpaceLink" style="font-size:11px;color:#b8f0ff;white-space:pre-wrap;word-break:break-all">Sign in to generate your link</pre>
+    <div class="row" style="margin-top:10px">
+      <button class="btn btn-c" type="button" onclick="copyMyLink()">COPY LINK</button>
+      <button class="btn btn-g" type="button" onclick="goPage('n8n')">Public Bot</button>
+      <button class="btn btn-g" type="button" onclick="goPage('workspace')">Workspace</button>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>MEMBER SHORTCUTS</h3>
+    <div class="workspace-grid">
+      <a href="#page-n8n" onclick="return goPage('n8n')"><b>CHAT</b>N8N bot</a>
+      <a href="#page-templates" onclick="return goPage('templates')"><b>TEMPLATES</b>Prompts</a>
+      <a href="#page-feedback" onclick="return goPage('feedback')"><b>FEEDBACK</b>Send note</a>
+      <a href="#page-help" onclick="return goPage('help')"><b>HELP</b>Center</a>
+    </div>
+  </div>
+</section>
+
+<section id="page-help" class="page-view" data-page="help">
+  <div class="st">◆ HELP CENTER</div>
+  <p class="ss">Self-serve help before contacting support</p>
+  <div class="guide-card"><h4>I cannot sign in</h4><p class="desk-hint">Operator must configure Supabase in Settings. Google provider must allow your site URL. Try email magic link.</p></div>
+  <div class="guide-card"><h4>Bot does not reply</h4><p class="desk-hint">n8n workflow must be Published. Check Status Board + Guides.</p></div>
+  <div class="guide-card"><h4>Feedback not saving</h4><p class="desk-hint">Use Vercel site URL. MONGODB_URI must be set. Make scenario ON.</p></div>
+  <div class="guide-card"><h4>Allow / connect popups</h4><p class="desk-hint">When connecting external free services, confirm only URLs you trust. We show Allow dialogs before opening sensitive connects.</p></div>
+  <div class="follow-bar">
+    <a href="#page-faq" onclick="return goPage('faq')">FAQ</a>
+    <a href="#page-guides" onclick="return goPage('guides')">Guides</a>
+    <a href="#page-support" onclick="return goPage('support')">Support</a>
+    <a href="#page-status" onclick="return goPage('status')">Status</a>
+  </div>
+</section>
 
 <section id="page-map" class="page-view" data-page="map">
   <div class="st">◆ HUB MAP // FULL MENU</div>
@@ -1249,6 +1349,12 @@ https://pasiya-bot-platform.vercel.app</pre>
     <input id="setN8nChat" placeholder="https://pasiyamax.app.n8n.cloud/webhook/...">
     <label>N8N GitHub Issue Webhook</label>
     <input id="setN8nIssue" placeholder="https://.../webhook/github-issue">
+    
+    <label>Supabase Project URL</label>
+    <input id="setSbUrl" placeholder="https://xxxx.supabase.co">
+    <label>Supabase anon public key</label>
+    <input id="setSbAnon" placeholder="eyJhbGciOi...">
+
     <label>Make.com Webhook</label>
     <input id="setMakeHook" placeholder="https://hook.eu1.make.com/...">
     <div class="row" style="margin-top:10px">
@@ -1723,6 +1829,9 @@ function handleImage(input, which){
 
 
 const PAGE_MAP = {
+  auth: ['page-auth'],
+  myspace: ['page-myspace'],
+  help: ['page-help'],
   app: ['page-app'],
   map: ['page-map'],
   support: ['page-support'],
@@ -1831,7 +1940,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 document.addEventListener('DOMContentLoaded', function(){
   
-  ['page-faq','page-templates','page-changelog','page-map','page-support','page-legal'].forEach(function(id){
+  ['page-faq','page-templates','page-changelog','page-map','page-support','page-legal','page-auth','page-myspace','page-help','page-app'].forEach(function(id){
     var n=document.getElementById(id); if(n){n.classList.add('page-view'); n.classList.remove('active');}
   });
 
@@ -1915,6 +2024,149 @@ function syncTrust(){
 setTimeout(syncTrust,1000);
 setTimeout(syncTrust,3000);
 
+
+function showModal(title, text, buttons){
+  var bg=document.getElementById('modalBg');
+  document.getElementById('modalTitle').textContent=title||'Notice';
+  document.getElementById('modalText').textContent=text||'';
+  var act=document.getElementById('modalActions'); act.innerHTML='';
+  (buttons||[{label:'OK', primary:true}]).forEach(function(b){
+    var btn=document.createElement('button');
+    btn.className=b.primary?'btn btn-c':'btn btn-g';
+    btn.type='button'; btn.textContent=b.label;
+    btn.onclick=function(){ hideModal(); if(b.onClick) b.onClick(); };
+    act.appendChild(btn);
+  });
+  bg.classList.add('show');
+}
+function hideModal(){ var bg=document.getElementById('modalBg'); if(bg) bg.classList.remove('show'); }
+function showSuccess(msg){
+  showModal('SUCCESS', msg||'Completed successfully.', [{label:'OK', primary:true}]);
+  setTimeout(hideModal, 2800);
+}
+function confirmAllow(service, url){
+  showModal('ALLOW CONNECTION', 'Allow opening '+service+'?\n'+url, [
+    {label:'Cancel', primary:false},
+    {label:'Allow', primary:true, onClick:function(){ window.open(url,'_blank','noopener'); showSuccess(service+' opened. Continue setup there.'); }}
+  ]);
+}
+// wrap external workspace links optionally - data-allow
+document.addEventListener('click', function(e){
+  var a=e.target.closest('a[data-allow]');
+  if(!a) return;
+  e.preventDefault();
+  confirmAllow(a.getAttribute('data-allow')||'Service', a.href);
+});
+
+function getSbConfig(){
+  var st={};
+  try{st=JSON.parse(localStorage.getItem('pasiya_settings')||'{}')}catch(e){}
+  return {url:(st.sbUrl||'').trim(), anon:(st.sbAnon||'').trim()};
+}
+function getSupabase(){
+  var c=getSbConfig();
+  if(!c.url||!c.anon) return null;
+  if(!window.supabase||!window.supabase.createClient) return null;
+  return window.supabase.createClient(c.url, c.anon);
+}
+function authStatus(msg, ok){
+  var el=document.getElementById('authStatus');
+  if(el){el.textContent=msg; el.style.color=ok?'#00ff9d':'#ff2a6d';}
+}
+async function authGoogle(){
+  var sb=getSupabase();
+  if(!sb){ showModal('SETUP NEEDED', 'Add Supabase URL + anon key in Settings first (free at supabase.com).', [{label:'Open Settings', primary:true, onClick:function(){goPage('settings')}}, {label:'OK'}]); return; }
+  authStatus('>> Redirecting to Google...', true);
+  const { error } = await sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: location.origin + location.pathname + '#page-myspace' }});
+  if(error) authStatus('>> '+error.message, false);
+}
+async function authEmailMagic(){
+  var sb=getSupabase();
+  if(!sb){ showModal('SETUP NEEDED', 'Add Supabase URL + anon key in Settings first.', [{label:'Open Settings', primary:true, onClick:function(){goPage('settings')}}]); return; }
+  var email=(document.getElementById('authEmail')&&document.getElementById('authEmail').value||'').trim();
+  if(!email){ authStatus('>> Enter email', false); return; }
+  authStatus('>> Sending magic link...', true);
+  const { error } = await sb.auth.signInWithOtp({ email, options:{ emailRedirectTo: location.origin + location.pathname + '#page-myspace' }});
+  if(error) authStatus('>> '+error.message, false);
+  else { authStatus('>> Check your email for the login link', true); showSuccess('Magic link sent. Open your email.'); }
+}
+async function authSignOut(){
+  var sb=getSupabase(); if(sb) await sb.auth.signOut();
+  updateAuthUI(null);
+  showSuccess('Signed out.');
+}
+function updateAuthUI(user){
+  var out=document.getElementById('authLoggedOut');
+  var inn=document.getElementById('authLoggedIn');
+  var lab=document.getElementById('authUserLabel');
+  var chip=document.getElementById('userChip');
+  if(user){
+    if(out) out.style.display='none';
+    if(inn) inn.style.display='block';
+    if(lab) lab.textContent=user.email||user.id;
+    if(chip) chip.textContent = (user.email||'member').split('@')[0];
+    var link = location.origin + location.pathname + '#page-myspace';
+    var pre=document.getElementById('mySpaceLink'); if(pre) pre.textContent=link;
+    localStorage.setItem('pasiya_user_link', link);
+  } else {
+    if(out) out.style.display='block';
+    if(inn) inn.style.display='none';
+    if(chip) chip.textContent='';
+    var pre=document.getElementById('mySpaceLink'); if(pre) pre.textContent='Sign in to generate your link';
+  }
+}
+function copyMyLink(){
+  var t=(document.getElementById('mySpaceLink')&&document.getElementById('mySpaceLink').textContent)||'';
+  if(!t||t.indexOf('Sign in')===0){ showModal('Sign in required', 'Create an account first to get your personal link.'); return; }
+  if(navigator.clipboard) navigator.clipboard.writeText(t).then(function(){ showSuccess('Link copied.'); });
+  else prompt('Copy:', t);
+}
+async function initAuth(){
+  var sb=getSupabase();
+  if(!sb){ updateAuthUI(null); return; }
+  const { data } = await sb.auth.getSession();
+  updateAuthUI(data && data.session && data.session.user);
+  sb.auth.onAuthStateChange(function(event, session){
+    updateAuthUI(session && session.user);
+    if(event==='SIGNED_IN') showSuccess('Welcome! Account connected.');
+  });
+}
+// patch saveSettings / loadSettingsUI
+var _saveSettings = typeof saveSettings==='function' ? saveSettings : null;
+saveSettings = function(){
+  var st={};
+  try{st=JSON.parse(localStorage.getItem('pasiya_settings')||'{}')}catch(e){}
+  st.n8nChat=(document.getElementById('setN8nChat')&&document.getElementById('setN8nChat').value||'').trim();
+  st.n8nIssue=(document.getElementById('setN8nIssue')&&document.getElementById('setN8nIssue').value||'').trim();
+  st.make=(document.getElementById('setMakeHook')&&document.getElementById('setMakeHook').value||'').trim();
+  st.sbUrl=(document.getElementById('setSbUrl')&&document.getElementById('setSbUrl').value||'').trim();
+  st.sbAnon=(document.getElementById('setSbAnon')&&document.getElementById('setSbAnon').value||'').trim();
+  localStorage.setItem('pasiya_settings', JSON.stringify(st));
+  if(st.make) localStorage.setItem('pasiya_make_hook', st.make);
+  var hooks={issue:st.n8nIssue, file:(JSON.parse(localStorage.getItem('pasiya_gh_hooks')||'{}').file||'')};
+  localStorage.setItem('pasiya_gh_hooks', JSON.stringify(hooks));
+  var s=document.getElementById('setStatus');
+  if(s){s.textContent='>> Settings saved'; s.style.color='#00ff9d';}
+  showSuccess('Settings saved in this browser.');
+  initAuth();
+};
+var _loadSettingsUI = typeof loadSettingsUI==='function' ? loadSettingsUI : null;
+loadSettingsUI = function(){
+  var st={}; try{st=JSON.parse(localStorage.getItem('pasiya_settings')||'{}')}catch(e){}
+  var hooks={}; try{hooks=JSON.parse(localStorage.getItem('pasiya_gh_hooks')||'{}')}catch(e){}
+  var el1=document.getElementById('setN8nChat');
+  var el2=document.getElementById('setN8nIssue');
+  var el3=document.getElementById('setMakeHook');
+  var el4=document.getElementById('setSbUrl');
+  var el5=document.getElementById('setSbAnon');
+  if(el1) el1.value=st.n8nChat||'https://pasiyamax.app.n8n.cloud/webhook/edd1abad-75c2-46d0-8081-950f29803003';
+  if(el2) el2.value=st.n8nIssue||hooks.issue||'';
+  if(el3) el3.value=st.make||localStorage.getItem('pasiya_make_hook')||'https://hook.eu1.make.com/41k8qajbe6y1ctqgd1ewsutdko8hwt3h';
+  if(el4) el4.value=st.sbUrl||'';
+  if(el5) el5.value=st.sbAnon||'';
+};
+document.addEventListener('DOMContentLoaded', function(){ initAuth(); });
+
 loadConfig();upd();document.getElementById('apiKey').addEventListener('input',upd);
 </script>
 
@@ -1924,6 +2176,15 @@ loadConfig();upd();document.getElementById('apiKey').addEventListener('input',up
   <br><button class="btn btn-c" type="button" onclick="dismissToast()">GOT IT</button>
 </div>
 <button type="button" class="top-btn" id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Top">↑</button>
+
+
+<div class="modal-bg" id="modalBg">
+  <div class="modal" id="modalBox">
+    <h3 id="modalTitle">Notice</h3>
+    <p id="modalText">...</p>
+    <div class="row" id="modalActions"></div>
+  </div>
+</div>
 
 </body>
 </html>
