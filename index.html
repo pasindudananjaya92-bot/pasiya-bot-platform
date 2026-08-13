@@ -300,6 +300,15 @@ footer a{color:var(--c);text-decoration:none}
   <div class="psub">initializing command center...</div>
 </div>
 
+<script>
+(function(){
+  function h(){var p=document.getElementById('preloader');if(p){p.classList.add('hide');p.style.display='none';p.style.visibility='hidden';}}
+  setTimeout(h,600); setTimeout(h,1500); setTimeout(h,3000);
+  document.addEventListener('DOMContentLoaded',h);
+  window.addEventListener('load',h);
+})();
+</script>
+
 <div class="bg-anim"></div>
 <div class="bg-grid"></div>
 <div class="bg-glow g1"></div>
@@ -1736,11 +1745,7 @@ function clearAllChats(){
     userData.page=location.href;
     userData.source=userData.source||'pasiya-max-website';
     userData.title = userData.title || ('Feedback from ' + (userData.name||'visitor'));
-    userData.body = '**Name:** '+(userData.name||'-')+'
-**Email:** '+(userData.email||'-')+'
-**Page:** '+userData.page+'
-
-'+(userData.message||'');
+    userData.body = '**Name:** '+(userData.name||'-')+'\n**Email:** '+(userData.email||'-')+'\n**Page:** '+userData.page+'\n\n'+(userData.message||'');
 
     var apiBase = /github\.io$/i.test(location.hostname)
       ? 'https://pasiya-bot-platform.vercel.app'
