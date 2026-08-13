@@ -155,6 +155,51 @@ textarea{min-height:70px;resize:vertical}
   background:rgba(0,0,0,.35);border:1px solid rgba(0,240,255,.25);color:var(--t);
   border-radius:6px;padding:10px;font-family:'Share Tech Mono',monospace;font-size:12px}
 
+
+/* ===== APP SHELL: LEFT MENU + PAGES ===== */
+.app-shell{display:flex;min-height:100vh;padding-top:52px}
+.side-nav{
+  position:fixed;top:52px;left:0;bottom:0;width:248px;z-index:900;
+  background:rgba(4,8,18,.96);border-right:1px solid rgba(0,240,255,.2);
+  backdrop-filter:blur(12px);overflow-y:auto;padding:12px 10px 24px;
+  transform:translateX(0);transition:transform .25s ease}
+.side-nav .nav-title{
+  font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2px;color:var(--c);
+  padding:8px 10px 6px;opacity:.85}
+.side-nav a.nav-item{
+  display:flex;align-items:center;gap:8px;padding:10px 12px;margin:3px 0;
+  border-radius:6px;color:var(--t);text-decoration:none;font-size:13px;font-weight:600;
+  border:1px solid transparent;cursor:pointer}
+.side-nav a.nav-item:hover,.side-nav a.nav-item.active{
+  background:rgba(0,240,255,.1);border-color:rgba(0,240,255,.3);color:var(--c);
+  box-shadow:0 0 12px rgba(0,240,255,.12)}
+.side-nav .nav-item span.ic{width:22px;text-align:center}
+.main-stage{flex:1;margin-left:248px;width:calc(100% - 248px);padding:12px 14px 40px}
+.page-view{display:none;animation:fadeIn .35s ease}
+.page-view.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.menu-toggle{
+  display:none;position:fixed;bottom:18px;left:18px;z-index:950;
+  width:48px;height:48px;border-radius:50%;border:1px solid rgba(0,240,255,.4);
+  background:rgba(0,20,40,.9);color:var(--c);font-size:20px;cursor:pointer;
+  box-shadow:0 0 20px rgba(0,240,255,.25)}
+.side-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:850}
+@media(max-width:860px){
+  .side-nav{transform:translateX(-105%)}
+  .side-nav.open{transform:translateX(0)}
+  .main-stage{margin-left:0;width:100%}
+  .menu-toggle{display:flex;align-items:center;justify-content:center}
+  .side-overlay.open{display:block}
+}
+.settings-grid{display:grid;gap:12px}
+.settings-grid .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.workspace-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.workspace-grid a{
+  display:block;padding:14px;border-radius:8px;border:1px solid rgba(0,240,255,.22);
+  background:rgba(0,240,255,.05);color:var(--t);text-decoration:none;text-align:center}
+.workspace-grid a:hover{border-color:var(--c);color:var(--c);box-shadow:0 0 14px rgba(0,240,255,.2)}
+.workspace-grid a b{display:block;font-family:'Orbitron',sans-serif;font-size:11px;margin-bottom:4px;color:var(--c)}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -172,6 +217,29 @@ footer a{color:var(--c);text-decoration:none}
 <div class="bg-glow g1"></div>
 <div class="bg-glow g2"></div>
 <div class="scanlines"></div>
+
+<button class="menu-toggle" type="button" onclick="toggleSide()" aria-label="Menu">☰</button>
+<div class="side-overlay" id="sideOverlay" onclick="toggleSide(false)"></div>
+<aside class="side-nav" id="sideNav">
+  <div class="nav-title">PASIYA OS // MENU</div>
+  <a class="nav-item active" href="#page-home" data-page="home" onclick="return goPage('home',this)"><span class="ic">⌂</span> Dashboard</a>
+  <a class="nav-item" href="#page-bots" data-page="bots" onclick="return goPage('bots',this)"><span class="ic">🤖</span> AI Bots</a>
+  <a class="nav-item" href="#page-n8n" data-page="n8n" onclick="return goPage('n8n',this)"><span class="ic">⚡</span> N8N Public Bot</a>
+  <a class="nav-item" href="#page-desk" data-page="desk" onclick="return goPage('desk',this)"><span class="ic">🎛</span> Service Desk</a>
+  <a class="nav-item" href="#page-workspace" data-page="workspace" onclick="return goPage('workspace',this)"><span class="ic">🧩</span> Free Workspace</a>
+  <a class="nav-item" href="#page-feedback" data-page="feedback" onclick="return goPage('feedback',this)"><span class="ic">💾</span> Power Feedback</a>
+  <a class="nav-item" href="#page-tools" data-page="tools" onclick="return goPage('tools',this)"><span class="ic">🛠</span> Tool Hubs</a>
+  <a class="nav-item" href="#page-social" data-page="social" onclick="return goPage('social',this)"><span class="ic">🌐</span> Social & Web</a>
+  <a class="nav-item" href="#page-stats" data-page="stats" onclick="return goPage('stats',this)"><span class="ic">📊</span> Analytics</a>
+  <a class="nav-item" href="#page-settings" data-page="settings" onclick="return goPage('settings',this)"><span class="ic">⚙</span> Settings</a>
+  <div class="nav-title" style="margin-top:14px">QUICK LAUNCH</div>
+  <a class="nav-item" href="https://console.groq.com" target="_blank" rel="noopener"><span class="ic">🔑</span> Groq Keys</a>
+  <a class="nav-item" href="https://pasiyamax.app.n8n.cloud" target="_blank" rel="noopener"><span class="ic">☁</span> n8n Cloud</a>
+  <a class="nav-item" href="https://www.make.com" target="_blank" rel="noopener"><span class="ic">🔗</span> Make.com</a>
+  <a class="nav-item" href="https://pasiya-bot-platform.vercel.app" target="_blank" rel="noopener"><span class="ic">▲</span> Vercel Live</a>
+</aside>
+<div class="app-shell"><div class="main-stage" id="mainStage">
+
 
 <header>
   <div class="logo">PASIYA <b>MAX</b> // CMD</div>
@@ -632,6 +700,42 @@ RULES:
 </section>
 
 
+
+<section id="page-workspace" class="page-view" data-page="workspace">
+  <div class="st">◆ FREE WORKSPACE // CONNECTED SERVICES</div>
+  <p class="ss">Launch free services already linked to Pasiya Max • Same cyber theme</p>
+  <div class="panel">
+    <h3>🧠 AI BRAIN</h3>
+    <div class="workspace-grid">
+      <a href="https://console.groq.com" target="_blank" rel="noopener"><b>GROQ</b>Free LLM API</a>
+      <a href="https://aistudio.google.com" target="_blank" rel="noopener"><b>GEMINI</b>Google AI Studio</a>
+      <a href="https://openrouter.ai" target="_blank" rel="noopener"><b>OPENROUTER</b>Multi-model</a>
+      <a href="#page-bots" onclick="return goPage('bots')"><b>BOT CORE</b>Chat with your key</a>
+      <a href="#page-n8n" onclick="return goPage('n8n')"><b>N8N BOT</b>No key required</a>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>⚙ AUTOMATION</h3>
+    <div class="workspace-grid">
+      <a href="https://pasiyamax.app.n8n.cloud" target="_blank" rel="noopener"><b>N8N CLOUD</b>Your instance</a>
+      <a href="https://www.make.com" target="_blank" rel="noopener"><b>MAKE</b>Webhook live</a>
+      <a href="https://zapier.com" target="_blank" rel="noopener"><b>ZAPIER</b>Free tier</a>
+      <a href="https://botpress.com" target="_blank" rel="noopener"><b>BOTPRESS</b>Chatbots</a>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>🚀 HOST / DATA</h3>
+    <div class="workspace-grid">
+      <a href="https://pasiya-bot-platform.vercel.app" target="_blank" rel="noopener"><b>VERCEL</b>This app live</a>
+      <a href="https://github.com/pasindudananjaya92-bot/pasiya-bot-platform" target="_blank" rel="noopener"><b>GITHUB</b>Source repo</a>
+      <a href="https://cloud.mongodb.com" target="_blank" rel="noopener"><b>MONGODB</b>Feedback DB</a>
+      <a href="https://supabase.com" target="_blank" rel="noopener"><b>SUPABASE</b>Free backend</a>
+      <a href="https://railway.app" target="_blank" rel="noopener"><b>RAILWAY</b>Deploy</a>
+      <a href="https://replit.com" target="_blank" rel="noopener"><b>REPLIT</b>Code host</a>
+    </div>
+  </div>
+</section>
+
 <section id="stats-pro">
   <div class="st">◆ LIVE ANALYTICS & FOLLOW</div>
   <p class="ss">Visitor counters update when the page loads • Follow Pasiya Max</p>
@@ -656,6 +760,39 @@ RULES:
   </div>
 </section>
 
+</div>
+<section id="page-settings" class="page-view" data-page="settings">
+  <div class="st">◆ SETTINGS // CONTROL PANEL</div>
+  <p class="ss">Saved in this browser only • Connect webhooks & preferences</p>
+  <div class="panel settings-grid">
+    <h3>🔗 WEBHOOKS</h3>
+    <label>N8N Chat Webhook (Production)</label>
+    <input id="setN8nChat" placeholder="https://pasiyamax.app.n8n.cloud/webhook/...">
+    <label>N8N GitHub Issue Webhook</label>
+    <input id="setN8nIssue" placeholder="https://.../webhook/github-issue">
+    <label>Make.com Webhook</label>
+    <input id="setMakeHook" placeholder="https://hook.eu1.make.com/...">
+    <div class="row" style="margin-top:10px">
+      <button class="btn btn-c" type="button" onclick="saveSettings()">💾 SAVE SETTINGS</button>
+      <button class="btn btn-g" type="button" onclick="loadSettingsUI()">↺ RELOAD</button>
+    </div>
+    <div id="setStatus" class="gh-note"></div>
+  </div>
+  <div class="panel">
+    <h3>🎨 DISPLAY</h3>
+    <div class="row">
+      <button class="btn btn-c" type="button" onclick="setChatTall(true)">Tall chat ON</button>
+      <button class="btn btn-g" type="button" onclick="setChatTall(false)">Tall chat OFF</button>
+    </div>
+    <p class="desk-hint">Tall chat helps long bot replies. Default is ON.</p>
+  </div>
+  <div class="panel">
+    <h3>ℹ ABOUT THIS OS</h3>
+    <p class="desk-hint">Pasiya Max OS-style shell • Left menu opens internal pages without leaving the site • Free stack: Groq, n8n, Make, Vercel, MongoDB, GitHub Pages</p>
+  </div>
+</section>
+
+<!-- end main-stage --></div><!-- end app-shell -->
 <footer>
   <div style="color:var(--g);margin-bottom:6px">PASIYA MAX // ULTIMATE FREE AI COMMAND CENTER</div>
   <div>100% Free Services • No Credit Card • Animated Cyber Interface</div>
@@ -960,7 +1097,7 @@ function clearAllChats(){
 
 
 (function(){
-  var MAKE_HOOK = 'https://hook.eu1.make.com/41k8qajbe6y1ctqgd1ewsutdko8hwt3h';
+  var MAKE_HOOK = localStorage.getItem('pasiya_make_hook')||'https://hook.eu1.make.com/41k8qajbe6y1ctqgd1ewsutdko8hwt3h';
   var form=document.getElementById('mongoFeedbackForm');
   if(!form)return;
   form.addEventListener('submit', async function(e){
@@ -1094,6 +1231,111 @@ function handleImage(input, which){
   };
   reader.readAsDataURL(f);
 }
+
+
+const PAGE_MAP = {
+  home: ['home','hero',null],
+  bots: ['core'],
+  n8n: ['n8n'],
+  desk: ['desk','tools-plus'],
+  workspace: ['page-workspace'],
+  feedback: ['github-auto'],
+  tools: ['auto','ai','llms','host','dev'],
+  social: ['social','web'],
+  stats: ['stats-pro'],
+  settings: ['page-settings']
+};
+function toggleSide(force){
+  var n=document.getElementById('sideNav');
+  var o=document.getElementById('sideOverlay');
+  if(!n)return;
+  var open = force===false ? false : force===true ? true : !n.classList.contains('open');
+  n.classList.toggle('open', open);
+  if(o) o.classList.toggle('open', open);
+}
+function goPage(name, el){
+  try{
+    document.querySelectorAll('.side-nav a.nav-item[data-page]').forEach(function(a){a.classList.remove('active')});
+    if(el) el.classList.add('active');
+    else {
+      var link=document.querySelector('.side-nav a[data-page="'+name+'"]');
+      if(link) link.classList.add('active');
+    }
+    // hide all major sections that are page targets
+    var allIds = ['page-workspace','page-settings','core','n8n','desk','tools-plus','github-auto','stats-pro','auto','social'];
+    // also hero/home
+    document.querySelectorAll('section[id], .hero, #home').forEach(function(sec){
+      if(sec.id==='preloader')return;
+    });
+    // Show strategy: show mapped sections, scroll to first
+    var targets = PAGE_MAP[name] || [name];
+    var first=null;
+    // For SPA-like: if workspace/settings use page-view class
+    document.querySelectorAll('.page-view').forEach(function(p){p.classList.remove('active')});
+    targets.forEach(function(id){
+      if(!id)return;
+      var node=document.getElementById(id) || document.querySelector('.'+id);
+      if(!node)return;
+      if(node.classList.contains('page-view')) node.classList.add('active');
+      if(!first) first=node;
+    });
+    if(name==='workspace' || name==='settings'){
+      // hide other heavy sections optional - just scroll
+    }
+    if(first){ first.scrollIntoView({behavior:'smooth',block:'start'}); }
+    if(name==='settings') loadSettingsUI();
+    toggleSide(false);
+    try{ history.replaceState(null,'','#page-'+name); }catch(e){}
+  }catch(err){ console.error(err); }
+  return false;
+}
+function saveSettings(){
+  var chat=(document.getElementById('setN8nChat')||{}).value||'';
+  var issue=(document.getElementById('setN8nIssue')||{}).value||'';
+  var make=(document.getElementById('setMakeHook')||{}).value||'';
+  if(chat && typeof N8N_WEBHOOK!=='undefined'){ try{ window.N8N_WEBHOOK=chat; }catch(e){} }
+  // override const not possible - store and patch sendN8n to read localStorage
+  localStorage.setItem('pasiya_settings', JSON.stringify({n8nChat:chat.trim(), n8nIssue:issue.trim(), make:make.trim()}));
+  var hooks={issue:issue.trim(), file:(JSON.parse(localStorage.getItem('pasiya_gh_hooks')||'{}').file||'')};
+  localStorage.setItem('pasiya_gh_hooks', JSON.stringify(hooks));
+  if(make.trim()) localStorage.setItem('pasiya_make_hook', make.trim());
+  var s=document.getElementById('setStatus');
+  if(s){s.textContent='>> Settings saved in this browser';s.style.color='#00ff9d'}
+}
+function loadSettingsUI(){
+  var st={};
+  try{st=JSON.parse(localStorage.getItem('pasiya_settings')||'{}')}catch(e){}
+  var hooks={};
+  try{hooks=JSON.parse(localStorage.getItem('pasiya_gh_hooks')||'{}')}catch(e){}
+  var el1=document.getElementById('setN8nChat');
+  var el2=document.getElementById('setN8nIssue');
+  var el3=document.getElementById('setMakeHook');
+  if(el1) el1.value=st.n8nChat||'https://pasiyamax.app.n8n.cloud/webhook/edd1abad-75c2-46d0-8081-950f29803003';
+  if(el2) el2.value=st.n8nIssue||hooks.issue||'';
+  if(el3) el3.value=st.make||localStorage.getItem('pasiya_make_hook')||'https://hook.eu1.make.com/41k8qajbe6y1ctqgd1ewsutdko8hwt3h';
+}
+function setChatTall(on){
+  document.querySelectorAll('.chat').forEach(function(c){
+    if(on){c.style.minHeight='420px';c.style.height='min(62vh,560px)';}
+    else {c.style.minHeight='220px';c.style.height='280px';}
+  });
+  localStorage.setItem('pasiya_chat_tall', on?'1':'0');
+}
+// Apply make hook from settings in feedback if present
+document.addEventListener('DOMContentLoaded', function(){
+  loadSettingsUI();
+  if(localStorage.getItem('pasiya_chat_tall')==='0') setChatTall(false);
+  var hash=location.hash||'';
+  if(hash.indexOf('page-')===1) goPage(hash.replace('#page-',''));
+});
+
+
+document.addEventListener('DOMContentLoaded', function(){
+  var w=document.getElementById('page-workspace');
+  var s=document.getElementById('page-settings');
+  if(w){w.classList.add('page-view'); w.classList.remove('active');}
+  if(s){s.classList.add('page-view'); s.classList.remove('active');}
+});
 
 loadConfig();upd();document.getElementById('apiKey').addEventListener('input',upd);
 </script>
