@@ -241,6 +241,13 @@ textarea{min-height:70px;resize:vertical}
   font-family:'Share Tech Mono',monospace;font-size:11px}
 .kbd-help{font-size:10px;color:var(--m);padding:8px 10px;line-height:1.5}
 
+
+.guide-card{border:1px solid rgba(0,240,255,.2);border-radius:8px;padding:14px;margin:10px 0;background:rgba(0,0,0,.22)}
+.guide-card h4{font-family:'Orbitron',sans-serif;font-size:12px;color:var(--c);margin-bottom:8px;letter-spacing:1px}
+.guide-card ol{margin:0 0 0 18px;color:var(--t);font-size:13px;line-height:1.65}
+.guide-card ol li{margin:4px 0}
+.guide-card .tag{display:inline-block;font-size:9px;padding:2px 6px;border-radius:3px;border:1px solid rgba(0,255,157,.3);color:#00ff9d;margin-bottom:8px;font-family:'Share Tech Mono',monospace}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -269,6 +276,8 @@ footer a{color:var(--c);text-decoration:none}
   <a class="nav-item" href="#page-bots" data-page="bots" onclick="return goPage('bots',this)"><span class="ic">🤖</span> AI Bots</a>
   <a class="nav-item" href="#page-n8n" data-page="n8n" onclick="return goPage('n8n',this)"><span class="ic">⚡</span> N8N Public Bot</a>
   <a class="nav-item" href="#page-desk" data-page="desk" onclick="return goPage('desk',this)"><span class="ic">🎛</span> Service Desk</a>
+  <a class="nav-item" href="#page-guides" data-page="guides" onclick="return goPage('guides',this)"><span class="ic">📖</span> Guides</a>
+  <a class="nav-item" href="#page-bridge" data-page="bridge" onclick="return goPage('bridge',this)"><span class="ic">◈</span> Control Bridge</a>
   <a class="nav-item" href="#page-workspace" data-page="workspace" onclick="return goPage('workspace',this)"><span class="ic">🧩</span> Free Workspace</a>
   <a class="nav-item" href="#page-feedback" data-page="feedback" onclick="return goPage('feedback',this)"><span class="ic">💾</span> Power Feedback</a>
   <a class="nav-item" href="#page-tools" data-page="tools" onclick="return goPage('tools',this)"><span class="ic">🛠</span> Tool Hubs</a>
@@ -745,6 +754,91 @@ RULES:
 
 
 
+
+
+<section id="page-guides" class="page-view" data-page="guides">
+  <div class="st">◆ GUIDES // HOW TO CONNECT FREE SERVICES</div>
+  <p class="ss">Step-by-step for visitors & operators • Keep this hub useful every day</p>
+
+  <div class="guide-card">
+    <span class="tag">PUBLIC USERS</span>
+    <h4>1. CHAT WITH NO API KEY</h4>
+    <ol>
+      <li>Open left menu → <b>N8N Public Bot</b></li>
+      <li>Type Sinhala or English and send</li>
+      <li>Replies come from your n8n → Groq workflow (must be Published)</li>
+      <li>Use 🎤 Voice or 🖼 Photo buttons if needed</li>
+    </ol>
+  </div>
+
+  <div class="guide-card">
+    <span class="tag">POWER USERS</span>
+    <h4>2. BOT CORE WITH FREE GROQ KEY</h4>
+    <ol>
+      <li>Create key at <a href="https://console.groq.com" target="_blank" rel="noopener" style="color:var(--c)">console.groq.com</a></li>
+      <li>Menu → <b>AI Bots</b> → paste key → SAVE (stored only in this browser)</li>
+      <li>Chat with long answers + code Copy buttons</li>
+      <li>Never put the key in GitHub or public posts</li>
+    </ol>
+  </div>
+
+  <div class="guide-card">
+    <span class="tag">OPERATOR</span>
+    <h4>3. KEEP N8N WORKFLOW LIVE</h4>
+    <ol>
+      <li>Login <a href="https://pasiyamax.app.n8n.cloud" target="_blank" rel="noopener" style="color:var(--c)">pasiyamax.app.n8n.cloud</a></li>
+      <li>Open Webhook → LLM → Groq workflow</li>
+      <li>Toggle <b>Active / Published</b></li>
+      <li>Use Production URL <code>/webhook/...</code> (not webhook-test)</li>
+      <li>Menu → Settings → paste webhook if changed → SAVE</li>
+    </ol>
+  </div>
+
+  <div class="guide-card">
+    <span class="tag">OPERATOR</span>
+    <h4>4. POWER FEEDBACK (MONGO + MAKE + N8N)</h4>
+    <ol>
+      <li>Vercel project → Environment Variable <code>MONGODB_URI</code> → Redeploy</li>
+      <li>Make.com scenario ON + webhook listening</li>
+      <li>Optional: n8n Issue webhook in Settings</li>
+      <li>Menu → <b>Power Feedback</b> → submit test message</li>
+      <li>Check MongoDB collection <code>feedback</code> + Make history</li>
+    </ol>
+  </div>
+
+  <div class="guide-card">
+    <span class="tag">GROWTH</span>
+    <h4>5. SHARE THIS HUB WITH THE WORLD</h4>
+    <ol>
+      <li>Primary link: <code>https://pasiya-bot-platform.vercel.app</code></li>
+      <li>Menu → <b>Share Hub Link</b> (or copy from Analytics / Follow)</li>
+      <li>Post to Instagram / YouTube / WhatsApp / Telegram channels</li>
+      <li>Tell users: public bot = no key; Workspace = free tools map</li>
+      <li>Open <b>Control Bridge</b> page to explain the model</li>
+    </ol>
+  </div>
+
+  <div class="guide-card">
+    <span class="tag">TRUST</span>
+    <h4>6. SECURITY RULES (ALWAYS)</h4>
+    <ol>
+      <li>No GitHub tokens or DB passwords inside <code>index.html</code></li>
+      <li>Secrets only in Vercel env / n8n credentials</li>
+      <li>If a secret was pasted in chat, rotate it immediately</li>
+      <li>Read Settings → Privacy note</li>
+    </ol>
+  </div>
+
+  <div class="panel">
+    <h3>NEXT VISITOR ACTION</h3>
+    <div class="follow-bar">
+      <a href="#page-n8n" onclick="return goPage('n8n')">Try Public Bot</a>
+      <a href="#page-bridge" onclick="return goPage('bridge')">Control Bridge</a>
+      <a href="#page-workspace" onclick="return goPage('workspace')">Workspace</a>
+      <a href="#page-settings" onclick="return goPage('settings')">Settings</a>
+    </div>
+  </div>
+</section>
 
 <section id="page-bridge" class="page-view" data-page="bridge">
   <div class="bridge-hero">
@@ -1350,6 +1444,7 @@ function handleImage(input, which){
 
 
 const PAGE_MAP = {
+  guides: ['page-guides'],
   bridge: ['page-bridge'],
   home: ['home','hero',null],
   bots: ['core'],
@@ -1448,6 +1543,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
 document.addEventListener('DOMContentLoaded', function(){
+  var gd=document.getElementById('page-guides'); if(gd){gd.classList.add('page-view'); gd.classList.remove('active');}
   var br=document.getElementById('page-bridge'); if(br){br.classList.add('page-view'); br.classList.remove('active');}
   var w=document.getElementById('page-workspace');
   var s=document.getElementById('page-settings');
