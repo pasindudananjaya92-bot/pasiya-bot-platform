@@ -6,6 +6,8 @@
 <title>PASIYA MAX // ULTIMATE FREE AI COMMAND CENTER</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#00f0ff">
+<meta property="og:title" content="PASIYA MAX // Free AI Command Center">
+<meta property="og:description" content="Free AI bots, n8n, tools hub by Pasindu Dananjaya">
 <meta name="description" content="The most complete free AI Bot Builder + Free Tools universe. Animated cyber interface.">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -69,7 +71,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--c);box-shadow:0 0 12p
 textarea{min-height:70px;resize:vertical}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:700px){.row{grid-template-columns:1fr}nav{display:none}}
-.chat{background:#02060f;border:1px solid rgba(0,240,255,.12);border-radius:6px;height:280px;overflow-y:auto;padding:11px;margin-bottom:8px;display:flex;flex-direction:column;gap:7px}
+.chat{min-height:420px;height:min(62vh,560px);max-height:70vh;overflow-y:auto;padding:12px;border:1px solid rgba(0,240,255,.15);border-radius:8px;background:rgba(0,0,0,.25)}
 .msg{max-width:88%;padding:7px 11px;border-radius:5px;font-size:11px;line-height:1.5;font-family:'Share Tech Mono',monospace}
 .msg.user{align-self:flex-end;background:rgba(0,240,255,.1);border:1px solid rgba(0,240,255,.25);color:var(--c)}
 .msg.bot{align-self:flex-start;background:rgba(176,38,255,.1);border:1px solid rgba(176,38,255,.25);color:#e0b0ff}
@@ -131,6 +133,28 @@ textarea{min-height:70px;resize:vertical}
 .gh-note{font-size:10px;color:var(--m);margin-top:10px;line-height:1.6;font-family:'Share Tech Mono',monospace}
 .gh-note code{color:var(--c);font-size:9px}
 
+
+.chat{min-height:420px;height:min(62vh,560px);max-height:70vh}
+#n8nChat.chat,#chat.chat{min-height:420px}
+.msg-tools{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;align-items:center}
+.msg-tools button,.msg-tools label.filebtn{
+  font-family:'Share Tech Mono',monospace;font-size:10px;padding:7px 10px;
+  background:rgba(0,240,255,.08);border:1px solid rgba(0,240,255,.28);color:var(--c);
+  border-radius:4px;cursor:pointer}
+.msg-tools button:hover,.msg-tools label.filebtn:hover{background:rgba(0,240,255,.16)}
+.msg-tools input[type=file]{display:none}
+.follow-bar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}
+.follow-bar a{
+  font-family:'Share Tech Mono',monospace;font-size:11px;padding:8px 14px;
+  border:1px solid rgba(0,240,255,.35);border-radius:20px;color:var(--c);text-decoration:none;
+  background:rgba(0,240,255,.06)}
+.follow-bar a:hover{background:rgba(0,240,255,.15);box-shadow:0 0 12px rgba(0,240,255,.25)}
+.analytics-panel .stat-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.analytics-panel .stat{flex:1;min-width:100px}
+.cin textarea{width:100%;min-height:44px;max-height:120px;resize:vertical;
+  background:rgba(0,0,0,.35);border:1px solid rgba(0,240,255,.25);color:var(--t);
+  border-radius:6px;padding:10px;font-family:'Share Tech Mono',monospace;font-size:12px}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -154,7 +178,7 @@ footer a{color:var(--c);text-decoration:none}
   <nav>
     <a href="#home">HOME</a><a href="#core">BOT_CORE</a><a href="#llm">LLMs</a><a href="#ai">AI</a>
     <a href="#desk">DESK</a><a href="#tools-plus">TOOLS+</a><a href="#n8n">N8N</a><a href="#auto">AUTO</a><a href="#host">HOST</a><a href="#dev">DEV</a>
-    <a href="#social">SOCIAL</a><a href="#web">WEB</a><a href="#github-auto">GITHUB</a><a href="#guide">GUIDE</a>
+    <a href="#social">SOCIAL</a><a href="#web">WEB</a><a href="#github-auto">GITHUB</a><a href="#stats-pro">STATS</a><a href="#guide">GUIDE</a>
   </nav>
 </header>
 
@@ -227,6 +251,13 @@ POWER CAPABILITIES:
 - If user describes an image or sends image URL context, describe what you can infer and suggest free tools (Remove.bg, Canva, Leonardo, etc.).
 - For "fix/improve my site" requests: give exact steps and code snippets they can copy; you cannot edit the live GitHub file directly.
 - Prefer practical step-by-step instructions using only free services listed on this platform.
+VISITOR FAQ RULES:
+- Always explain Pasiya Max sections accurately: BOT CORE (own API key), N8N public bot (no key), Service Desk, Power Feedback (Mongo+Make+n8n), free tool hubs, Social Nexus, Web Architecture, GitHub automation.
+- When user sends a URL, analyze purpose, pros, cons, risks, and related free tools on this site.
+- When user mentions an image, describe what you can from URL/context and suggest free editors (Remove.bg, Canva, Leonardo).
+- Put all code in markdown fences so Copy buttons appear.
+- Prefer Sinhala if user writes Sinhala.
+
 
 RULES:
 - Explain how to use each section step by step when asked.
@@ -237,7 +268,14 @@ RULES:
       <button class="btn btn-c" onclick="saveConfig()">💾 SAVE</button>
       <button class="btn btn-g" onclick="clearChat()">⌫ CLEAR</button>
     </div>
-    <div id="cfg" style="margin-top:8px;font-size:10px;font-family:'Share Tech Mono',monospace;color:var(--m)"></div>
+    
+    <div class="msg-tools" id="coreTools">
+      <button type="button" onclick="startVoice('inp')" title="Voice to text">🎤 VOICE</button>
+      <label class="filebtn">🖼 PHOTO<input type="file" accept="image/*" onchange="handleImage(this,'core')"></label>
+      <button type="button" onclick="pasteUrlPrompt('inp')">🔗 ANALYZE URL</button>
+    </div>
+
+<div id="cfg" style="margin-top:8px;font-size:10px;font-family:'Share Tech Mono',monospace;color:var(--m)"></div>
   </div>
   <div class="panel">
     <h3><span class="dot" id="dot"></span> NEURAL LINK // LIVE</h3>
@@ -372,6 +410,13 @@ RULES:
       <input id="n8nInp" placeholder="message to n8n bot..." onkeydown="if(event.key==='Enter')sendN8n()">
       <button class="btn btn-c" onclick="sendN8n()">SEND</button>
     </div>
+    
+    <div class="msg-tools" id="n8nTools">
+      <button type="button" onclick="startVoice('n8nInp')" title="Voice to text">🎤 VOICE</button>
+      <label class="filebtn">🖼 PHOTO<input type="file" accept="image/*" onchange="handleImage(this,'n8n')"></label>
+      <button type="button" onclick="pasteUrlPrompt('n8nInp')">🔗 ANALYZE URL</button>
+    </div>
+
     <div id="n8nStatus" style="margin-top:8px;font-size:10px;font-family:'Share Tech Mono',monospace;color:var(--m)"></div>
   </div>
 </section>
@@ -583,6 +628,31 @@ RULES:
       <button class="btn btn-c" type="button" onclick="submitFileUpdate()">UPDATE FILE VIA N8N</button>
     </div>
     <div id="ghFileStatus" class="gh-note"></div>
+  </div>
+</section>
+
+
+<section id="stats-pro">
+  <div class="st">◆ LIVE ANALYTICS & FOLLOW</div>
+  <p class="ss">Visitor counters update when the page loads • Follow Pasiya Max</p>
+  <div class="panel analytics-panel">
+    <h3>📊 VISITOR STATS</h3>
+    <div class="stat-row">
+      <div class="stat"><div class="n" id="visitCount2">—</div><div class="l">TOTAL VISITS</div></div>
+      <div class="stat"><div class="n" id="todayCount2">—</div><div class="l">TODAY (THIS DEVICE)</div></div>
+      <div class="stat"><div class="n" id="sessionCount">1</div><div class="l">THIS SESSION</div></div>
+    </div>
+    <p class="desk-hint" style="margin-top:10px">Global total uses a free counter API. Today/session counts are stored in your browser. For full admin analytics use Vercel Analytics or MongoDB feedback logs.</p>
+  </div>
+  <div class="panel">
+    <h3>⭐ FOLLOW / SUPPORT</h3>
+    <div class="follow-bar">
+      <a href="https://github.com/pasindudananjaya92-bot/pasiya-bot-platform" target="_blank" rel="noopener">★ Star on GitHub</a>
+      <a href="https://github.com/pasindudananjaya92-bot" target="_blank" rel="noopener">Follow GitHub</a>
+      <a href="https://www.instagram.com/pasindu5598" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://youtube.com/@pasya" target="_blank" rel="noopener">YouTube</a>
+      <a href="https://pasiya-bot-platform.vercel.app" target="_blank" rel="noopener">Open Vercel Site</a>
+    </div>
   </div>
 </section>
 
@@ -956,6 +1026,74 @@ function clearAllChats(){
     }
   });
 })();
+
+
+// Sync analytics displays
+(function(){
+  function sync(){
+    var a=document.getElementById('visitCount'), b=document.getElementById('visitCount2');
+    var c=document.getElementById('todayCount'), d=document.getElementById('todayCount2');
+    if(a&&b) b.textContent=a.textContent;
+    if(c&&d) d.textContent=c.textContent;
+    var s=sessionStorage.getItem('pasiya_session_hits');
+    if(!s){s='1';sessionStorage.setItem('pasiya_session_hits','1');}
+    else {s=String(parseInt(s,10)||1);}
+    var el=document.getElementById('sessionCount'); if(el) el.textContent=s;
+  }
+  setTimeout(sync,800);
+  setTimeout(sync,2500);
+})();
+
+function pasteUrlPrompt(inputId){
+  var u=prompt('Paste URL to analyze:');
+  if(!u)return;
+  var i=document.getElementById(inputId);
+  if(!i)return;
+  i.value='Please deeply analyze this URL (purpose, pros, cons, risks, and related free tools on Pasiya Max): '+u.trim();
+  if(inputId==='n8nInp' && typeof sendN8n==='function') sendN8n();
+  else if(typeof send==='function') send();
+}
+
+function startVoice(inputId){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){alert('Voice not supported in this browser. Try Chrome.');return;}
+  var rec=new SR();
+  rec.lang='si-LK';
+  rec.interimResults=false;
+  rec.onresult=function(ev){
+    var t=ev.results[0][0].transcript;
+    var i=document.getElementById(inputId);
+    if(i){i.value=(i.value?i.value+' ':'')+t;}
+  };
+  rec.onerror=function(){try{rec.lang='en-US';rec.start()}catch(e){}};
+  try{rec.start()}catch(e){alert('Mic error: '+e.message)}
+}
+
+function handleImage(input, which){
+  var f=input.files&&input.files[0]; if(!f)return;
+  if(f.size>4*1024*1024){alert('Image too large (max ~4MB). Compress or use image URL.');input.value='';return;}
+  var reader=new FileReader();
+  reader.onload=function(){
+    var dataUrl=reader.result;
+    var prompt='User attached an image ('+f.name+', type '+f.type+'). Describe what you can infer and suggest free tools on Pasiya Max (Remove.bg, Canva, Leonardo, etc.). If you cannot see pixels, guide the user to also paste an image URL.';
+    // For n8n/core we send text note; full vision needs vision model endpoint
+    if(which==='n8n'){
+      var n=document.getElementById('n8nInp');
+      if(n){n.value=prompt+' [local image selected: '+f.name+']';}
+      addN8n('sys','// Image selected: '+f.name+' — message prepared. For full vision, also paste a public image URL.');
+      // show thumbnail in chat
+      var box=document.getElementById('n8nChat');
+      if(box){var im=document.createElement('div');im.className='msg user';im.innerHTML='<img src="'+dataUrl+'" alt="upload" style="max-width:220px;border-radius:6px;border:1px solid rgba(0,240,255,.3)">';box.appendChild(im);}
+    } else {
+      var i=document.getElementById('inp');
+      if(i){i.value=prompt+' [local image: '+f.name+']';}
+      var box=document.getElementById('chat');
+      if(box){var im=document.createElement('div');im.className='msg user';im.innerHTML='<img src="'+dataUrl+'" alt="upload" style="max-width:220px;border-radius:6px;border:1px solid rgba(0,240,255,.3)">';box.appendChild(im);}
+    }
+    input.value='';
+  };
+  reader.readAsDataURL(f);
+}
 
 loadConfig();upd();document.getElementById('apiKey').addEventListener('input',upd);
 </script>
