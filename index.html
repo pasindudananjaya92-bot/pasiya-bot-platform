@@ -506,6 +506,25 @@ RULES:
     <div id="ghStatus" class="gh-note"></div>
   </div>
 
+  
+  <div class="panel gh-form">
+    <h3>💾 FEEDBACK → MONGODB (VERCEL API)</h3>
+    <p class="desk-hint">Saves to MongoDB via Vercel <code>/api/submit</code> • Works best on pasiya-bot-platform.vercel.app</p>
+    <form id="mongoFeedbackForm">
+      <label>NAME</label>
+      <input name="name" id="mfName" placeholder="Your name" required>
+      <label>EMAIL (optional)</label>
+      <input name="email" id="mfEmail" type="email" placeholder="email@example.com">
+      <label>MESSAGE</label>
+      <textarea name="message" id="mfMessage" placeholder="Your feedback..." required></textarea>
+      <input type="hidden" name="source" value="pasiya-max-website">
+      <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-c" type="submit">SAVE TO DATABASE</button>
+      </div>
+    </form>
+    <div id="mfStatus" class="gh-note"></div>
+  </div>
+
   <div class="panel">
     <h3>⚙️ N8N WEBHOOK URLS (SAVE ONCE)</h3>
     <p class="desk-hint">Create 2 workflows in n8n (or one with Switch). Paste Production webhook URLs here. Saved in this browser only.</p>
@@ -867,6 +886,45 @@ function clearAllChats(){
   var a=document.getElementById('chat');if(a)a.innerHTML='<div class="msg sys">// Chat cleared</div>';
   var b=document.getElementById('n8nChat');if(b)b.innerHTML='<div class="msg sys">// n8n chat cleared</div>';
 }
+
+
+(function(){
+  var form=document.getElementById('mongoFeedbackForm');
+  if(!form)return;
+  form.addEventListener('submit', async function(e){
+    e.preventDefault();
+    var st=document.getElementById('mfStatus');
+    function status(msg,ok){if(st){st.textContent=msg;st.style.color=ok?'#00ff9d':'#ff2a6d'}}
+    var formData=new FormData(form);
+    var userData=Object.fromEntries(formData.entries());
+    userData.createdAt=new Date().toISOString();
+    userData.page=location.href;
+    // On GitHub Pages, call Vercel API; on Vercel use relative path
+    var apiBase = /github\.io$/i.test(location.hostname)
+      ? 'https://pasiya-bot-platform.vercel.app'
+      : '';
+    var url = apiBase + '/api/submit';
+    status('>> Saving to MongoDB...', true);
+    try{
+      var response=await fetch(url,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(userData)
+      });
+      var result={};
+      try{result=await response.json()}catch(_){result={error:'Invalid response'}}
+      if(response.ok && result.success){
+        status('>> Saved to MongoDB (feedback collection). ID: '+(result.id||'ok'), true);
+        form.reset();
+      } else {
+        status('>> Error: '+(result.error||result.message||('HTTP '+response.status)), false);
+      }
+    }catch(err){
+      console.error(err);
+      status('>> Backend connect failed. Use Vercel site or check MONGODB_URI + Redeploy.', false);
+    }
+  });
+})();
 
 loadConfig();upd();document.getElementById('apiKey').addEventListener('input',upd);
 </script>
