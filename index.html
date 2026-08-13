@@ -381,7 +381,7 @@ RULES:
   <p class="ss">Workflow + AI agent engines</p>
   <div class="grid">
     <a class="card" href="https://pasiyamax.app.n8n.cloud" target="_blank"><div class="ic">🔄</div><h3>N8N (MY CLOUD)</h3><p>pasiyamax.app.n8n.cloud</p><span class="tag">CONNECTED</span></a>
-    <a class="card" href="https://www.make.com" target="_blank"><div class="ic">🛠️</div><h3>MAKE</h3><p>Visual free plan</p></a>
+    <a class="card" href="https://www.make.com" target="_blank"><div class="ic">🛠️</div><h3>MAKE (CONNECTED)</h3><p>Webhook live</p><span class="tag">LIVE</span></a>
     <a class="card" href="https://zapier.com" target="_blank"><div class="ic">⚡</div><h3>ZAPIER</h3><p>Free automation</p></a>
     <a class="card" href="https://pipedream.com" target="_blank"><div class="ic">🚀</div><h3>PIPEDREAM</h3><p>Dev workflows</p></a>
     <a class="card" href="https://botpress.com" target="_blank"><div class="ic">🤖</div><h3>BOTPRESS</h3><p>Free chatbot builder</p></a>
@@ -508,8 +508,9 @@ RULES:
 
   
   <div class="panel gh-form">
-    <h3>💾 FEEDBACK → MONGODB (VERCEL API)</h3>
-    <p class="desk-hint">Saves to MongoDB via Vercel <code>/api/submit</code> • Works best on pasiya-bot-platform.vercel.app</p>
+    <h3>💾 POWER FEEDBACK // MONGO + MAKE + N8N</h3>
+    <p class="desk-hint">One submit → <b style="color:var(--g)">MongoDB</b> (Vercel API) + <b style="color:var(--c)">Make.com</b> webhook + <b style="color:var(--p)">n8n</b> issue hook (if saved)<br>
+    Make: <code>hook.eu1.make.com/…hwt3h</code></p>
     <form id="mongoFeedbackForm">
       <label>NAME</label>
       <input name="name" id="mfName" placeholder="Your name" required>
@@ -889,6 +890,7 @@ function clearAllChats(){
 
 
 (function(){
+  var MAKE_HOOK = 'https://hook.eu1.make.com/41k8qajbe6y1ctqgd1ewsutdko8hwt3h';
   var form=document.getElementById('mongoFeedbackForm');
   if(!form)return;
   form.addEventListener('submit', async function(e){
@@ -899,29 +901,58 @@ function clearAllChats(){
     var userData=Object.fromEntries(formData.entries());
     userData.createdAt=new Date().toISOString();
     userData.page=location.href;
-    // On GitHub Pages, call Vercel API; on Vercel use relative path
+    userData.source=userData.source||'pasiya-max-website';
+    userData.title = userData.title || ('Feedback from ' + (userData.name||'visitor'));
+    userData.body = '**Name:** '+(userData.name||'-')+'
+**Email:** '+(userData.email||'-')+'
+**Page:** '+userData.page+'
+
+'+(userData.message||'');
+
     var apiBase = /github\.io$/i.test(location.hostname)
       ? 'https://pasiya-bot-platform.vercel.app'
       : '';
-    var url = apiBase + '/api/submit';
-    status('>> Saving to MongoDB...', true);
+    var mongoUrl = apiBase + '/api/submit';
+
+    // n8n issue hook from localStorage if saved
+    var n8nIssue = '';
+    try{ n8nIssue=(JSON.parse(localStorage.getItem('pasiya_gh_hooks')||'{}').issue||'').trim(); }catch(_){}
+
+    status('>> Sending to MongoDB + Make + n8n...', true);
+    var results = {mongo:'…', make:'…', n8n:'…'};
+
+    // 1) MongoDB via Vercel
     try{
-      var response=await fetch(url,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(userData)
-      });
-      var result={};
-      try{result=await response.json()}catch(_){result={error:'Invalid response'}}
-      if(response.ok && result.success){
-        status('>> Saved to MongoDB (feedback collection). ID: '+(result.id||'ok'), true);
-        form.reset();
-      } else {
-        status('>> Error: '+(result.error||result.message||('HTTP '+response.status)), false);
-      }
-    }catch(err){
-      console.error(err);
-      status('>> Backend connect failed. Use Vercel site or check MONGODB_URI + Redeploy.', false);
+      var r1=await fetch(mongoUrl,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(userData)});
+      var j1={}; try{j1=await r1.json()}catch(_){}
+      results.mongo = (r1.ok && j1.success) ? ('OK'+(j1.id?(' id='+j1.id):'')) : ('FAIL '+(j1.error||r1.status));
+    }catch(err){ results.mongo = 'FAIL '+err.message; }
+
+    // 2) Make.com webhook
+    try{
+      var r2=await fetch(MAKE_HOOK,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(userData)});
+      results.make = r2.ok ? 'OK' : ('FAIL '+r2.status);
+    }catch(err){ results.make = 'FAIL '+err.message; }
+
+    // 3) n8n GitHub issue webhook (optional)
+    if(n8nIssue){
+      try{
+        if(typeof postToHook==='function'){
+          await postToHook(n8nIssue,{action:'create_issue',title:userData.title,body:userData.body,name:userData.name||'anonymous'});
+          results.n8n = 'OK';
+        } else {
+          var r3=await fetch(n8nIssue,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'create_issue',title:userData.title,body:userData.body})});
+          results.n8n = r3.ok ? 'OK' : ('FAIL '+r3.status);
+        }
+      }catch(err){ results.n8n = 'FAIL '+err.message; }
+    } else {
+      results.n8n = 'SKIP (save ISSUE WEBHOOK first)';
+    }
+
+    var ok = String(results.mongo).indexOf('OK')===0 || String(results.make).indexOf('OK')===0;
+    status('>> Mongo: '+results.mongo+' | Make: '+results.make+' | n8n: '+results.n8n, ok);
+    if(String(results.mongo).indexOf('OK')===0 || String(results.make).indexOf('OK')===0){
+      form.reset();
     }
   });
 })();
