@@ -759,6 +759,82 @@ RULES:
 
 
 
+
+<section id="page-map" class="page-view" data-page="map">
+  <div class="st">◆ HUB MAP // FULL MENU</div>
+  <p class="ss">One screen overview of every internal page in Pasiya Max OS</p>
+  <div class="workspace-grid">
+    <a href="#page-home" onclick="return goPage('home')"><b>DASHBOARD</b>Home</a>
+    <a href="#page-bots" onclick="return goPage('bots')"><b>AI BOTS</b>BOT CORE</a>
+    <a href="#page-n8n" onclick="return goPage('n8n')"><b>N8N BOT</b>No API key</a>
+    <a href="#page-desk" onclick="return goPage('desk')"><b>SERVICE DESK</b>Router</a>
+    <a href="#page-guides" onclick="return goPage('guides')"><b>GUIDES</b>How-to</a>
+    <a href="#page-bridge" onclick="return goPage('bridge')"><b>CONTROL BRIDGE</b>Why this hub</a>
+    <a href="#page-workspace" onclick="return goPage('workspace')"><b>WORKSPACE</b>Free services</a>
+    <a href="#page-feedback" onclick="return goPage('feedback')"><b>FEEDBACK</b>Mongo+Make+n8n</a>
+    <a href="#page-status" onclick="return goPage('status')"><b>STATUS</b>Health</a>
+    <a href="#page-faq" onclick="return goPage('faq')"><b>FAQ</b>Answers</a>
+    <a href="#page-templates" onclick="return goPage('templates')"><b>TEMPLATES</b>Copy prompts</a>
+    <a href="#page-changelog" onclick="return goPage('changelog')"><b>CHANGELOG</b>Waves</a>
+    <a href="#page-stats" onclick="return goPage('stats')"><b>ANALYTICS</b>Visits</a>
+    <a href="#page-settings" onclick="return goPage('settings')"><b>SETTINGS</b>Webhooks</a>
+    <a href="#page-support" onclick="return goPage('support')"><b>SUPPORT</b>Contact</a>
+    <a href="#page-legal" onclick="return goPage('legal')"><b>LEGAL</b>Disclaimer</a>
+  </div>
+</section>
+
+<section id="page-support" class="page-view" data-page="support">
+  <div class="st">◆ SUPPORT // REACH THE OPERATOR</div>
+  <p class="ss">For users of this free hub • Prefer in-app feedback when possible</p>
+  <div class="guide-card">
+    <h4>Fastest path</h4>
+    <ol class="desk-hint" style="margin-left:18px;line-height:1.7">
+      <li>Use <b>Power Feedback</b> (saves to Mongo + Make + optional n8n)</li>
+      <li>Or chat the issue to <b>N8N Public Bot</b></li>
+      <li>Star / watch the GitHub repo for updates</li>
+    </ol>
+  </div>
+  <div class="panel">
+    <h3>PUBLIC CHANNELS</h3>
+    <div class="follow-bar">
+      <a href="https://github.com/pasindudananjaya92-bot/pasiya-bot-platform" target="_blank" rel="noopener">GitHub Repo</a>
+      <a href="https://github.com/pasindudananjaya92-bot" target="_blank" rel="noopener">GitHub Profile</a>
+      <a href="https://www.instagram.com/pasindu5598" target="_blank" rel="noopener">Instagram</a>
+      <a href="https://youtube.com/@pasya" target="_blank" rel="noopener">YouTube</a>
+      <a href="#page-feedback" onclick="return goPage('feedback')">Power Feedback</a>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>BEFORE YOU ASK</h3>
+    <p class="desk-hint">Check <b>Status Board</b> + <b>Guides</b> + <b>FAQ</b>. Most “bot offline” issues are n8n not Published or webhook URL changed.</p>
+  </div>
+</section>
+
+<section id="page-legal" class="page-view" data-page="legal">
+  <div class="st">◆ LEGAL // DISCLAIMER</div>
+  <p class="ss">Short professional notice for an international free hub</p>
+  <div class="guide-card">
+    <h4>Service nature</h4>
+    <p class="desk-hint">Pasiya Max is a free information and routing hub. Third-party services (Groq, n8n, Make, Vercel, MongoDB, social networks, AI tools) have their own terms, limits and availability. We do not control those providers.</p>
+  </div>
+  <div class="guide-card">
+    <h4>No warranty</h4>
+    <p class="desk-hint">Provided “as is” without guarantees of uptime, accuracy, or fitness for a particular purpose. Free API limits may change without notice.</p>
+  </div>
+  <div class="guide-card">
+    <h4>Your responsibility</h4>
+    <p class="desk-hint">Do not upload illegal content. Do not share secrets in public chats. You are responsible for how you use generated code and automations.</p>
+  </div>
+  <div class="guide-card">
+    <h4>Privacy summary</h4>
+    <p class="desk-hint">Optional feedback forms may store messages in MongoDB and forward to Make/n8n. Browser keys stay local. See Settings privacy note.</p>
+  </div>
+  <div class="guide-card">
+    <h4>License</h4>
+    <p class="desk-hint">Project source is under MIT on GitHub unless stated otherwise in repo files.</p>
+  </div>
+</section>
+
 <section id="page-faq" class="page-view" data-page="faq">
   <div class="st">◆ FAQ // VISITOR QUESTIONS</div>
   <p class="ss">Clear answers so users stay and trust the hub</p>
@@ -810,7 +886,9 @@ https://pasiya-bot-platform.vercel.app</pre>
   <div class="guide-card"><h4>Wave 2 — Automation</h4><p class="desk-hint">n8n public webhook bot, Make.com bridge, Vercel API + MongoDB feedback, Power Feedback triple-send.</p></div>
   <div class="guide-card"><h4>Wave 3 — OS shell</h4><p class="desk-hint">Left menu, internal pages, Settings, Workspace, Control Bridge, taller chat, voice/photo helpers.</p></div>
   <div class="guide-card"><h4>Wave 4 — Trust & growth</h4><p class="desk-hint">Guides, Status Board, onboarding toast, share hub, privacy note, analytics/follow.</p></div>
-  <div class="guide-card"><h4>Wave 5 — This upload</h4><p class="desk-hint">FAQ + Templates + Changelog pages for visitors and operators.</p></div>
+  <div class="guide-card"><h4>Wave 5 — FAQ / Templates / Changelog</h4><p class="desk-hint">Visitor trust pages + copy templates.</p></div>
+  <div class="guide-card"><h4>Wave 6 — SETUP PHASE COMPLETE</h4><p class="desk-hint">Hub Map, Support, Legal added. Core OS shell + guides + status + automation bridges ready. Next phase: elevate the App experience & branding to international product quality.</p></div>
+  <div class="guide-card"><h4>Wave 5 note</h4><p class="desk-hint">FAQ + Templates + Changelog pages for visitors and operators.</p></div>
   <div class="follow-bar">
     <a href="#page-bridge" onclick="return goPage('bridge')">Control Bridge</a>
     <a href="#page-faq" onclick="return goPage('faq')">FAQ</a>
@@ -1548,6 +1626,9 @@ function handleImage(input, which){
 
 
 const PAGE_MAP = {
+  map: ['page-map'],
+  support: ['page-support'],
+  legal: ['page-legal'],
   faq: ['page-faq'],
   templates: ['page-templates'],
   changelog: ['page-changelog'],
@@ -1652,7 +1733,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 document.addEventListener('DOMContentLoaded', function(){
   
-  ['page-faq','page-templates','page-changelog'].forEach(function(id){
+  ['page-faq','page-templates','page-changelog','page-map','page-support','page-legal'].forEach(function(id){
     var n=document.getElementById(id); if(n){n.classList.add('page-view'); n.classList.remove('active');}
   });
 
