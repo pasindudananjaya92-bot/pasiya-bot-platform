@@ -276,6 +276,7 @@ footer a{color:var(--c);text-decoration:none}
   <a class="nav-item" href="#page-bots" data-page="bots" onclick="return goPage('bots',this)"><span class="ic">🤖</span> AI Bots</a>
   <a class="nav-item" href="#page-n8n" data-page="n8n" onclick="return goPage('n8n',this)"><span class="ic">⚡</span> N8N Public Bot</a>
   <a class="nav-item" href="#page-desk" data-page="desk" onclick="return goPage('desk',this)"><span class="ic">🎛</span> Service Desk</a>
+  <a class="nav-item" href="#page-status" data-page="status" onclick="return goPage('status',this)"><span class="ic">📡</span> Status Board</a>
   <a class="nav-item" href="#page-guides" data-page="guides" onclick="return goPage('guides',this)"><span class="ic">📖</span> Guides</a>
   <a class="nav-item" href="#page-bridge" data-page="bridge" onclick="return goPage('bridge',this)"><span class="ic">◈</span> Control Bridge</a>
   <a class="nav-item" href="#page-workspace" data-page="workspace" onclick="return goPage('workspace',this)"><span class="ic">🧩</span> Free Workspace</a>
@@ -755,6 +756,49 @@ RULES:
 
 
 
+
+
+<section id="page-status" class="page-view" data-page="status">
+  <div class="st">◆ STATUS BOARD // WHAT IS LIVE</div>
+  <p class="ss">Operator checklist • Visitors can see which free bridges this hub uses</p>
+  <div class="panel">
+    <h3>✅ CORE STACK</h3>
+    <table class="svc-table">
+      <thead><tr><th>Service</th><th>Role</th><th>Where secret lives</th></tr></thead>
+      <tbody>
+        <tr><td>GitHub Pages / Vercel</td><td>Public website host</td><td>No secrets in HTML</td></tr>
+        <tr><td>N8N Public Bot</td><td>Chat without user API key</td><td>Groq key inside n8n only</td></tr>
+        <tr><td>BOT CORE</td><td>User brings free Groq/Gemini key</td><td>Browser localStorage only</td></tr>
+        <tr><td>Vercel /api/submit</td><td>Feedback API</td><td>MONGODB_URI in Vercel env</td></tr>
+        <tr><td>Make.com webhook</td><td>Automation bridge</td><td>Scenario on Make side</td></tr>
+        <tr><td>MongoDB Atlas</td><td>Feedback storage</td><td>Atlas + Vercel env</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="panel">
+    <h3>🧪 QUICK HEALTH CHECKS</h3>
+    <ol class="desk-hint" style="margin-left:18px;line-height:1.8">
+      <li>Open <b>N8N Public Bot</b> → send “hi” → expect reply</li>
+      <li>Open <b>Power Feedback</b> → submit test → Mongo / Make status OK</li>
+      <li>Menu → <b>Guides</b> → follow operator steps if something fails</li>
+      <li>Menu → <b>Settings</b> → confirm webhook URLs saved</li>
+      <li>Hard refresh after every GitHub upload</li>
+    </ol>
+  </div>
+  <div class="panel">
+    <h3>🔐 REMEMBER</h3>
+    <p class="desk-hint">
+      Private GitHub repo ≠ safe to put tokens in index.html.
+      The live website is still public — browser users can view all front-end code.
+      Tokens belong in n8n credentials and Vercel Environment Variables only.
+    </p>
+  </div>
+  <div class="follow-bar">
+    <a href="#page-guides" onclick="return goPage('guides')">Open Guides</a>
+    <a href="#page-n8n" onclick="return goPage('n8n')">Test Public Bot</a>
+    <a href="#page-settings" onclick="return goPage('settings')">Settings</a>
+  </div>
+</section>
 
 <section id="page-guides" class="page-view" data-page="guides">
   <div class="st">◆ GUIDES // HOW TO CONNECT FREE SERVICES</div>
@@ -1444,6 +1488,7 @@ function handleImage(input, which){
 
 
 const PAGE_MAP = {
+  status: ['page-status'],
   guides: ['page-guides'],
   bridge: ['page-bridge'],
   home: ['home','hero',null],
@@ -1543,6 +1588,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
 document.addEventListener('DOMContentLoaded', function(){
+  var stpage=document.getElementById('page-status'); if(stpage){stpage.classList.add('page-view'); stpage.classList.remove('active');}
   var gd=document.getElementById('page-guides'); if(gd){gd.classList.add('page-view'); gd.classList.remove('active');}
   var br=document.getElementById('page-bridge'); if(br){br.classList.add('page-view'); br.classList.remove('active');}
   var w=document.getElementById('page-workspace');
