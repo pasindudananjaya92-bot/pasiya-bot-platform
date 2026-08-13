@@ -383,7 +383,7 @@ footer a{color:var(--c);text-decoration:none}
   <div class="panel">
     <h3>🚀 APP ROADMAP (NEXT)</h3>
     <ol class="desk-hint" style="margin-left:18px;line-height:1.8">
-      <li><b>Now:</b> Identity, logo, trust signals, clear FAQ/Legal/Status</li>
+      <li><b>Now:</b> Identity, logo, trust, Account gate (Supabase Google/Email)</li>
       <li><b>Next:</b> Deeper service wizards (one free tool at a time)</li>
       <li><b>Then:</b> Optional accounts (Supabase) only if needed</li>
       <li><b>Always:</b> Secrets only in n8n/Vercel — never in front-end code</li>
@@ -1194,6 +1194,26 @@ https://pasiya-bot-platform.vercel.app</pre>
       <li>Post to Instagram / YouTube / WhatsApp / Telegram channels</li>
       <li>Tell users: public bot = no key; Workspace = free tools map</li>
       <li>Open <b>Control Bridge</b> page to explain the model</li>
+    </ol>
+  </div>
+
+  
+  <div class="guide-card">
+    <span class="tag">OPERATOR — AUTH</span>
+    <h4>7. SUPABASE + GOOGLE LOGIN (FREE)</h4>
+    <ol>
+      <li>Go to <a href="https://supabase.com" target="_blank" rel="noopener" style="color:var(--c)">supabase.com</a> → New project (free)</li>
+      <li>Project Settings → API → copy <b>Project URL</b> and <b>anon public</b> key</li>
+      <li>Authentication → Providers → enable <b>Google</b> and <b>Email</b></li>
+      <li>Google Cloud Console → OAuth client → Authorized redirect URIs:
+        <br><code>https://YOUR_PROJECT.supabase.co/auth/v1/callback</code></li>
+      <li>Supabase Auth → URL config → Site URL:
+        <br><code>https://pasiya-bot-platform.vercel.app</code>
+        <br>Redirect: same + <code>https://pasindudananjaya92-bot.github.io/pasiya-max-ai/</code> if needed</li>
+      <li>This website → Menu → <b>Settings</b> → paste URL + anon key → SAVE</li>
+      <li>Menu → <b>Account</b> → Continue with Google / Email magic link</li>
+      <li>After login → <b>My Space</b> personal link appears</li>
+      <li>Never put <b>service_role</b> key in the website</li>
     </ol>
   </div>
 
