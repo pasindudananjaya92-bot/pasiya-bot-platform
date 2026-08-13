@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PASIYA MAX // ULTIMATE FREE AI COMMAND CENTER</title>
+<title>PASIYA NEXUS // Free AI Control App by Pasiya Max</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#00f0ff">
 <meta property="og:title" content="PASIYA MAX // Free AI Command Center">
@@ -248,6 +248,32 @@ textarea{min-height:70px;resize:vertical}
 .guide-card ol li{margin:4px 0}
 .guide-card .tag{display:inline-block;font-size:9px;padding:2px 6px;border-radius:3px;border:1px solid rgba(0,255,157,.3);color:#00ff9d;margin-bottom:8px;font-family:'Share Tech Mono',monospace}
 
+
+.app-hero{
+  position:relative;overflow:hidden;border:1px solid rgba(0,240,255,.28);border-radius:14px;
+  padding:28px 18px 22px;margin:10px 0 18px;
+  background:
+    radial-gradient(ellipse at 20% 0%,rgba(0,240,255,.18),transparent 50%),
+    radial-gradient(ellipse at 80% 100%,rgba(176,38,255,.16),transparent 45%),
+    linear-gradient(160deg,#03060f,#071018 40%,#0a0520);
+  text-align:center}
+.app-hero .logo-xl{width:72px;height:72px;margin:0 auto 12px;filter:drop-shadow(0 0 16px rgba(0,240,255,.55))}
+.app-hero .app-name{font-family:'Orbitron',sans-serif;font-size:clamp(22px,5vw,34px);font-weight:800;
+  letter-spacing:2px;background:linear-gradient(90deg,#00f0ff,#b026ff,#00ff9d);-webkit-background-clip:text;
+  background-clip:text;color:transparent;text-shadow:none}
+.app-hero .app-sub{font-family:'Share Tech Mono',monospace;font-size:12px;color:var(--m);margin-top:8px;line-height:1.6}
+.app-badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px}
+.app-badges span{
+  font-family:'Share Tech Mono',monospace;font-size:10px;padding:5px 10px;border-radius:20px;
+  border:1px solid rgba(0,240,255,.3);color:var(--c);background:rgba(0,240,255,.06)}
+.trust-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:12px}
+.trust-grid .t{
+  border:1px solid rgba(0,255,157,.2);border-radius:8px;padding:12px;text-align:center;
+  background:rgba(0,255,157,.04)}
+.trust-grid .t .n{font-family:'Orbitron',sans-serif;font-size:18px;color:#00ff9d}
+.trust-grid .t .l{font-size:10px;color:var(--m);margin-top:4px;font-family:'Share Tech Mono',monospace}
+.header .logo{display:flex;align-items:center;gap:8px}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -272,7 +298,8 @@ footer a{color:var(--c);text-decoration:none}
   <div class="nav-title">PASIYA OS // MENU</div>
   <input class="side-search" id="sideSearch" placeholder="Filter menu..." oninput="filterMenu(this.value)">
   <div class="kbd-help">Tip: Menu opens internal pages • Mobile: ☰ button</div>
-  <a class="nav-item active" href="#page-home" data-page="home" onclick="return goPage('home',this)"><span class="ic">⌂</span> Dashboard</a>
+  <a class="nav-item active" href="#page-app" data-page="app" onclick="return goPage('app',this)"><span class="ic">✦</span> Pasiya Nexus</a>
+  <a class="nav-item" href="#page-home" data-page="home" onclick="return goPage('home',this)"><span class="ic">⌂</span> Dashboard</a>
   <a class="nav-item" href="#page-bots" data-page="bots" onclick="return goPage('bots',this)"><span class="ic">🤖</span> AI Bots</a>
   <a class="nav-item" href="#page-n8n" data-page="n8n" onclick="return goPage('n8n',this)"><span class="ic">⚡</span> N8N Public Bot</a>
   <a class="nav-item" href="#page-desk" data-page="desk" onclick="return goPage('desk',this)"><span class="ic">🎛</span> Service Desk</a>
@@ -293,6 +320,76 @@ footer a{color:var(--c);text-decoration:none}
   <a class="nav-item" href="https://pasiya-bot-platform.vercel.app" target="_blank" rel="noopener"><span class="ic">▲</span> Vercel Live</a>
 </aside>
 <div class="app-shell"><div class="main-stage" id="mainStage">
+
+<section id="page-app" class="page-view active" data-page="app">
+  <div class="app-hero">
+    <svg class="logo-xl" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-label="Pasiya Nexus"><defs><linearGradient id="nx" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#00f0ff"/><stop offset=".5" stop-color="#b026ff"/><stop offset="1" stop-color="#00ff9d"/></linearGradient></defs><rect x="3" y="3" width="58" height="58" rx="14" fill="#010308" stroke="url(#nx)" stroke-width="2.5"/><path d="M16 44V20h12c7 0 12 4 12 12s-5 12-12 12H16z" fill="none" stroke="#00f0ff" stroke-width="2.8" stroke-linejoin="round"/><circle cx="46" cy="32" r="10" fill="none" stroke="#b026ff" stroke-width="2.8"/><circle cx="46" cy="32" r="3.5" fill="#00ff9d"/><path d="M8 8l4 2M56 56l-4-2M56 8l-4 2M8 56l4-2" stroke="url(#nx)" stroke-width="1.2" opacity=".7"/></svg>
+    <div class="app-name">PASIYA NEXUS</div>
+    <div class="app-sub">
+      Free AI Control App inside Pasiya Max Hub<br>
+      Public bots • Automation bridges • Global free-tool routing<br>
+      Built for trust, clarity, and daily use — not a dead landing page
+    </div>
+    <div class="app-badges">
+      <span>100% FREE HUB</span>
+      <span>NO KEY PUBLIC BOT</span>
+      <span>N8N + MAKE + MONGO</span>
+      <span>OPEN SOURCE MIT</span>
+      <span>INTERNATIONAL READY</span>
+    </div>
+    <div class="follow-bar" style="margin-top:16px">
+      <a href="#page-n8n" onclick="return goPage('n8n')">Open Public Bot</a>
+      <a href="#page-bridge" onclick="return goPage('bridge')">Control Bridge</a>
+      <a href="#page-map" onclick="return goPage('map')">Hub Map</a>
+      <a href="#" onclick="shareHub();return false;">Share App Link</a>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>📊 TRUST SIGNALS</h3>
+    <div class="trust-grid">
+      <div class="t"><div class="n" id="trustVisits">—</div><div class="l">TOTAL VISITS</div></div>
+      <div class="t"><div class="n" id="trustToday">—</div><div class="l">TODAY (DEVICE)</div></div>
+      <div class="t"><div class="n">LIVE</div><div class="l">SYSTEM STATUS</div></div>
+      <div class="t"><div class="n">FREE</div><div class="l">ACCESS MODEL</div></div>
+    </div>
+    <p class="desk-hint" style="margin-top:10px">Visits help show real usage. For public credibility, keep Status Board green and Guides up to date.</p>
+  </div>
+
+  <div class="panel">
+    <h3>◈ WHAT THIS APP IS</h3>
+    <p class="desk-hint" style="line-height:1.75">
+      <b style="color:var(--c)">PASIYA NEXUS</b> is the product name for the interactive control layer of this website.
+      It is not a paid mobile store app yet — it is a progressive web command center that runs on Vercel/GitHub Pages,
+      powered by free infrastructure you already connected (Groq via n8n, Make, MongoDB, free AI tool links).
+      Goal: people return daily, institutions trust the transparency, and partners can recommend the hub without fear.
+    </p>
+  </div>
+
+  <div class="panel">
+    <h3>🚀 APP ROADMAP (NEXT)</h3>
+    <ol class="desk-hint" style="margin-left:18px;line-height:1.8">
+      <li><b>Now:</b> Identity, logo, trust signals, clear FAQ/Legal/Status</li>
+      <li><b>Next:</b> Deeper service wizards (one free tool at a time)</li>
+      <li><b>Then:</b> Optional accounts (Supabase) only if needed</li>
+      <li><b>Always:</b> Secrets only in n8n/Vercel — never in front-end code</li>
+      <li><b>Growth:</b> Share hub, star GitHub, publish Changelog waves</li>
+    </ol>
+  </div>
+
+  <div class="panel">
+    <h3>🔗 RUNS ON YOUR FREE STACK</h3>
+    <div class="workspace-grid">
+      <a href="#page-n8n" onclick="return goPage('n8n')"><b>N8N BOT</b>Live chat</a>
+      <a href="#page-workspace" onclick="return goPage('workspace')"><b>WORKSPACE</b>Tool launch</a>
+      <a href="#page-feedback" onclick="return goPage('feedback')"><b>FEEDBACK</b>Data bridge</a>
+      <a href="#page-status" onclick="return goPage('status')"><b>STATUS</b>Health</a>
+      <a href="#page-legal" onclick="return goPage('legal')"><b>LEGAL</b>Trust text</a>
+      <a href="https://github.com/pasindudananjaya92-bot/pasiya-bot-platform" target="_blank" rel="noopener"><b>GITHUB</b>Source</a>
+    </div>
+  </div>
+</section>
+
 
 
 <header>
@@ -1626,6 +1723,7 @@ function handleImage(input, which){
 
 
 const PAGE_MAP = {
+  app: ['page-app'],
   map: ['page-map'],
   support: ['page-support'],
   legal: ['page-legal'],
@@ -1727,7 +1825,7 @@ document.addEventListener('DOMContentLoaded', function(){
   loadSettingsUI();
   if(localStorage.getItem('pasiya_chat_tall')==='0') setChatTall(false);
   var hash=location.hash||'';
-  if(hash.indexOf('page-')===1) goPage(hash.replace('#page-',''));
+  if(hash.indexOf('page-')===1) goPage(hash.replace('#page-','')); else goPage('app');
 });
 
 
@@ -1805,6 +1903,17 @@ function sendTpl(id){
   var i=document.getElementById('n8nInp');
   if(i){i.value=t; setTimeout(function(){ if(typeof sendN8n==='function') sendN8n(); }, 300);}
 }
+
+
+function syncTrust(){
+  var v=document.getElementById('visitCount')||document.getElementById('visitCount2');
+  var t=document.getElementById('todayCount')||document.getElementById('todayCount2');
+  var a=document.getElementById('trustVisits'), b=document.getElementById('trustToday');
+  if(a&&v) a.textContent=v.textContent||'—';
+  if(b&&t) b.textContent=t.textContent||'—';
+}
+setTimeout(syncTrust,1000);
+setTimeout(syncTrust,3000);
 
 loadConfig();upd();document.getElementById('apiKey').addEventListener('input',upd);
 </script>
