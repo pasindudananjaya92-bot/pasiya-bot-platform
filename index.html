@@ -758,6 +758,66 @@ RULES:
 
 
 
+
+<section id="page-faq" class="page-view" data-page="faq">
+  <div class="st">◆ FAQ // VISITOR QUESTIONS</div>
+  <p class="ss">Clear answers so users stay and trust the hub</p>
+  <div class="guide-card"><h4>Is this free?</h4><p class="desk-hint">Yes. The hub is free to open. Some tools need free signups (Groq, n8n, Make, Vercel). We do not charge for access to this site.</p></div>
+  <div class="guide-card"><h4>Do I need an API key to chat?</h4><p class="desk-hint"><b>No</b> for N8N Public Bot. <b>Yes</b> only if you use BOT CORE with your own free Groq/Gemini key (saved in your browser).</p></div>
+  <div class="guide-card"><h4>Is my key safe?</h4><p class="desk-hint">BOT CORE keys stay in localStorage on your device. Never paste keys into public group chats or GitHub. Operator secrets stay in n8n/Vercel env — not in the website HTML.</p></div>
+  <div class="guide-card"><h4>What is Control Bridge?</h4><p class="desk-hint">This site is a middle layer: one cyber UI that routes you to free AI, automation and hosting tools, plus the owner’s connected n8n / Make / Mongo stack.</p></div>
+  <div class="guide-card"><h4>Something failed — what now?</h4><p class="desk-hint">Open <b>Status Board</b> and <b>Guides</b>. Check n8n Published, Vercel redeploy, Make scenario ON. Send feedback via Power Feedback form.</p></div>
+  <div class="follow-bar">
+    <a href="#page-status" onclick="return goPage('status')">Status Board</a>
+    <a href="#page-guides" onclick="return goPage('guides')">Guides</a>
+    <a href="#page-n8n" onclick="return goPage('n8n')">Public Bot</a>
+  </div>
+</section>
+
+<section id="page-templates" class="page-view" data-page="templates">
+  <div class="st">◆ TEMPLATES // COPY & USE</div>
+  <p class="ss">Ready prompts for bots and sharing • One-tap copy</p>
+  <div class="guide-card">
+    <h4>Public bot — site help</h4>
+    <pre id="tpl1" style="white-space:pre-wrap;font-size:11px;color:#b8f0ff;margin:8px 0">Explain all sections of Pasiya Max in simple language. I am a new visitor. Sinhala OK.</pre>
+    <button class="btn btn-c" type="button" onclick="copyTpl('tpl1')">COPY</button>
+    <button class="btn btn-g" type="button" onclick="sendTpl('tpl1')">SEND TO N8N BOT</button>
+  </div>
+  <div class="guide-card">
+    <h4>Public bot — free stack advice</h4>
+    <pre id="tpl2" style="white-space:pre-wrap;font-size:11px;color:#b8f0ff;margin:8px 0">I want a free AI bot online 24/7 with no credit card. Give step-by-step using only free tools listed on this hub.</pre>
+    <button class="btn btn-c" type="button" onclick="copyTpl('tpl2')">COPY</button>
+    <button class="btn btn-g" type="button" onclick="sendTpl('tpl2')">SEND TO N8N BOT</button>
+  </div>
+  <div class="guide-card">
+    <h4>Share message (social)</h4>
+    <pre id="tpl3" style="white-space:pre-wrap;font-size:11px;color:#b8f0ff;margin:8px 0">Free AI command center — public bot (no API key), tools map, automation bridge.
+https://pasiya-bot-platform.vercel.app</pre>
+    <button class="btn btn-c" type="button" onclick="copyTpl('tpl3')">COPY</button>
+    <button class="btn btn-g" type="button" onclick="shareHub()">SHARE HUB</button>
+  </div>
+  <div class="guide-card">
+    <h4>URL analysis</h4>
+    <pre id="tpl4" style="white-space:pre-wrap;font-size:11px;color:#b8f0ff;margin:8px 0">Analyze this URL in detail (purpose, pros, cons, risks) and relate it to free tools on Pasiya Max: </pre>
+    <button class="btn btn-c" type="button" onclick="copyTpl('tpl4')">COPY</button>
+  </div>
+</section>
+
+<section id="page-changelog" class="page-view" data-page="changelog">
+  <div class="st">◆ CHANGELOG // WHAT WE BUILT</div>
+  <p class="ss">Growth log • Shows this is an evolving product, not a dead page</p>
+  <div class="guide-card"><h4>Wave 1 — Core hub</h4><p class="desk-hint">Single-page cyber UI, free tool directories, social nexus, BOT CORE + localStorage keys.</p></div>
+  <div class="guide-card"><h4>Wave 2 — Automation</h4><p class="desk-hint">n8n public webhook bot, Make.com bridge, Vercel API + MongoDB feedback, Power Feedback triple-send.</p></div>
+  <div class="guide-card"><h4>Wave 3 — OS shell</h4><p class="desk-hint">Left menu, internal pages, Settings, Workspace, Control Bridge, taller chat, voice/photo helpers.</p></div>
+  <div class="guide-card"><h4>Wave 4 — Trust & growth</h4><p class="desk-hint">Guides, Status Board, onboarding toast, share hub, privacy note, analytics/follow.</p></div>
+  <div class="guide-card"><h4>Wave 5 — This upload</h4><p class="desk-hint">FAQ + Templates + Changelog pages for visitors and operators.</p></div>
+  <div class="follow-bar">
+    <a href="#page-bridge" onclick="return goPage('bridge')">Control Bridge</a>
+    <a href="#page-faq" onclick="return goPage('faq')">FAQ</a>
+    <a href="#page-templates" onclick="return goPage('templates')">Templates</a>
+  </div>
+</section>
+
 <section id="page-status" class="page-view" data-page="status">
   <div class="st">◆ STATUS BOARD // WHAT IS LIVE</div>
   <p class="ss">Operator checklist • Visitors can see which free bridges this hub uses</p>
@@ -1488,6 +1548,9 @@ function handleImage(input, which){
 
 
 const PAGE_MAP = {
+  faq: ['page-faq'],
+  templates: ['page-templates'],
+  changelog: ['page-changelog'],
   status: ['page-status'],
   guides: ['page-guides'],
   bridge: ['page-bridge'],
@@ -1588,6 +1651,11 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
 document.addEventListener('DOMContentLoaded', function(){
+  
+  ['page-faq','page-templates','page-changelog'].forEach(function(id){
+    var n=document.getElementById(id); if(n){n.classList.add('page-view'); n.classList.remove('active');}
+  });
+
   var stpage=document.getElementById('page-status'); if(stpage){stpage.classList.add('page-view'); stpage.classList.remove('active');}
   var gd=document.getElementById('page-guides'); if(gd){gd.classList.add('page-view'); gd.classList.remove('active');}
   var br=document.getElementById('page-bridge'); if(br){br.classList.add('page-view'); br.classList.remove('active');}
@@ -1639,6 +1707,22 @@ function shareHub(){
   if(navigator.share){ navigator.share({title:'Pasiya Max', text:text, url:url}).catch(function(){}); }
   else if(navigator.clipboard){ navigator.clipboard.writeText(url); alert('Hub link copied:\\n'+url); }
   else { prompt('Copy hub link:', url); }
+}
+
+
+function copyTpl(id){
+  var el=document.getElementById(id); if(!el)return;
+  var t=el.innerText||el.textContent||'';
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(function(){alert('Copied')}).catch(function(){prompt('Copy:',t)});
+  } else prompt('Copy:', t);
+}
+function sendTpl(id){
+  var el=document.getElementById(id); if(!el)return;
+  var t=(el.innerText||el.textContent||'').trim();
+  goPage('n8n');
+  var i=document.getElementById('n8nInp');
+  if(i){i.value=t; setTimeout(function(){ if(typeof sendN8n==='function') sendN8n(); }, 300);}
 }
 
 loadConfig();upd();document.getElementById('apiKey').addEventListener('input',upd);
