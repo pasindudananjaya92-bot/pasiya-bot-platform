@@ -218,6 +218,29 @@ textarea{min-height:70px;resize:vertical}
 .svc-table th,.svc-table td{border:1px solid rgba(0,240,255,.15);padding:8px;text-align:left}
 .svc-table th{color:var(--c);background:rgba(0,240,255,.06)}
 
+
+.skip-link{position:absolute;left:-999px;top:0;background:var(--c);color:#000;padding:8px 12px;z-index:100001;font-weight:700}
+.skip-link:focus{left:8px;top:8px}
+.toast{
+  position:fixed;bottom:24px;right:16px;z-index:10000;max-width:300px;
+  background:rgba(6,12,24,.95);border:1px solid rgba(0,240,255,.35);border-radius:8px;
+  padding:12px 14px;font-size:12px;color:var(--t);box-shadow:0 0 24px rgba(0,240,255,.2);
+  display:none}
+.toast.show{display:block;animation:fadeIn .3s ease}
+.toast button{margin-top:8px}
+.top-btn{
+  position:fixed;bottom:18px;right:18px;z-index:940;width:44px;height:44px;border-radius:50%;
+  border:1px solid rgba(0,240,255,.4);background:rgba(0,20,40,.9);color:var(--c);cursor:pointer;
+  font-size:18px;display:none;align-items:center;justify-content:center}
+.top-btn.show{display:flex}
+.status-pill{
+  font-family:'Share Tech Mono',monospace;font-size:10px;padding:3px 8px;border-radius:10px;
+  border:1px solid rgba(0,255,157,.35);color:#00ff9d;margin-left:8px}
+.side-search{width:100%;margin:6px 0 10px;padding:8px 10px;border-radius:6px;
+  border:1px solid rgba(0,240,255,.25);background:rgba(0,0,0,.35);color:var(--t);
+  font-family:'Share Tech Mono',monospace;font-size:11px}
+.kbd-help{font-size:10px;color:var(--m);padding:8px 10px;line-height:1.5}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -240,6 +263,8 @@ footer a{color:var(--c);text-decoration:none}
 <div class="side-overlay" id="sideOverlay" onclick="toggleSide(false)"></div>
 <aside class="side-nav" id="sideNav">
   <div class="nav-title">PASIYA OS // MENU</div>
+  <input class="side-search" id="sideSearch" placeholder="Filter menu..." oninput="filterMenu(this.value)">
+  <div class="kbd-help">Tip: Menu opens internal pages • Mobile: ☰ button</div>
   <a class="nav-item active" href="#page-home" data-page="home" onclick="return goPage('home',this)"><span class="ic">⌂</span> Dashboard</a>
   <a class="nav-item" href="#page-bots" data-page="bots" onclick="return goPage('bots',this)"><span class="ic">🤖</span> AI Bots</a>
   <a class="nav-item" href="#page-n8n" data-page="n8n" onclick="return goPage('n8n',this)"><span class="ic">⚡</span> N8N Public Bot</a>
@@ -250,6 +275,7 @@ footer a{color:var(--c);text-decoration:none}
   <a class="nav-item" href="#page-social" data-page="social" onclick="return goPage('social',this)"><span class="ic">🌐</span> Social & Web</a>
   <a class="nav-item" href="#page-stats" data-page="stats" onclick="return goPage('stats',this)"><span class="ic">📊</span> Analytics</a>
   <a class="nav-item" href="#page-settings" data-page="settings" onclick="return goPage('settings',this)"><span class="ic">⚙</span> Settings</a>
+  <a class="nav-item" href="#" onclick="shareHub();return false;"><span class="ic">📤</span> Share Hub Link</a>
   <div class="nav-title" style="margin-top:14px">QUICK LAUNCH</div>
   <a class="nav-item" href="https://console.groq.com" target="_blank" rel="noopener"><span class="ic">🔑</span> Groq Keys</a>
   <a class="nav-item" href="https://pasiyamax.app.n8n.cloud" target="_blank" rel="noopener"><span class="ic">☁</span> n8n Cloud</a>
@@ -866,6 +892,15 @@ RULES:
     </div>
     <p class="desk-hint">Tall chat helps long bot replies. Default is ON.</p>
   </div>
+  
+  <div class="panel">
+    <h3>🔒 PRIVACY (SHORT)</h3>
+    <p class="desk-hint">
+      API keys stay in your browser localStorage. Feedback may go to MongoDB / Make / n8n if you submit forms.
+      No passwords are stored in this static front-end. Do not paste secrets into public chats.
+    </p>
+  </div>
+
   <div class="panel">
     <h3>ℹ ABOUT THIS OS</h3>
     <p class="desk-hint">Pasiya Max OS-style shell • Left menu opens internal pages without leaving the site • Free stack: Groq, n8n, Make, Vercel, MongoDB, GitHub Pages</p>
@@ -874,6 +909,7 @@ RULES:
 
 <!-- end main-stage --></div><!-- end app-shell -->
 <footer>
+<p style="text-align:center;font-size:11px;color:var(--m);padding:8px;font-family:'Share Tech Mono',monospace">Pasiya Max // free AI control bridge • Grow step by step • Not “just another site”</p>
   <div style="color:var(--g);margin-bottom:6px">PASIYA MAX // ULTIMATE FREE AI COMMAND CENTER</div>
   <div>100% Free Services • No Credit Card • Animated Cyber Interface</div>
   <div style="margin-top:12px"><a href="https://github.com/pasindudananjaya92-bot">GITHUB</a> · <a href="https://pasindudananjaya.substack.com">BLOG</a> · <a href="https://youtube.com/@pasya">YOUTUBE</a></div>
@@ -1419,7 +1455,59 @@ document.addEventListener('DOMContentLoaded', function(){
   if(s){s.classList.add('page-view'); s.classList.remove('active');}
 });
 
+
+function filterMenu(q){
+  q=(q||'').toLowerCase();
+  document.querySelectorAll('#sideNav a.nav-item').forEach(function(a){
+    var t=(a.textContent||'').toLowerCase();
+    a.style.display = !q || t.indexOf(q)>=0 ? '' : 'none';
+  });
+}
+function dismissToast(){
+  var t=document.getElementById('onboardToast');
+  if(t) t.classList.remove('show');
+  localStorage.setItem('pasiya_onboard_v1','1');
+}
+function showOnboard(){
+  if(localStorage.getItem('pasiya_onboard_v1')) return;
+  var t=document.getElementById('onboardToast');
+  if(t) t.classList.add('show');
+}
+window.addEventListener('scroll', function(){
+  var b=document.getElementById('topBtn');
+  if(!b)return;
+  b.classList.toggle('show', window.scrollY>400);
+});
+function updateNetPill(){
+  var p=document.getElementById('netPill');
+  if(!p)return;
+  if(navigator.onLine){p.textContent='ONLINE';p.style.color='#00ff9d';p.style.borderColor='rgba(0,255,157,.35)';}
+  else {p.textContent='OFFLINE';p.style.color='#ff2a6d';p.style.borderColor='rgba(255,42,109,.45)';}
+}
+window.addEventListener('online', updateNetPill);
+window.addEventListener('offline', updateNetPill);
+document.addEventListener('DOMContentLoaded', function(){
+  updateNetPill();
+  setTimeout(showOnboard, 1600);
+});
+// Share hub
+function shareHub(){
+  var url='https://pasiya-bot-platform.vercel.app';
+  var text='Pasiya Max — free AI command center (bots, n8n, tools)';
+  if(navigator.share){ navigator.share({title:'Pasiya Max', text:text, url:url}).catch(function(){}); }
+  else if(navigator.clipboard){ navigator.clipboard.writeText(url); alert('Hub link copied:\\n'+url); }
+  else { prompt('Copy hub link:', url); }
+}
+
 loadConfig();upd();document.getElementById('apiKey').addEventListener('input',upd);
 </script>
+
+<div class="toast" id="onboardToast">
+  <b style="color:var(--c)">Welcome to Pasiya Max</b><br>
+  Use the left menu (or ☰) → <b>Control Bridge</b> for the full free-service map. Public chat needs no API key.
+  <br><button class="btn btn-c" type="button" onclick="dismissToast()">GOT IT</button>
+</div>
+<button type="button" class="top-btn" id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Top">↑</button>
+
 </body>
 </html>
