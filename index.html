@@ -288,6 +288,42 @@ textarea{min-height:70px;resize:vertical}
   background:rgba(0,0,0,.35);color:var(--t);font-family:'Share Tech Mono',monospace}
 .user-chip{font-family:'Share Tech Mono',monospace;font-size:10px;color:#00ff9d;margin-left:6px}
 
+
+/* ===== SIDE AI AGENT + LIVE VISITORS ===== */
+.side-agent{
+  margin-top:12px;padding:10px;border:1px solid rgba(0,240,255,.28);border-radius:10px;
+  background:linear-gradient(165deg,rgba(0,240,255,.08),rgba(176,38,255,.06),rgba(0,0,0,.35));
+}
+.side-agent h4{
+  font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:1.5px;color:var(--c);
+  margin:0 0 6px;display:flex;align-items:center;gap:6px}
+.side-agent h4 .pulse{
+  width:8px;height:8px;border-radius:50%;background:#00ff9d;
+  box-shadow:0 0 8px #00ff9d;animation:agentPulse 1.6s ease infinite}
+@keyframes agentPulse{0%,100%{opacity:1}50%{opacity:.35}}
+.side-agent .agent-hint{font-size:10px;color:var(--m);line-height:1.4;margin-bottom:8px;font-family:'Share Tech Mono',monospace}
+.side-agent .agent-chat{
+  height:140px;overflow-y:auto;border:1px solid rgba(0,240,255,.15);border-radius:6px;
+  padding:6px;margin-bottom:6px;background:rgba(0,0,0,.35);font-size:11px}
+.side-agent .am{margin:4px 0;padding:5px 7px;border-radius:5px;line-height:1.4}
+.side-agent .am.user{background:rgba(176,38,255,.15);color:#e0d0ff}
+.side-agent .am.bot{background:rgba(0,240,255,.1);color:#b8f0ff}
+.side-agent .am.sys{color:var(--m);font-size:10px}
+.side-agent .agent-row{display:flex;gap:4px}
+.side-agent .agent-row input{
+  flex:1;min-width:0;padding:7px 8px;border-radius:5px;border:1px solid rgba(0,240,255,.25);
+  background:rgba(0,0,0,.4);color:var(--t);font-size:11px;font-family:'Share Tech Mono',monospace}
+.side-agent .agent-row button{
+  padding:7px 10px;border-radius:5px;border:1px solid rgba(0,240,255,.4);
+  background:rgba(0,240,255,.15);color:var(--c);font-size:10px;cursor:pointer;font-family:'Orbitron',sans-serif}
+.side-agent .agent-row button:hover{background:rgba(0,240,255,.28)}
+.side-visitors{
+  margin-top:10px;padding:8px 10px;border:1px solid rgba(0,255,157,.25);border-radius:8px;
+  background:rgba(0,255,157,.05);font-family:'Share Tech Mono',monospace}
+.side-visitors .sv-title{font-size:9px;color:#00ff9d;letter-spacing:1px;margin-bottom:4px}
+.side-visitors .sv-row{display:flex;justify-content:space-between;font-size:11px;color:var(--t);margin:2px 0}
+.side-visitors .sv-row b{color:#00ff9d}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -341,6 +377,25 @@ footer a{color:var(--c);text-decoration:none}
   <a class="nav-item" href="https://pasiyamax.app.n8n.cloud" target="_blank" rel="noopener"><span class="ic">☁</span> n8n Cloud</a>
   <a class="nav-item" href="https://www.make.com" target="_blank" rel="noopener"><span class="ic">🔗</span> Make.com</a>
   <a class="nav-item" href="https://pasiya-bot-platform.vercel.app" target="_blank" rel="noopener"><span class="ic">▲</span> Vercel Live</a>
+
+  <div class="side-visitors" id="sideVisitors">
+    <div class="sv-title">◉ LIVE VISITORS</div>
+    <div class="sv-row"><span>Total</span><b id="sideVisitTotal">—</b></div>
+    <div class="sv-row"><span>Today</span><b id="sideVisitToday">—</b></div>
+    <div class="sv-row"><span>Session</span><b id="sideVisitSession">1</b></div>
+  </div>
+  <div class="side-agent" id="sideAgent">
+    <h4><span class="pulse"></span> BUILD AGENT</h4>
+    <div class="agent-hint">Ask in English how to connect free tools (n8n, Make, Groq, Vercel…). Uses your public N8N bot when available.</div>
+    <div class="agent-chat" id="agentChat">
+      <div class="am sys">// Build Agent online — ask: "How do I get a free Groq API key?"</div>
+    </div>
+    <div class="agent-row">
+      <input id="agentInp" placeholder="Type help request..." onkeydown="if(event.key==='Enter'){sendAgent();}">
+      <button type="button" onclick="sendAgent()">GO</button>
+    </div>
+  </div>
+
 </aside>
 <div class="app-shell"><div class="main-stage" id="mainStage">
 
@@ -2202,6 +2257,69 @@ loadSettingsUI = function(){
   if(el5) el5.value=st.sbAnon||'';
 };
 document.addEventListener('DOMContentLoaded', function(){ initAuth(); });
+
+
+function agentAdd(role, text){
+  var box=document.getElementById('agentChat'); if(!box)return;
+  var d=document.createElement('div'); d.className='am '+role;
+  d.textContent=text; box.appendChild(d); box.scrollTop=box.scrollHeight;
+}
+function getAgentWebhook(){
+  try{
+    var st=JSON.parse(localStorage.getItem('pasiya_settings')||'{}');
+    if(st.n8nChat) return st.n8nChat.trim();
+  }catch(e){}
+  if(typeof N8N_WEBHOOK!=='undefined' && N8N_WEBHOOK) return N8N_WEBHOOK;
+  return 'https://pasiyamax.app.n8n.cloud/webhook/edd1abad-75c2-46d0-8081-950f29803003';
+}
+async function sendAgent(){
+  var inp=document.getElementById('agentInp'); if(!inp)return;
+  var msg=(inp.value||'').trim(); if(!msg)return;
+  inp.value='';
+  agentAdd('user', msg);
+  agentAdd('sys', '// thinking via free N8N bridge...');
+  var system = 'You are PASIYA BUILD AGENT on pasiya-bot-platform. Help users connect FREE services only: Groq, n8n, Make, Vercel, MongoDB Atlas free, GitHub Pages, Supabase free, Replit free. Give short clear English steps. If user needs webhook/API setup, list exact clicks. Never ask for paid plans. Prefer Sinhala if user writes Sinhala.';
+  var url=getAgentWebhook();
+  try{
+    var res=await fetch(url,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chatInput:msg, message:msg, query:msg, system:system, source:'side-build-agent'})
+    });
+    var text=await res.text();
+    var reply=text;
+    try{
+      var j=JSON.parse(text);
+      reply = j.output||j.text||j.message||j.reply||j.data||(typeof j==='string'?j:JSON.stringify(j));
+      if(typeof reply!=='string') reply=JSON.stringify(reply);
+    }catch(e){}
+    // remove thinking line
+    var box=document.getElementById('agentChat');
+    if(box){ var sys=box.querySelectorAll('.am.sys'); if(sys.length) sys[sys.length-1].remove(); }
+    agentAdd('bot', (reply||'No reply — check n8n workflow is Published.').slice(0,2000));
+  }catch(err){
+    var box=document.getElementById('agentChat');
+    if(box){ var sys=box.querySelectorAll('.am.sys'); if(sys.length) sys[sys.length-1].remove(); }
+    agentAdd('bot', 'Bridge offline. Open N8N Public Bot page or publish n8n webhook. Error: '+err.message);
+  }
+}
+function syncSideVisitors(){
+  function copy(fromId, toId){
+    var a=document.getElementById(fromId), b=document.getElementById(toId);
+    if(a&&b) b.textContent=a.textContent||'—';
+  }
+  copy('visitCount','sideVisitTotal');
+  copy('visitCount2','sideVisitTotal');
+  copy('todayCount','sideVisitToday');
+  copy('todayCount2','sideVisitToday');
+  var s=sessionStorage.getItem('pasiya_session_hits')||'1';
+  var el=document.getElementById('sideVisitSession'); if(el) el.textContent=s;
+  // also bump session display from existing logic
+  var sc=document.getElementById('sessionCount');
+  if(sc&&el) el.textContent=sc.textContent||s;
+}
+setInterval(syncSideVisitors, 2000);
+document.addEventListener('DOMContentLoaded', function(){ setTimeout(syncSideVisitors, 500); setTimeout(syncSideVisitors, 2000); });
 
 try{loadConfig();}catch(e){console.warn(e);}
 try{upd();}catch(e){console.warn(e);}
