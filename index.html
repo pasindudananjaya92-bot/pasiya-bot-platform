@@ -918,6 +918,49 @@ body.side-open .main-stage{
   /* keep content usable */
 }
 
+
+/* ===== MENU DEFAULT OPEN v5 ===== */
+aside.side-nav#sideNav{
+  transform:translateX(0) !important;
+  pointer-events:auto !important;
+  z-index:10040 !important;
+}
+aside.side-nav#sideNav:not(.open):not(.force-open){
+  /* when user closed, .closed class */
+}
+aside.side-nav#sideNav.closed{
+  transform:translateX(-105%) !important;
+  pointer-events:none !important;
+}
+aside.side-nav#sideNav.open,
+aside.side-nav#sideNav.force-open{
+  transform:translateX(0) !important;
+  pointer-events:auto !important;
+}
+body.side-open .main-stage{
+  margin-left:min(280px,86vw);
+  width:calc(100% - min(280px, 86vw));
+}
+@media(max-width:900px){
+  body.side-open .main-stage{margin-left:0 !important;width:100% !important}
+}
+.pc-mode-bar{
+  display:flex !important;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:10px 0 14px;
+  padding:10px;
+  border:1px solid rgba(245,197,66,.35);
+  border-radius:10px;
+  background:rgba(245,197,66,.08);
+}
+.pc-mode-bar button{
+  flex:1;
+  min-width:140px;
+  padding:12px 10px !important;
+  font-size:11px !important;
+}
+
 </style>
 </head>
 <body>
@@ -975,7 +1018,7 @@ body.side-open .main-stage{
   </div>
 </aside>
 
-<aside class="side-nav" id="sideNav">
+<aside class="side-nav open force-open" id="sideNav">
   <button type="button" class="nav-close" onclick="toggleSide(false)" aria-label="Close menu">&lt;</button>
   <div class="nav-title">PASIYA OS // MENU</div>
   <a class="nav-item" href="#home" onclick="return goHomeDash()"><span class="ic">⌂</span> Home Dashboard</a>
@@ -3160,19 +3203,31 @@ const PAGE_MAP = {
 function toggleSide(force){
   var n=document.getElementById('sideNav');
   var o=document.getElementById('sideOverlay');
-  if(!n){ console.warn('sideNav missing'); return; }
-  var open = force===false ? false : force===true ? true : !n.classList.contains('open');
+  if(!n) return;
+  var currentlyOpen = n.classList.contains('open') || (n.classList.contains('force-open') && !n.classList.contains('closed'));
+  var open = force===false ? false : force===true ? true : !currentlyOpen;
   if(open){
-    n.classList.remove('closing');
     n.classList.add('open');
+    n.classList.add('force-open');
+    n.classList.remove('closed');
+    n.classList.remove('closing');
     document.body.classList.add('side-open');
     if(o){ o.classList.add('open'); o.style.display='block'; }
   } else {
     n.classList.remove('open');
-    n.classList.add('closing');
+    n.classList.remove('force-open');
+    n.classList.add('closed');
     document.body.classList.remove('side-open');
-    if(o){ o.classList.remove('open'); }
-    setTimeout(function(){ n.classList.remove('closing'); }, 350);
+    if(o){ o.classList.remove('open'); o.style.display='none'; }
+  }
+}
+function ensureMenuDefaultOpen(){
+  var n=document.getElementById('sideNav');
+  if(!n) return;
+  if(localStorage.getItem('pasiya_menu_closed')==='1'){
+    toggleSide(false);
+  } else {
+    toggleSide(true);
   }
 }
 
