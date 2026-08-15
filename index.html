@@ -738,6 +738,21 @@ body.accent-violet{--c:#c77dff;--p:#7b2cbf}
 html.user-reduce-motion *{animation-duration:.01ms !important;transition-duration:.01ms !important}
 body.compact-nav .side-nav a.nav-item{padding:7px 10px;margin:2px 0;font-size:12px}
 
+
+/* ===== PILOT PATCH v1 ===== */
+.home-chip{
+  position:fixed;top:10px;right:12px;z-index:960;
+  padding:8px 12px;border-radius:20px;font-size:11px;cursor:pointer;
+  border:1px solid rgba(0,240,255,.4);background:rgba(4,12,24,.92);color:var(--c);
+  font-family:'Orbitron',sans-serif;letter-spacing:1px;
+  box-shadow:0 0 14px rgba(0,240,255,.2)}
+.home-chip:hover{background:rgba(0,240,255,.15)}
+body.agent-open .home-chip{right:min(430px,94vw)}
+.net-dot{
+  display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;
+  background:#00ff9d;box-shadow:0 0 8px #00ff9d}
+.net-dot.off{background:#ff2a6d;box-shadow:0 0 8px #ff2a6d}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -800,6 +815,7 @@ footer a{color:var(--c);text-decoration:none}
 <aside class="side-nav" id="sideNav">
   <button type="button" class="nav-close" onclick="toggleSide(false)" aria-label="Close menu">&lt;</button>
   <div class="nav-title">PASIYA OS // MENU</div>
+  <a class="nav-item" href="#home" onclick="return goHomeDash()"><span class="ic">⌂</span> Home Dashboard</a>
   <hr class="gold-line">
   <input class="side-search" id="sideSearch" placeholder="Filter menu..." oninput="filterMenu(this.value)">
   <div class="kbd-help">Tip: Menu opens internal pages • Mobile: ☰ button</div>
@@ -3649,6 +3665,43 @@ document.addEventListener('DOMContentLoaded', function(){
   }catch(e){}
 });
 
+
+function goHomeDash(){
+  try{
+    document.body.classList.remove('spa-mode');
+    document.querySelectorAll('.page-view').forEach(function(p){ p.classList.remove('active'); });
+    // show page-app overview if exists without forcing desktop
+    var ap=document.getElementById('page-app');
+    if(ap){ ap.classList.add('active'); document.body.classList.add('spa-mode'); }
+    window.scrollTo(0,0);
+    try{ history.replaceState(null,'','#home'); }catch(e){}
+    if(typeof showToast==='function') showToast('Home dashboard');
+  }catch(e){ console.warn(e); }
+  return false;
+}
+function updateNetDot(){
+  var d=document.getElementById('netDot');
+  if(!d) return;
+  if(navigator.onLine){ d.classList.remove('off'); d.title='Online'; }
+  else { d.classList.add('off'); d.title='Offline'; }
+}
+document.addEventListener('DOMContentLoaded', function(){
+  var chip=document.getElementById('homeChip');
+  if(chip && !document.getElementById('netDot')){
+    var s=document.createElement('span'); s.id='netDot'; s.className='net-dot'; s.title='Online';
+    chip.prepend(s);
+  }
+  updateNetDot();
+  window.addEventListener('online', updateNetDot);
+  window.addEventListener('offline', updateNetDot);
+});
+// Ensure CMD has Home
+if(typeof CMD_ITEMS!=='undefined' && CMD_ITEMS && !CMD_ITEMS.some(function(x){return x.t==='Home dashboard';})){
+  CMD_ITEMS.unshift({t:'Home dashboard', a:function(){ goHomeDash(); }});
+  CMD_ITEMS.push({t:'Free Cloud services', a:function(){ goPage('freecloud'); }});
+  CMD_ITEMS.push({t:'Virtual PC desktop', a:function(){ goPage('desktop'); }});
+}
+
 try{loadConfig();}catch(e){console.warn(e);}
 try{upd();}catch(e){console.warn(e);}
 try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hide'); __p.style.display='none';}}catch(e){}document.getElementById('apiKey').addEventListener('input',upd);
@@ -3694,5 +3747,6 @@ try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hid
   <div class="vkbd" id="vkbd"></div>
 </div>
 
+<button type="button" class="home-chip" id="homeChip" onclick="goHomeDash()" title="Main dashboard">HOME</button>
 </body>
 </html>
