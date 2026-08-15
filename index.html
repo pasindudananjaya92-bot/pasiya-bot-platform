@@ -18,6 +18,9 @@
 <meta property="og:site_name" content="Pasiya Max">
 <meta name="robots" content="index,follow">
 <meta name="author" content="Pasindu Dananjaya">
+<link rel="dns-prefetch" href="https://pasiyamax.app.n8n.cloud">
+<link rel="dns-prefetch" href="https://hook.eu1.make.com">
+<link rel="dns-prefetch" href="https://eof67cbcwtmde2i.m.pipedream.net">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <script type="application/ld+json">
@@ -705,6 +708,28 @@ body.side-open .main-stage{margin-left:248px;width:calc(100% - 248px)}
 .spa-mode .legacy-block{display:none !important}
 .page-view{display:none}
 .page-view.active{display:block !important}
+
+
+/* ===== PERF + STABILITY v1 ===== */
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  html{scroll-behavior:auto}
+}
+.side-nav,.agent-drawer,.vdesk,.page-view.active{
+  will-change: transform, opacity;
+  contain: layout style;
+}
+.page-view{content-visibility:auto;contain-intrinsic-size:1px 800px}
+.page-view.active{content-visibility:visible}
+img,svg{max-width:100%;height:auto}
+.main-stage{min-height:50vh}
+.toast-perf{
+  position:fixed;bottom:72px;left:50%;transform:translateX(-50%);z-index:99999;
+  padding:10px 16px;border-radius:8px;background:rgba(0,20,40,.95);
+  border:1px solid rgba(0,240,255,.4);color:var(--c);font-size:12px;
+  opacity:0;pointer-events:none;transition:opacity .25s}
+.toast-perf.show{opacity:1}
 
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
@@ -1501,6 +1526,9 @@ RULES:
       <button type="button" onclick="openVWin('terminal')"><span class="ic">⬛</span>Term</button>
       <button type="button" onclick="openVWin('notes')"><span class="ic">📄</span>Notes</button>
       <button type="button" onclick="toggleVKbd()"><span class="ic">⌨️</span>Keys</button>
+      <button type="button" onclick="openVWin('calc')"><span class="ic">🔢</span>Calc</button>
+      <button type="button" onclick="shareHub()"><span class="ic">📤</span>Share</button>
+      <button type="button" onclick="goPage('status')"><span class="ic">📡</span>Status</button>
       <button type="button" onclick="goPage('learn')"><span class="ic">📚</span>Learn</button>
       <button type="button" onclick="goPage('apibridge')"><span class="ic">🔌</span>API</button>
     </div>
@@ -1521,6 +1549,13 @@ Commands: help | agent | tools | clear
 </pre>
         <input id="vtermIn" style="width:100%;margin-top:8px;padding:8px;border-radius:6px;border:1px solid rgba(0,240,255,.3);background:#000;color:#0f0;font-family:monospace"
           onkeydown="if(event.key==='Enter'){vtermExec();}">
+      </div>
+    </div>
+    <div class="vwin" id="vwin-calc">
+      <div class="vwin-h"><span>CALCULATOR</span><button type="button" onclick="closeVWin('calc')">&lt;</button></div>
+      <div class="vwin-b">
+        <input id="vcalc" readonly style="width:100%;padding:12px;font-size:20px;text-align:right;background:#000;color:#0f0;border:1px solid rgba(0,240,255,.3);border-radius:8px;margin-bottom:8px">
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px" id="vcalcPad"></div>
       </div>
     </div>
     <div class="vwin" id="vwin-notes">
@@ -3281,8 +3316,9 @@ if(_agentAddFull){
 }
 
 
+
 function openVWin(name){
-  ['files','terminal','notes'].forEach(function(n){
+  ['files','terminal','notes','calc'].forEach(function(n){
     var w=document.getElementById('vwin-'+n);
     if(w) w.classList.toggle('open', n===name);
   });
@@ -3290,7 +3326,31 @@ function openVWin(name){
     var t=document.getElementById('vnotes');
     if(t) t.value=localStorage.getItem('pasiya_vnotes')||'';
   }
+  if(name==='calc') buildCalc();
 }
+function buildCalc(){
+  var pad=document.getElementById('vcalcPad'); if(!pad||pad.dataset.ready)return;
+  var keys=['7','8','9','/','4','5','6','*','1','2','3','-','0','.','=','+','C'];
+  pad.innerHTML='';
+  keys.forEach(function(k){
+    var b=document.createElement('button'); b.type='button'; b.textContent=k;
+    b.style.cssText='padding:12px;border-radius:6px;border:1px solid rgba(0,240,255,.3);background:#111;color:#dff;cursor:pointer';
+    b.onclick=function(){ calcKey(k); };
+    pad.appendChild(b);
+  });
+  pad.dataset.ready='1';
+}
+function calcKey(k){
+  var el=document.getElementById('vcalc'); if(!el)return;
+  if(k==='C'){ el.value=''; return; }
+  if(k==='='){
+    try{ el.value=String(Function('"use strict";return('+el.value+')')()); }
+    catch(e){ el.value='Error'; }
+    return;
+  }
+  el.value=(el.value||'')+k;
+}
+
 function closeVWin(name){
   var w=document.getElementById('vwin-'+name);
   if(w) w.classList.remove('open');
@@ -3368,6 +3428,39 @@ function vtermExec(){
   else pre.textContent += '\\nunknown — try help';
   pre.scrollTop=pre.scrollHeight;
 }
+
+
+function showToast(msg){
+  var t=document.getElementById('perfToast');
+  if(!t){
+    t=document.createElement('div'); t.id='perfToast'; t.className='toast-perf'; document.body.appendChild(t);
+  }
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2200);
+}
+// Service worker (static shell only — never caches API/webhooks)
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('./sw.js').then(function(){
+      /* offline shell ready */
+    }).catch(function(){});
+  });
+}
+// Hash deep-link on load
+document.addEventListener('DOMContentLoaded', function(){
+  try{
+    var h=(location.hash||'').replace(/^#/,'').replace(/^page-/,'');
+    if(h && typeof goPage==='function'){
+      var map={agent:'desktop',app:'desktop',pc:'desktop',desktop:'desktop',
+        toolkit:'toolkit',webstudio:'webstudio',autostudio:'autostudio',
+        creator:'creator',deploy:'deploy',promptlab:'promptlab',
+        learn:'learn',apibridge:'apibridge',settings:'settings',
+        guides:'guides',feedback:'feedback',n8n:'n8n',status:'status',faq:'faq'};
+      if(map[h]) setTimeout(function(){ goPage(map[h]); }, 100);
+    }
+  }catch(e){}
+});
+// Safer openAgentPanel scroll lock optional
 
 try{loadConfig();}catch(e){console.warn(e);}
 try{upd();}catch(e){console.warn(e);}
