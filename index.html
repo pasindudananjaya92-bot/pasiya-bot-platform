@@ -29,7 +29,7 @@
 <meta name="description" content="The most complete free AI Bot Builder + Free Tools universe. Animated cyber interface.">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--c:#00f0ff;--p:#b026ff;--g:#00ff9d;--r:#ff2a6d;--bg:#010308;--t:#d0e0f0;--m:#6a7a8a}
+:root{--c:#00f0ff;--p:#b026ff;--g:#00ff9d;--r:#ff2a6d;--gold:#f5c542;--gold2:#ff8c2a;--bg:#010308;--t:#d0e0f0;--m:#6a7a8a}
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--t);font-family:'Rajdhani',sans-serif;overflow-x:hidden;min-height:100vh}
@@ -206,7 +206,7 @@ textarea{min-height:70px;resize:vertical}
   .side-nav{transform:translateX(-105%)}
   .side-nav.open{transform:translateX(0)}
   .main-stage{margin-left:0;width:100%}
-  .menu-toggle{display:flex;align-items:center;justify-content:center}
+  .menu-toggle.cyber-orb{display:flex!important;align-items:center;justify-content:center}
   .side-overlay.open{display:block}
 }
 .settings-grid{display:grid;gap:12px}
@@ -466,6 +466,86 @@ body.agent-open .pro-fab-row{display:none}
 .typing-dots span:nth-child(3){animation-delay:.4s}
 @keyframes td{0%,100%{opacity:.3}50%{opacity:1}}
 
+
+/* ===== DIGITAL MENU MAGIC + GOLD ===== */
+.menu-toggle.cyber-orb{
+  display:flex !important;align-items:center;justify-content:center;
+  position:fixed;top:10px;left:12px;z-index:960;
+  width:46px;height:46px;border-radius:14px;padding:0;cursor:pointer;
+  border:1px solid rgba(245,197,66,.45);
+  background:radial-gradient(circle at 30% 30%,rgba(0,240,255,.25),rgba(176,38,255,.2),rgba(1,3,8,.95));
+  box-shadow:0 0 18px rgba(0,240,255,.35),0 0 8px rgba(245,197,66,.25);
+  overflow:hidden}
+.menu-toggle.cyber-orb::before{
+  content:'';position:absolute;inset:-40%;background:conic-gradient(from 0deg,#00f0ff,#b026ff,#f5c542,#00ff9d,#00f0ff);
+  animation:orbSpin 4s linear infinite;opacity:.55}
+.menu-toggle.cyber-orb::after{
+  content:'';position:absolute;inset:2px;border-radius:12px;background:#030812;z-index:0}
+.menu-toggle.cyber-orb .orb-core{
+  position:relative;z-index:1;width:22px;height:22px}
+.menu-toggle.cyber-orb svg{width:22px;height:22px;display:block}
+@keyframes orbSpin{to{transform:rotate(360deg)}}
+body.side-open .menu-toggle.cyber-orb{
+  border-color:rgba(0,255,157,.6);box-shadow:0 0 22px rgba(0,255,157,.4)}
+
+.side-nav{
+  transform:translateY(-12px) translateX(-105%);
+  opacity:0;pointer-events:none;
+  transition:transform .45s cubic-bezier(.22,1,.36,1),opacity .35s ease,box-shadow .4s ease;
+  border-right:1px solid transparent;
+  background:
+    linear-gradient(180deg,rgba(4,10,22,.97),rgba(8,4,18,.97)) padding-box,
+    linear-gradient(180deg,#00f0ff,#b026ff,#f5c542,#00ff9d,#00f0ff) border-box;
+  border-right-width:2px;
+  box-shadow:none}
+.side-nav.open{
+  transform:translateY(0) translateX(0);
+  opacity:1;pointer-events:auto;
+  box-shadow:8px 0 40px rgba(0,240,255,.18),0 0 60px rgba(245,197,66,.08);
+  animation:navGlowPulse 3s ease-in-out infinite}
+.side-nav.closing{
+  transform:translateY(18px) translateX(-105%);
+  opacity:0}
+@keyframes navGlowPulse{
+  0%,100%{box-shadow:8px 0 36px rgba(0,240,255,.15),0 0 40px rgba(245,197,66,.06)}
+  50%{box-shadow:10px 0 48px rgba(176,38,255,.28),0 0 55px rgba(0,255,157,.12)}
+}
+.side-nav .nav-title{
+  background:linear-gradient(90deg,var(--c),var(--gold),var(--p));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  font-weight:800}
+.main-stage{transition:margin .4s ease}
+body.side-open .main-stage{margin-left:248px;width:calc(100% - 248px)}
+@media(max-width:900px){
+  body.side-open .main-stage{margin-left:0;width:100%}
+}
+.side-overlay.open{opacity:1;pointer-events:auto}
+.side-overlay{
+  transition:opacity .35s ease}
+
+/* App digital open */
+#page-app.page-view.active .app-shell-dash,
+#page-app.page-view.active .app-hero{
+  animation:appRise .55s cubic-bezier(.22,1,.36,1)}
+@keyframes appRise{
+  from{opacity:0;transform:translateY(24px) scale(.97);filter:blur(4px)}
+  to{opacity:1;transform:none;filter:none}
+}
+
+/* Agent bubble polish + tools */
+.agent-drawer .ad-msg.bot{border-radius:4px 14px 14px 14px}
+.agent-drawer .ad-msg.user{border-radius:14px 4px 14px 14px}
+.agent-drawer .ad-tools{display:flex;gap:6px;padding:0 12px 8px}
+.agent-drawer .ad-tools button,.agent-drawer .ad-tools label{
+  font-size:10px;padding:6px 8px;border-radius:6px;border:1px solid rgba(245,197,66,.3);
+  background:rgba(245,197,66,.08);color:var(--gold);cursor:pointer;font-family:'Orbitron',sans-serif}
+.ad-msg .copy-mini{
+  margin-top:6px;font-size:10px;padding:3px 8px;border-radius:4px;cursor:pointer;
+  border:1px solid rgba(0,240,255,.3);background:rgba(0,240,255,.08);color:var(--c)}
+.gold-line{
+  height:2px;margin:10px 0;border:none;
+  background:linear-gradient(90deg,transparent,var(--gold),var(--c),var(--p),transparent)}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -493,7 +573,15 @@ footer a{color:var(--c);text-decoration:none}
 <div class="bg-glow g2"></div>
 <div class="scanlines"></div>
 
-<button class="menu-toggle" type="button" onclick="toggleSide()" aria-label="Menu">☰</button>
+<button class="menu-toggle cyber-orb" type="button" onclick="toggleSide()" aria-label="Open navigation matrix" title="Navigation">
+  <span class="orb-core" aria-hidden="true">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M12 3 L20 8 L20 16 L12 21 L4 16 L4 8 Z" stroke="#00f0ff" stroke-width="1.4"/>
+      <path d="M12 7 L16 9.5 L16 14.5 L12 17 L8 14.5 L8 9.5 Z" stroke="#f5c542" stroke-width="1.2"/>
+      <circle cx="12" cy="12" r="2" fill="#00ff9d"/>
+    </svg>
+  </span>
+</button>
 <div class="side-overlay" id="sideOverlay" onclick="toggleSide(false)"></div>
 
 <aside class="agent-drawer" id="agentDrawer" role="dialog" aria-modal="true" aria-label="Pasiya AI Agent" aria-label="AI Agent panel">
@@ -505,6 +593,12 @@ footer a{color:var(--c);text-decoration:none}
   <div class="ad-chat" id="agentChatFull">
     <div class="ad-msg sys">// Agent ready — ask how to connect Groq, n8n, Make, Vercel, or build a free site</div>
   </div>
+  
+  <div class="ad-tools">
+    <button type="button" id="agentVoiceBtn" onclick="agentVoice()">VOICE</button>
+    <label>PHOTO<input type="file" id="agentPhoto" accept="image/*" hidden onchange="agentPhoto(this)"></label>
+    <button type="button" onclick="agentCopyLast()">COPY LAST</button>
+  </div>
   <div class="ad-foot">
     <textarea id="agentInpFull" placeholder="Message the agent..." rows="2" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAgentFull();}"></textarea>
     <button type="button" onclick="sendAgentFull()">SEND</button>
@@ -513,6 +607,7 @@ footer a{color:var(--c);text-decoration:none}
 
 <aside class="side-nav" id="sideNav">
   <div class="nav-title">PASIYA OS // MENU</div>
+  <hr class="gold-line">
   <input class="side-search" id="sideSearch" placeholder="Filter menu..." oninput="filterMenu(this.value)">
   <div class="kbd-help">Tip: Menu opens internal pages • Mobile: ☰ button</div>
   <a class="nav-item active" href="#page-app" data-page="app" onclick="return goPage('app',this)"><span class="ic">✦</span> Pasiya Nexus</a>
@@ -2289,7 +2384,16 @@ function toggleSide(force){
   var o=document.getElementById('sideOverlay');
   if(!n)return;
   var open = force===false ? false : force===true ? true : !n.classList.contains('open');
-  n.classList.toggle('open', open);
+  if(open){
+    n.classList.remove('closing');
+    n.classList.add('open');
+    document.body.classList.add('side-open');
+  } else {
+    n.classList.add('closing');
+    n.classList.remove('open');
+    document.body.classList.remove('side-open');
+    setTimeout(function(){ n.classList.remove('closing'); }, 450);
+  }
   if(o) o.classList.toggle('open', open);
 }
 function goPage(name, el){
@@ -2795,6 +2899,55 @@ document.addEventListener('keydown', function(e){
 
 window.addEventListener('error', function(e){ try{ console.warn('Pasiya hub error', e.message); }catch(_){}});
 window.addEventListener('unhandledrejection', function(e){ try{ console.warn('Pasiya hub promise', e.reason); }catch(_){}});
+
+
+function agentVoice(){
+  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ agentAddFull('sys','// Voice not supported on this browser'); return; }
+  var r=new SR(); r.lang='en-US'; r.interimResults=false;
+  agentAddFull('sys','// Listening...');
+  r.onresult=function(e){
+    var t=e.results[0][0].transcript;
+    var box=document.getElementById('agentChatFull');
+    if(box){ var sys=box.querySelectorAll('.ad-msg.sys'); if(sys.length) sys[sys.length-1].remove(); }
+    var inp=document.getElementById('agentInpFull'); if(inp) inp.value=t;
+    sendAgentFull();
+  };
+  r.onerror=function(){ agentAddFull('sys','// Voice error'); };
+  r.start();
+}
+function agentPhoto(input){
+  var f=input.files&&input.files[0]; if(!f)return;
+  agentAddFull('user','[Photo] '+f.name+' ('+Math.round(f.size/1024)+' KB) — describe this for free-tool workflow');
+  var inp=document.getElementById('agentInpFull');
+  if(inp) inp.value='I uploaded an image named '+f.name+'. Suggest free tools on this hub to edit/publish it.';
+  input.value='';
+  sendAgentFull();
+}
+function agentCopyLast(){
+  var box=document.getElementById('agentChatFull'); if(!box)return;
+  var bots=box.querySelectorAll('.ad-msg.bot');
+  if(!bots.length){ agentAddFull('sys','// No bot reply to copy'); return; }
+  var t=bots[bots.length-1].innerText||bots[bots.length-1].textContent;
+  if(navigator.clipboard) navigator.clipboard.writeText(t).then(function(){ agentAddFull('sys','// Copied last reply'); });
+  else prompt('Copy:', t);
+}
+// enhance agentAddFull for bot copy button
+var _agentAddFull = typeof agentAddFull==='function' ? agentAddFull : null;
+if(_agentAddFull){
+  agentAddFull = function(role, text){
+    var box=document.getElementById('agentChatFull'); if(!box)return;
+    var d=document.createElement('div'); d.className='ad-msg '+role;
+    d.textContent=text;
+    if(role==='bot'){
+      var b=document.createElement('button'); b.type='button'; b.className='copy-mini'; b.textContent='COPY';
+      b.onclick=function(){ if(navigator.clipboard) navigator.clipboard.writeText(text); };
+      d.appendChild(document.createElement('br'));
+      d.appendChild(b);
+    }
+    box.appendChild(d); box.scrollTop=box.scrollHeight;
+  };
+}
 
 try{loadConfig();}catch(e){console.warn(e);}
 try{upd();}catch(e){console.warn(e);}
