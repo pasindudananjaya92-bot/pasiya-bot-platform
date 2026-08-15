@@ -409,6 +409,26 @@ body.agent-open .agent-fab{display:none}
 .app-tiles .t-name{font-family:'Orbitron',sans-serif;font-size:11px;color:var(--c);letter-spacing:1px}
 .page-view.active{display:block !important}
 
+
+/* ===== COMMAND PALETTE + POLISH ===== */
+.cmd-palette{
+  position:fixed;inset:0;z-index:200100;display:none;align-items:flex-start;justify-content:center;
+  padding-top:12vh;background:rgba(0,0,0,.65)}
+.cmd-palette.show{display:flex}
+.cmd-box{
+  width:min(520px,94vw);background:#0a1220;border:1px solid rgba(0,240,255,.4);border-radius:12px;
+  box-shadow:0 0 40px rgba(0,240,255,.2);overflow:hidden}
+.cmd-box input{
+  width:100%;padding:14px 16px;border:0;border-bottom:1px solid rgba(0,240,255,.2);
+  background:transparent;color:var(--t);font-size:14px;font-family:'Share Tech Mono',monospace}
+.cmd-list{max-height:50vh;overflow-y:auto}
+.cmd-list button{
+  display:block;width:100%;text-align:left;padding:10px 16px;border:0;background:transparent;
+  color:var(--t);font-size:12px;cursor:pointer;font-family:'Share Tech Mono',monospace}
+.cmd-list button:hover,.cmd-list button.active{background:rgba(0,240,255,.12);color:var(--c)}
+.cmd-hint{padding:8px 16px;font-size:10px;color:var(--m);border-top:1px solid rgba(0,240,255,.15)}
+.kbd{font-size:10px;border:1px solid rgba(0,240,255,.3);padding:1px 5px;border-radius:3px;color:var(--c)}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -476,6 +496,7 @@ footer a{color:var(--c);text-decoration:none}
   <a class="nav-item" href="#page-social" data-page="social" onclick="return goPage('social',this)"><span class="ic">🌐</span> Social & Web</a>
   <a class="nav-item" href="#page-stats" data-page="stats" onclick="return goPage('stats',this)"><span class="ic">📊</span> Analytics</a>
   <a class="nav-item" href="#page-settings" data-page="settings" onclick="return goPage('settings',this)"><span class="ic">⚙</span> Settings</a>
+  <a class="nav-item" href="#" onclick="openCmd();return false;"><span class="ic">⌘</span> Command Palette</a>
   <a class="nav-item" href="#" onclick="shareHub();return false;"><span class="ic">📤</span> Share Hub Link</a>
   <div class="nav-title" style="margin-top:14px">QUICK LAUNCH</div>
   <a class="nav-item" href="https://console.groq.com" data-allow="Groq Console" target="_blank" rel="noopener"><span class="ic">🔑</span> Groq Keys</a>
@@ -535,6 +556,7 @@ footer a{color:var(--c);text-decoration:none}
       <a href="#page-deploy" onclick="return goPage('deploy')"><span class="t-ic">🚀</span><span class="t-name">DEPLOY DESK</span>Host free projects</a>
       <a href="#page-promptlab" onclick="return goPage('promptlab')"><span class="t-ic">🧪</span><span class="t-name">PROMPT LAB</span>Ready prompts</a>
       <a href="#page-settings" onclick="return goPage('settings')"><span class="t-ic">⚙</span><span class="t-name">SETTINGS</span>Webhooks & keys</a>
+      <button type="button" onclick="openCmd()"><span class="t-ic">⌘</span><span class="t-name">COMMANDS</span>Ctrl+K jump anywhere</button>
     </div>
   </div>
 
@@ -2672,6 +2694,67 @@ document.addEventListener('DOMContentLoaded', function(){
   if((location.hash||'')==='#page-agent') openAgentPanel();
 });
 
+
+var CMD_ITEMS = [
+  {t:'AI Agent panel', a:function(){openAgentPanel()}},
+  {t:'Pasiya Nexus App', a:function(){goPage('app')}},
+  {t:'Web Studio', a:function(){goPage('webstudio')}},
+  {t:'Auto Studio', a:function(){goPage('autostudio')}},
+  {t:'Creator Lab', a:function(){goPage('creator')}},
+  {t:'Deploy Desk', a:function(){goPage('deploy')}},
+  {t:'Prompt Lab', a:function(){goPage('promptlab')}},
+  {t:'N8N Public Bot', a:function(){goPage('n8n')}},
+  {t:'BOT CORE', a:function(){goPage('bots')}},
+  {t:'Power Feedback', a:function(){goPage('feedback')}},
+  {t:'Control Bridge', a:function(){goPage('bridge')}},
+  {t:'Guides', a:function(){goPage('guides')}},
+  {t:'Status Board', a:function(){goPage('status')}},
+  {t:'Settings / Webhooks', a:function(){goPage('settings')}},
+  {t:'FAQ', a:function(){goPage('faq')}},
+  {t:'Account login', a:function(){goPage('auth')}},
+  {t:'Share hub link', a:function(){shareHub()}},
+  {t:'Hub Map', a:function(){goPage('map')}}
+];
+var cmdIdx=0;
+function openCmd(){
+  var p=document.getElementById('cmdPalette'); if(!p)return;
+  p.classList.add('show');
+  filterCmd('');
+  var i=document.getElementById('cmdInput'); if(i){i.value=''; setTimeout(function(){i.focus()},50);}
+}
+function closeCmd(){ var p=document.getElementById('cmdPalette'); if(p)p.classList.remove('show'); }
+function filterCmd(q){
+  q=(q||'').toLowerCase();
+  var list=document.getElementById('cmdList'); if(!list)return;
+  list.innerHTML='';
+  cmdIdx=0;
+  var n=0;
+  CMD_ITEMS.forEach(function(it,i){
+    if(q && it.t.toLowerCase().indexOf(q)<0) return;
+    var b=document.createElement('button');
+    b.type='button'; b.textContent=it.t;
+    b.onclick=function(){ closeCmd(); it.a(); };
+    if(n===0) b.className='active';
+    list.appendChild(b); n++;
+  });
+  if(!n){ list.innerHTML='<button type="button" disabled>No matches</button>'; }
+}
+function cmdKey(e){
+  var list=document.getElementById('cmdList'); if(!list)return;
+  var btns=[].slice.call(list.querySelectorAll('button:not([disabled])'));
+  if(e.key==='Escape'){ closeCmd(); return; }
+  if(e.key==='ArrowDown'){ e.preventDefault(); cmdIdx=Math.min(cmdIdx+1,btns.length-1); }
+  if(e.key==='ArrowUp'){ e.preventDefault(); cmdIdx=Math.max(cmdIdx-1,0); }
+  if(e.key==='Enter' && btns[cmdIdx]){ e.preventDefault(); btns[cmdIdx].click(); return; }
+  btns.forEach(function(b,i){ b.className=i===cmdIdx?'active':''; });
+}
+document.addEventListener('keydown', function(e){
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); openCmd(); }
+  if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='j'){ e.preventDefault(); openAgentPanel(); }
+  if(e.key==='Escape'){ closeCmd(); }
+});
+// Nav hint in side menu
+
 try{loadConfig();}catch(e){console.warn(e);}
 try{upd();}catch(e){console.warn(e);}
 try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hide'); __p.style.display='none';}}catch(e){}document.getElementById('apiKey').addEventListener('input',upd);
@@ -2690,6 +2773,15 @@ try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hid
     <h3 id="modalTitle">Notice</h3>
     <p id="modalText">...</p>
     <div class="row" id="modalActions"></div>
+  </div>
+</div>
+
+
+<div class="cmd-palette" id="cmdPalette" onclick="if(event.target===this)closeCmd()">
+  <div class="cmd-box">
+    <input id="cmdInput" placeholder="Search pages & actions..." oninput="filterCmd(this.value)" onkeydown="cmdKey(event)">
+    <div class="cmd-list" id="cmdList"></div>
+    <div class="cmd-hint">Navigate hub · <span class="kbd">Ctrl</span>+<span class="kbd">K</span> open · <span class="kbd">Esc</span> close · <span class="kbd">Ctrl</span>+<span class="kbd">J</span> AI Agent</div>
   </div>
 </div>
 
