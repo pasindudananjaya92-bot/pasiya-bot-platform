@@ -866,6 +866,58 @@ input, textarea, select, button, .vk-preview, [contenteditable] {
 
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
+
+/* ===== MENU RELIABLE v4 ===== */
+button.menu-toggle.cyber-orb{
+  display:flex !important;
+  position:fixed !important;
+  top:10px !important;
+  left:12px !important;
+  z-index:10050 !important;
+  width:48px !important;
+  height:48px !important;
+  pointer-events:auto !important;
+  opacity:1 !important;
+  visibility:visible !important;
+}
+aside.side-nav#sideNav{
+  position:fixed !important;
+  top:0 !important;
+  left:0 !important;
+  bottom:0 !important;
+  width:min(280px,86vw) !important;
+  z-index:10040 !important;
+  transform:translateX(-105%) !important;
+  opacity:1 !important;
+  pointer-events:none !important;
+  visibility:visible !important;
+  transition:transform .35s ease !important;
+  animation:none !important;
+  background:rgba(4,8,18,.98) !important;
+  overflow-y:auto !important;
+  padding:56px 12px 24px !important;
+}
+aside.side-nav#sideNav.open{
+  transform:translateX(0) !important;
+  pointer-events:auto !important;
+  box-shadow:8px 0 32px rgba(0,0,0,.5) !important;
+}
+aside.side-nav#sideNav.closing{
+  transform:translateX(-105%) !important;
+  pointer-events:none !important;
+}
+.side-overlay{
+  z-index:10030 !important;
+}
+.side-overlay.open{
+  display:block !important;
+  opacity:1 !important;
+  pointer-events:auto !important;
+}
+body.side-open .main-stage{
+  /* keep content usable */
+}
+
 </style>
 </head>
 <body>
@@ -3108,20 +3160,22 @@ const PAGE_MAP = {
 function toggleSide(force){
   var n=document.getElementById('sideNav');
   var o=document.getElementById('sideOverlay');
-  if(!n)return;
+  if(!n){ console.warn('sideNav missing'); return; }
   var open = force===false ? false : force===true ? true : !n.classList.contains('open');
   if(open){
     n.classList.remove('closing');
     n.classList.add('open');
     document.body.classList.add('side-open');
+    if(o){ o.classList.add('open'); o.style.display='block'; }
   } else {
-    n.classList.add('closing');
     n.classList.remove('open');
+    n.classList.add('closing');
     document.body.classList.remove('side-open');
-    setTimeout(function(){ n.classList.remove('closing'); }, 450);
+    if(o){ o.classList.remove('open'); }
+    setTimeout(function(){ n.classList.remove('closing'); }, 350);
   }
-  if(o) o.classList.toggle('open', open);
 }
+
 function goPage(name, el){
   try{
     document.querySelectorAll('.side-nav a.nav-item[data-page]').forEach(function(a){a.classList.remove('active')});
@@ -4351,6 +4405,15 @@ function buildVKbdFull(){
     box.appendChild(row);
   });
 }
+
+
+document.addEventListener('DOMContentLoaded', function(){
+  var btn=document.querySelector('.menu-toggle');
+  if(btn && !btn.getAttribute('onclick')) btn.setAttribute('onclick','toggleSide()');
+  // ensure nav can open
+  var n=document.getElementById('sideNav');
+  if(n){ n.classList.remove('open'); }
+});
 
 try{loadConfig();}catch(e){console.warn(e);}
 try{upd();}catch(e){console.warn(e);}
