@@ -731,6 +731,13 @@ img,svg{max-width:100%;height:auto}
   opacity:0;pointer-events:none;transition:opacity .25s}
 .toast-perf.show{opacity:1}
 
+
+/* ===== FINAL ACCENTS ===== */
+body.accent-gold{--c:#f5c542;--p:#ff8c2a}
+body.accent-violet{--c:#c77dff;--p:#7b2cbf}
+html.user-reduce-motion *{animation-duration:.01ms !important;transition-duration:.01ms !important}
+body.compact-nav .side-nav a.nav-item{padding:7px 10px;margin:2px 0;font-size:12px}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -1568,8 +1575,51 @@ Commands: help | agent | tools | clear
   </div>
 </section>
 
+
+<section id="page-freecloud" class="page-view" data-page="freecloud">
+  <div class="st">◆ FREE CLOUD // MORE SERVICES</div>
+  <p class="ss">Extra free-tier platforms you can use with this hub — open in new tab</p>
+  <div class="panel">
+    <h3>☁ BACKEND &amp; DATA</h3>
+    <div class="studio-grid">
+      <a href="https://supabase.com" target="_blank" rel="noopener"><b>SUPABASE</b>Auth + DB free</a>
+      <a href="https://www.mongodb.com/cloud/atlas" target="_blank" rel="noopener"><b>MONGO ATLAS</b>Free cluster</a>
+      <a href="https://firebase.google.com" target="_blank" rel="noopener"><b>FIREBASE</b>Google free tier</a>
+      <a href="https://appwrite.io" target="_blank" rel="noopener"><b>APPWRITE</b>BaaS</a>
+      <a href="https://pocketbase.io" target="_blank" rel="noopener"><b>POCKETBASE</b>Light backend</a>
+      <a href="https://jsonbin.io" target="_blank" rel="noopener"><b>JSONBIN</b>JSON store</a>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>🤖 AI BUILDERS</h3>
+    <div class="studio-grid">
+      <a href="https://flowiseai.com" target="_blank" rel="noopener"><b>FLOWISE</b>LLM flows</a>
+      <a href="https://dify.ai" target="_blank" rel="noopener"><b>DIFY</b>Agent apps</a>
+      <a href="https://botpress.com" target="_blank" rel="noopener"><b>BOTPRESS</b>Chatbots</a>
+      <a href="https://studio.botpress.com" target="_blank" rel="noopener"><b>BP STUDIO</b>Build</a>
+      <a href="https://aistudio.google.com" target="_blank" rel="noopener"><b>AI STUDIO</b>Gemini</a>
+      <a href="https://console.groq.com" target="_blank" rel="noopener"><b>GROQ</b>Fast keys</a>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>📨 COMMS &amp; FORMS</h3>
+    <div class="studio-grid">
+      <a href="https://formspree.io" target="_blank" rel="noopener"><b>FORMSPREE</b>Forms</a>
+      <a href="https://getform.io" target="_blank" rel="noopener"><b>GETFORM</b>Endpoints</a>
+      <a href="https://emailjs.com" target="_blank" rel="noopener"><b>EMAILJS</b>Email from JS</a>
+      <a href="https://telegram.org" target="_blank" rel="noopener"><b>TELEGRAM</b>Bots API</a>
+    </div>
+  </div>
+  <div class="follow-bar">
+    <a href="#page-toolkit" onclick="return goPage('toolkit')">Tool Kit</a>
+    <a href="#page-settings" onclick="return goPage('settings')">Settings</a>
+    <a href="#" onclick="openAgentPanel();return false;">Ask Agent how to connect</a>
+  </div>
+</section>
+
 <section id="page-toolkit" class="page-view" data-page="toolkit">
   <div class="st">◆ TOOL KIT HUB // FREE FACILITIES</div>
+  <p class="desk-hint"><a href="#page-freecloud" onclick="return goPage('freecloud')" style="color:var(--c)">→ More on Free Cloud page</a></p>
   <p class="ss">Extended free toolkit — open accounts with email/Google, no card required for basic use</p>
   <div class="panel">
     <h3>🧰 AI &amp; CHAT</h3>
@@ -2239,9 +2289,68 @@ https://pasiya-bot-platform.vercel.app</pre>
     </p>
   </div>
 
+
+  <div class="panel">
+    <h3>🧪 CONNECTION TESTS</h3>
+    <p class="desk-hint">Sends a tiny ping JSON to each webhook (browser network). Check n8n/Make/Pipedream execution logs.</p>
+    <div class="row" style="flex-wrap:wrap;gap:8px">
+      <button class="btn btn-c" type="button" onclick="testHook('n8n')">Test n8n</button>
+      <button class="btn btn-c" type="button" onclick="testHook('make')">Test Make</button>
+      <button class="btn btn-c" type="button" onclick="testHook('pipe')">Test Pipedream</button>
+      <button class="btn btn-g" type="button" onclick="openAgentPanel()">Open AI Agent</button>
+    </div>
+    <div id="testStatus" class="gh-note"></div>
+  </div>
+
+  <div class="panel">
+    <h3>🎛 PREFERENCES</h3>
+    <label>Accent mode</label>
+    <select id="setAccent" style="width:100%;padding:10px;border-radius:8px;background:#0a1220;color:var(--t);border:1px solid rgba(0,240,255,.3)">
+      <option value="cyan">Cyan cyber (default)</option>
+      <option value="gold">Gold luxury</option>
+      <option value="violet">Violet neon</option>
+    </select>
+    <label style="margin-top:10px;display:flex;align-items:center;gap:8px">
+      <input type="checkbox" id="setReduceMotion"> Reduce animations
+    </label>
+    <label style="display:flex;align-items:center;gap:8px">
+      <input type="checkbox" id="setCompactNav"> Compact side menu density
+    </label>
+    <div class="row" style="margin-top:10px">
+      <button class="btn btn-c" type="button" onclick="applyPrefs()">APPLY PREFS</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>📦 CONFIG BACKUP</h3>
+    <p class="desk-hint">Export/import webhook URLs saved in this browser (no server account).</p>
+    <div class="row" style="flex-wrap:wrap;gap:8px">
+      <button class="btn btn-c" type="button" onclick="exportConfig()">EXPORT JSON</button>
+      <button class="btn btn-g" type="button" onclick="document.getElementById('importCfg').click()">IMPORT JSON</button>
+      <input type="file" id="importCfg" accept="application/json,.json" hidden onchange="importConfig(this)">
+      <button class="btn btn-g" type="button" onclick="clearLocalConfig()">CLEAR LOCAL CONFIG</button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>🛠 ADVANCED</h3>
+    <ul class="studio-steps">
+      <li>Service Worker caches shell only — never n8n/Make secrets responses as source of truth</li>
+      <li>Virtual PC notes stay on device via localStorage</li>
+      <li>For production bots, keep tokens only inside n8n / Vercel env</li>
+      <li>GitHub repo: pasiya-bot-platform (public pages OK without secrets in HTML)</li>
+    </ul>
+    <div class="follow-bar">
+      <a href="#page-desktop" onclick="return goPage('desktop')">Virtual PC</a>
+      <a href="#page-apibridge" onclick="return goPage('apibridge')">API Bridge</a>
+      <a href="#page-status" onclick="return goPage('status')">Status</a>
+      <a href="https://github.com/pasindudananjaya92-bot/pasiya-bot-platform" target="_blank" rel="noopener">GitHub Repo</a>
+    </div>
+  </div>
+
   <div class="panel">
     <h3>ℹ ABOUT THIS OS</h3>
-    <p class="desk-hint">Pasiya Max OS-style shell • Left menu opens internal pages without leaving the site • Free stack: Groq, n8n, Make, Vercel, MongoDB, GitHub Pages</p>
+    <p class="desk-hint">Pasiya Max OS shell vFINAL • Virtual PC • SPA pages • Agent bridge • Free stack: Groq, n8n, Make, Pipedream, Vercel, MongoDB, GitHub Pages • Settings export/import</p>
   </div>
 </section>
 
@@ -2695,8 +2804,9 @@ function handleImage(input, which){
 
 
 const PAGE_MAP = {
-  desktop: ['page-desktop'],
-  pc: ['page-desktop'],
+  freecloud: ['page-freecloud'],
+  desktop: ['page-desktop','page-freecloud'],
+  pc: ['page-desktop','page-freecloud'],
   toolkit: ['page-toolkit'],
   apibridge: ['page-apibridge'],
   learn: ['page-learn'],
@@ -2709,7 +2819,7 @@ const PAGE_MAP = {
   auth: ['page-auth'],
   myspace: ['page-myspace'],
   help: ['page-help'],
-  app: ['page-desktop'],
+  app: ['page-desktop','page-freecloud'],
   nexus: ['page-app'],
   map: ['page-map'],
   support: ['page-support'],
@@ -2850,7 +2960,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 document.addEventListener('DOMContentLoaded', function(){
   
-  ['page-faq','page-templates','page-changelog','page-map','page-support','page-legal','page-auth','page-myspace','page-help','page-app','page-webstudio','page-autostudio','page-creator','page-deploy','page-promptlab','page-toolkit','page-apibridge','page-learn','page-desktop'].forEach(function(id){
+  ['page-faq','page-templates','page-changelog','page-map','page-support','page-legal','page-auth','page-myspace','page-help','page-app','page-webstudio','page-autostudio','page-creator','page-deploy','page-promptlab','page-toolkit','page-apibridge','page-learn','page-desktop','page-freecloud'].forEach(function(id){
     var n=document.getElementById(id); if(n){n.classList.add('page-view'); n.classList.remove('active');}
   });
 
@@ -3461,6 +3571,83 @@ document.addEventListener('DOMContentLoaded', function(){
   }catch(e){}
 });
 // Safer openAgentPanel scroll lock optional
+
+
+async function testHook(kind){
+  var st=document.getElementById('testStatus');
+  var url='';
+  if(kind==='n8n') url=(document.getElementById('setN8nChat')&&document.getElementById('setN8nChat').value)||localStorage.getItem('pasiya_n8n_chat')||'https://pasiyamax.app.n8n.cloud/webhook/2c3ef6f3-d4cd-4ccd-a889-e7894ad490bb';
+  if(kind==='make') url=(document.getElementById('setMakeHook')&&document.getElementById('setMakeHook').value)||localStorage.getItem('pasiya_make_hook')||'';
+  if(kind==='pipe') url=(document.getElementById('setPipeHook')&&document.getElementById('setPipeHook').value)||localStorage.getItem('pasiya_pipe_hook')||'https://eof67cbcwtmde2i.m.pipedream.net';
+  if(!url){ if(st) st.textContent='No URL for '+kind; return; }
+  if(st) st.textContent='Testing '+kind+'...';
+  try{
+    var res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'pasiya-settings-test',kind:kind,ts:Date.now()})});
+    if(st) st.textContent=kind+' → HTTP '+res.status+(res.ok?' OK':'');
+  }catch(e){
+    if(st) st.textContent=kind+' failed: '+e.message;
+  }
+}
+function applyPrefs(){
+  var acc=(document.getElementById('setAccent')||{}).value||'cyan';
+  localStorage.setItem('pasiya_accent', acc);
+  document.body.classList.remove('accent-gold','accent-violet');
+  if(acc==='gold') document.body.classList.add('accent-gold');
+  if(acc==='violet') document.body.classList.add('accent-violet');
+  var rm=document.getElementById('setReduceMotion');
+  if(rm){ localStorage.setItem('pasiya_reduce_motion', rm.checked?'1':'0'); document.documentElement.classList.toggle('user-reduce-motion', rm.checked); }
+  var cn=document.getElementById('setCompactNav');
+  if(cn){ localStorage.setItem('pasiya_compact_nav', cn.checked?'1':'0'); document.body.classList.toggle('compact-nav', cn.checked); }
+  if(typeof showToast==='function') showToast('Preferences applied');
+  else alert('Preferences applied');
+}
+function exportConfig(){
+  var data={
+    n8n_chat: localStorage.getItem('pasiya_n8n_chat')||'',
+    n8n_issue: localStorage.getItem('pasiya_n8n_issue')||'',
+    make: localStorage.getItem('pasiya_make_hook')||'',
+    pipe: localStorage.getItem('pasiya_pipe_hook')||'',
+    sb_url: localStorage.getItem('pasiya_sb_url')||'',
+    accent: localStorage.getItem('pasiya_accent')||'cyan'
+  };
+  var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='pasiya-config.json'; a.click();
+}
+function importConfig(input){
+  var f=input.files&&input.files[0]; if(!f)return;
+  var reader=new FileReader();
+  reader.onload=function(){
+    try{
+      var d=JSON.parse(reader.result);
+      if(d.n8n_chat) localStorage.setItem('pasiya_n8n_chat', d.n8n_chat);
+      if(d.make) localStorage.setItem('pasiya_make_hook', d.make);
+      if(d.pipe) localStorage.setItem('pasiya_pipe_hook', d.pipe);
+      if(d.sb_url) localStorage.setItem('pasiya_sb_url', d.sb_url);
+      if(d.accent) localStorage.setItem('pasiya_accent', d.accent);
+      if(typeof loadSettingsUI==='function') loadSettingsUI();
+      applyPrefs();
+      alert('Config imported');
+    }catch(e){ alert('Invalid JSON'); }
+    input.value='';
+  };
+  reader.readAsText(f);
+}
+function clearLocalConfig(){
+  if(!confirm('Clear local webhook/prefs on this device?')) return;
+  ['pasiya_n8n_chat','pasiya_n8n_issue','pasiya_make_hook','pasiya_pipe_hook','pasiya_sb_url','pasiya_sb_anon','pasiya_accent','pasiya_reduce_motion','pasiya_compact_nav'].forEach(function(k){ localStorage.removeItem(k); });
+  if(typeof loadSettingsUI==='function') loadSettingsUI();
+  alert('Local config cleared');
+}
+document.addEventListener('DOMContentLoaded', function(){
+  try{
+    var acc=localStorage.getItem('pasiya_accent')||'cyan';
+    var sel=document.getElementById('setAccent'); if(sel) sel.value=acc;
+    if(acc==='gold') document.body.classList.add('accent-gold');
+    if(acc==='violet') document.body.classList.add('accent-violet');
+    if(localStorage.getItem('pasiya_reduce_motion')==='1'){ document.documentElement.classList.add('user-reduce-motion'); var rm=document.getElementById('setReduceMotion'); if(rm) rm.checked=true; }
+    if(localStorage.getItem('pasiya_compact_nav')==='1'){ document.body.classList.add('compact-nav'); var cn=document.getElementById('setCompactNav'); if(cn) cn.checked=true; }
+  }catch(e){}
+});
 
 try{loadConfig();}catch(e){console.warn(e);}
 try{upd();}catch(e){console.warn(e);}
