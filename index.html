@@ -546,6 +546,39 @@ body.side-open .main-stage{margin-left:248px;width:calc(100% - 248px)}
   height:2px;margin:10px 0;border:none;
   background:linear-gradient(90deg,transparent,var(--gold),var(--c),var(--p),transparent)}
 
+
+
+.agent-drawer{
+  transition: transform .4s cubic-bezier(.22,1,.36,1), opacity .3s ease !important;
+}
+
+/* ===== MENU FIX v2 ===== */
+.side-nav{
+  transform: translate3d(-110%, 0, 0) !important;
+  opacity: 0;
+  pointer-events: none;
+  transition: transform .48s cubic-bezier(.22,1,.36,1), opacity .35s ease !important;
+}
+.side-nav.open{
+  transform: translate3d(0, 0, 0) !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+.side-nav.closing{
+  transform: translate3d(-110%, 12px, 0) !important;
+  opacity: 0 !important;
+}
+.side-nav .nav-close{
+  position:absolute;top:10px;right:10px;width:34px;height:34px;z-index:5;
+  border-radius:8px;border:1px solid rgba(0,240,255,.35);
+  background:rgba(0,240,255,.1);color:var(--c);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center}
+.side-nav .nav-title{padding-right:40px}
+.side-overlay{
+  position:fixed;inset:0;z-index:890;background:rgba(0,0,0,.45);
+  opacity:0;pointer-events:none;transition:opacity .3s ease}
+.side-overlay.open{opacity:1;pointer-events:auto}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -606,6 +639,7 @@ footer a{color:var(--c);text-decoration:none}
 </aside>
 
 <aside class="side-nav" id="sideNav">
+  <button type="button" class="nav-close" onclick="toggleSide(false)" aria-label="Close menu">&lt;</button>
   <div class="nav-title">PASIYA OS // MENU</div>
   <hr class="gold-line">
   <input class="side-search" id="sideSearch" placeholder="Filter menu..." oninput="filterMenu(this.value)">
@@ -2435,7 +2469,7 @@ function goPage(name, el){
       if(ap){ ap.classList.add('page-view'); ap.classList.add('active'); ap.scrollIntoView({behavior:'smooth',block:'start'}); }
     }
     if(name==='settings') loadSettingsUI();
-    toggleSide(false);
+    /* keep menu open — user closes with < or orb */
     try{ history.replaceState(null,'','#page-'+name); }catch(e){}
   }catch(err){ console.error(err); }
   return false;
