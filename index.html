@@ -579,6 +579,79 @@ body.side-open .main-stage{margin-left:248px;width:calc(100% - 248px)}
   opacity:0;pointer-events:none;transition:opacity .3s ease}
 .side-overlay.open{opacity:1;pointer-events:auto}
 
+
+/* ===== BOUNCE ROLL MENU v3 (keeps prior features) ===== */
+.side-nav{
+  transform: translate3d(-105%, -40px, 0) scale(.96) !important;
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: top left;
+  transition:
+    transform .55s cubic-bezier(.34,1.45,.64,1),
+    opacity .4s ease !important;
+}
+.side-nav.open{
+  transform: translate3d(0, 0, 0) scale(1) !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  animation: menuRollIn .65s cubic-bezier(.22,1,.36,1) both, navGlowPulse 3s ease-in-out 0.6s infinite;
+}
+.side-nav.closing{
+  transform: translate3d(-105%, 28px, 0) scale(.96) !important;
+  opacity: 0 !important;
+  transition:
+    transform .45s cubic-bezier(.4,0,.2,1),
+    opacity .35s ease !important;
+  animation: none !important;
+}
+@keyframes menuRollIn{
+  0%{ transform: translate3d(-100%, -30px, 0) scale(.94); opacity:0; filter:blur(3px); }
+  60%{ transform: translate3d(4%, 4px, 0) scale(1.01); opacity:1; filter:blur(0); }
+  100%{ transform: translate3d(0, 0, 0) scale(1); opacity:1; filter:none; }
+}
+.agent-drawer{
+  transition: transform .5s cubic-bezier(.34,1.3,.64,1), opacity .35s ease !important;
+}
+.agent-drawer.open{
+  animation: agentSlide .55s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes agentSlide{
+  from{ transform: translateX(100%) scale(.98); opacity:.5; }
+  70%{ transform: translateX(-6px) scale(1); opacity:1; }
+  to{ transform: translateX(0) scale(1); opacity:1; }
+}
+.side-nav a.nav-item{
+  transition: transform .2s ease, background .2s ease, border-color .2s ease, box-shadow .25s ease;
+}
+.side-nav.open a.nav-item{
+  animation: navItemIn .4s ease backwards;
+}
+.side-nav.open a.nav-item:nth-child(1){animation-delay:.05s}
+.side-nav.open a.nav-item:nth-child(2){animation-delay:.07s}
+.side-nav.open a.nav-item:nth-child(3){animation-delay:.09s}
+.side-nav.open a.nav-item:nth-child(4){animation-delay:.11s}
+.side-nav.open a.nav-item:nth-child(5){animation-delay:.13s}
+.side-nav.open a.nav-item:nth-child(6){animation-delay:.15s}
+.side-nav.open a.nav-item:nth-child(7){animation-delay:.17s}
+.side-nav.open a.nav-item:nth-child(8){animation-delay:.19s}
+.side-nav.open a.nav-item:nth-child(9){animation-delay:.21s}
+.side-nav.open a.nav-item:nth-child(10){animation-delay:.23s}
+@keyframes navItemIn{
+  from{ opacity:0; transform: translateX(-12px); }
+  to{ opacity:1; transform: none; }
+}
+.toolkit-strip{
+  margin-top:12px;padding:10px;border-radius:10px;
+  border:1px solid rgba(245,197,66,.25);background:rgba(245,197,66,.05)}
+.toolkit-strip h5{
+  font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:1px;color:var(--gold);margin:0 0 8px}
+.toolkit-strip .tk-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.toolkit-strip a{
+  display:block;padding:8px 6px;border-radius:6px;font-size:10px;text-align:center;
+  text-decoration:none;color:var(--t);border:1px solid rgba(0,240,255,.2);
+  background:rgba(0,0,0,.25);font-family:'Share Tech Mono',monospace}
+.toolkit-strip a:hover{border-color:var(--gold);color:var(--gold)}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -670,8 +743,30 @@ footer a{color:var(--c);text-decoration:none}
   <a class="nav-item" href="https://www.make.com" target="_blank" rel="noopener"><span class="ic">🔗</span> Make.com</a>
   <a class="nav-item" href="https://pasiya-bot-platform.vercel.app" target="_blank" rel="noopener"><span class="ic">▲</span> Vercel Live</a>
 
+  
+  <div class="nav-title" style="margin-top:12px">TOOLKIT // FREE</div>
+  <hr class="gold-line">
+  <a class="nav-item" href="#page-toolkit" data-page="toolkit" onclick="return goPage('toolkit',this)"><span class="ic">🧰</span> Tool Kit Hub</a>
+  <a class="nav-item" href="#page-apibridge" data-page="apibridge" onclick="return goPage('apibridge',this)"><span class="ic">🔌</span> API Bridge</a>
+  <a class="nav-item" href="#page-learn" data-page="learn" onclick="return goPage('learn',this)"><span class="ic">📚</span> Learn Free</a>
+
   <div class="side-visitors" id="sideVisitors">
     <div class="sv-title">◉ LIVE VISITORS</div>
+
+  <div class="toolkit-strip">
+    <h5>QUICK FREE TOOLS</h5>
+    <div class="tk-grid">
+      <a href="https://console.groq.com" target="_blank" rel="noopener">Groq</a>
+      <a href="https://pasiyamax.app.n8n.cloud" target="_blank" rel="noopener">n8n</a>
+      <a href="https://vercel.com" target="_blank" rel="noopener">Vercel</a>
+      <a href="https://github.com/new" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.make.com" target="_blank" rel="noopener">Make</a>
+      <a href="https://supabase.com" target="_blank" rel="noopener">Supabase</a>
+      <a href="https://eof67cbcwtmde2i.m.pipedream.net" target="_blank" rel="noopener">Pipe</a>
+      <a href="#" onclick="openAgentPanel();return false;">Agent</a>
+    </div>
+  </div>
+
     <div class="sv-row"><span>Total</span><b id="sideVisitTotal">—</b></div>
     <div class="sv-row"><span>Today</span><b id="sideVisitToday">—</b></div>
     <div class="sv-row"><span>Session</span><b id="sideVisitSession">1</b></div>
@@ -1325,6 +1420,77 @@ RULES:
 </section>
 
 
+
+
+<section id="page-toolkit" class="page-view" data-page="toolkit">
+  <div class="st">◆ TOOL KIT HUB // FREE FACILITIES</div>
+  <p class="ss">Extended free toolkit — open accounts with email/Google, no card required for basic use</p>
+  <div class="panel">
+    <h3>🧰 AI &amp; CHAT</h3>
+    <div class="studio-grid">
+      <a href="https://console.groq.com" target="_blank" rel="noopener"><b>GROQ</b>Fast free LLM keys</a>
+      <a href="https://aistudio.google.com" target="_blank" rel="noopener"><b>GOOGLE AI STUDIO</b>Gemini free tier</a>
+      <a href="https://huggingface.co/chat" target="_blank" rel="noopener"><b>HF CHAT</b>Open models</a>
+      <a href="https://chat.openai.com" target="_blank" rel="noopener"><b>CHATGPT</b>Free tier chat</a>
+      <a href="#" onclick="openAgentPanel();return false;"><b>PASIYA AGENT</b>This hub agent</a>
+      <a href="#page-n8n" onclick="return goPage('n8n')"><b>N8N BOT</b>Public webhook bot</a>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>⚙️ AUTOMATION</h3>
+    <div class="studio-grid">
+      <a href="https://pasiyamax.app.n8n.cloud" target="_blank" rel="noopener"><b>N8N</b>Workflows</a>
+      <a href="https://www.make.com" target="_blank" rel="noopener"><b>MAKE</b>Scenarios</a>
+      <a href="https://pipedream.com" target="_blank" rel="noopener"><b>PIPEDREAM</b>HTTP workflows</a>
+      <a href="https://zapier.com" target="_blank" rel="noopener"><b>ZAPIER</b>Simple zaps</a>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>🚀 HOST &amp; CODE</h3>
+    <div class="studio-grid">
+      <a href="https://github.com" target="_blank" rel="noopener"><b>GITHUB</b>Repos + Pages</a>
+      <a href="https://vercel.com" target="_blank" rel="noopener"><b>VERCEL</b>Deploy</a>
+      <a href="https://replit.com" target="_blank" rel="noopener"><b>REPLIT</b>IDE + host</a>
+      <a href="https://codepen.io" target="_blank" rel="noopener"><b>CODEPEN</b>Front-end</a>
+    </div>
+  </div>
+</section>
+
+<section id="page-apibridge" class="page-view" data-page="apibridge">
+  <div class="st">◆ API BRIDGE // CONNECT FREELY</div>
+  <p class="ss">How this hub talks to free backends — no secrets in public HTML</p>
+  <div class="panel">
+    <h3>🔌 LIVE BRIDGES</h3>
+    <ol class="studio-steps">
+      <li><b>n8n webhook</b> → AI Agent + Public Bot</li>
+      <li><b>Make.com</b> → Power Feedback fan-out</li>
+      <li><b>Pipedream</b> → Settings webhook field</li>
+      <li><b>Vercel /api/submit</b> → MongoDB feedback</li>
+      <li><b>Groq</b> → optional BOT CORE (browser key) or via n8n</li>
+    </ol>
+  </div>
+  <div class="panel">
+    <h3>✅ SAFE RULES</h3>
+    <p class="desk-hint">Put API keys only in n8n credentials, Vercel env, or provider dashboards. Settings on this site store webhook URLs in your browser localStorage only.</p>
+    <div class="follow-bar">
+      <a href="#page-settings" onclick="return goPage('settings')">Open Settings</a>
+      <a href="#" onclick="openAgentPanel();return false;">Ask Agent</a>
+    </div>
+  </div>
+</section>
+
+<section id="page-learn" class="page-view" data-page="learn">
+  <div class="st">◆ LEARN FREE // SKILL PATHS</div>
+  <p class="ss">Free learning links for builders using this hub</p>
+  <div class="studio-grid">
+    <a href="https://docs.n8n.io" target="_blank" rel="noopener"><b>N8N DOCS</b>Workflows</a>
+    <a href="https://vercel.com/docs" target="_blank" rel="noopener"><b>VERCEL DOCS</b>Deploy</a>
+    <a href="https://developer.mozilla.org" target="_blank" rel="noopener"><b>MDN</b>HTML/JS</a>
+    <a href="https://www.freecodecamp.org" target="_blank" rel="noopener"><b>FREECODECAMP</b>Courses</a>
+    <a href="https://roadmap.sh" target="_blank" rel="noopener"><b>ROADMAP.SH</b>Paths</a>
+    <a href="#page-guides" onclick="return goPage('guides')"><b>HUB GUIDES</b>This site</a>
+  </div>
+</section>
 
 <section id="page-creator" class="page-view" data-page="creator">
   <div class="st">◆ CREATOR LAB // FREE MEDIA & CONTENT</div>
@@ -2383,6 +2549,9 @@ function handleImage(input, which){
 
 
 const PAGE_MAP = {
+  toolkit: ['page-toolkit'],
+  apibridge: ['page-apibridge'],
+  learn: ['page-learn'],
   creator: ['page-creator'],
   deploy: ['page-deploy'],
   promptlab: ['page-promptlab'],
@@ -2518,7 +2687,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 document.addEventListener('DOMContentLoaded', function(){
   
-  ['page-faq','page-templates','page-changelog','page-map','page-support','page-legal','page-auth','page-myspace','page-help','page-app','page-webstudio','page-autostudio','page-creator','page-deploy','page-promptlab'].forEach(function(id){
+  ['page-faq','page-templates','page-changelog','page-map','page-support','page-legal','page-auth','page-myspace','page-help','page-app','page-webstudio','page-autostudio','page-creator','page-deploy','page-promptlab','page-toolkit','page-apibridge','page-learn'].forEach(function(id){
     var n=document.getElementById(id); if(n){n.classList.add('page-view'); n.classList.remove('active');}
   });
 
