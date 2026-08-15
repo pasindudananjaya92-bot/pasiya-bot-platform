@@ -7,6 +7,23 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" async></script>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#00f0ff">
+
+<link rel="canonical" href="https://pasiya-bot-platform.vercel.app/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23010308'/%3E%3Ccircle cx='32' cy='32' r='14' fill='none' stroke='%2300f0ff' stroke-width='4'/%3E%3Ccircle cx='32' cy='32' r='5' fill='%2300ff9d'/%3E%3C/svg%3E">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PASIYA NEXUS // Free AI Control Hub">
+<meta name="twitter:description" content="Free AI bots, n8n agent, tools bridge — no credit card.">
+<meta property="og:url" content="https://pasiya-bot-platform.vercel.app/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Pasiya Max">
+<meta name="robots" content="index,follow">
+<meta name="author" content="Pasindu Dananjaya">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebApplication","name":"Pasiya Nexus","applicationCategory":"DeveloperApplication","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"url":"https://pasiya-bot-platform.vercel.app/","description":"Free AI command center and tools hub with n8n agent bridge.","author":{"@type":"Person","name":"Pasindu Dananjaya"}}
+</script>
+
 <meta property="og:title" content="PASIYA MAX // Free AI Command Center">
 <meta property="og:description" content="Free AI bots, n8n, tools hub by Pasindu Dananjaya">
 <meta name="description" content="The most complete free AI Bot Builder + Free Tools universe. Animated cyber interface.">
@@ -429,6 +446,26 @@ body.agent-open .agent-fab{display:none}
 .cmd-hint{padding:8px 16px;font-size:10px;color:var(--m);border-top:1px solid rgba(0,240,255,.15)}
 .kbd{font-size:10px;border:1px solid rgba(0,240,255,.3);padding:1px 5px;border-radius:3px;color:var(--c)}
 
+
+/* ===== PRO POLISH ===== */
+:focus-visible{outline:2px solid var(--c);outline-offset:2px}
+.pro-fab-row{
+  position:fixed;bottom:16px;right:16px;z-index:910;display:flex;flex-direction:column;gap:8px}
+.pro-fab{
+  width:48px;height:48px;border-radius:50%;border:1px solid rgba(0,240,255,.4);
+  background:rgba(4,12,24,.95);color:var(--c);font-size:18px;cursor:pointer;
+  box-shadow:0 0 16px rgba(0,240,255,.25);display:flex;align-items:center;justify-content:center}
+.pro-fab:hover{background:rgba(0,240,255,.15)}
+body.agent-open .pro-fab-row{display:none}
+.site-footer-pro{
+  margin:40px 16px 80px;padding:20px;border-top:1px solid rgba(0,240,255,.15);
+  font-size:12px;color:var(--m);text-align:center;line-height:1.7}
+.site-footer-pro a{color:var(--c);text-decoration:none;margin:0 8px}
+.typing-dots span{animation:td 1.2s infinite;opacity:.3}
+.typing-dots span:nth-child(2){animation-delay:.2s}
+.typing-dots span:nth-child(3){animation-delay:.4s}
+@keyframes td{0%,100%{opacity:.3}50%{opacity:1}}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -459,7 +496,7 @@ footer a{color:var(--c);text-decoration:none}
 <button class="menu-toggle" type="button" onclick="toggleSide()" aria-label="Menu">☰</button>
 <div class="side-overlay" id="sideOverlay" onclick="toggleSide(false)"></div>
 
-<aside class="agent-drawer" id="agentDrawer" aria-label="AI Agent panel">
+<aside class="agent-drawer" id="agentDrawer" role="dialog" aria-modal="true" aria-label="Pasiya AI Agent" aria-label="AI Agent panel">
   <div class="ad-head">
     <h3><span class="pulse"></span> PASIYA AI AGENT</h3>
     <button type="button" class="ad-close" onclick="closeAgentPanel()" title="Collapse">&lt;</button>
@@ -2755,6 +2792,10 @@ document.addEventListener('keydown', function(e){
 });
 // Nav hint in side menu
 
+
+window.addEventListener('error', function(e){ try{ console.warn('Pasiya hub error', e.message); }catch(_){}});
+window.addEventListener('unhandledrejection', function(e){ try{ console.warn('Pasiya hub promise', e.reason); }catch(_){}});
+
 try{loadConfig();}catch(e){console.warn(e);}
 try{upd();}catch(e){console.warn(e);}
 try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hide'); __p.style.display='none';}}catch(e){}document.getElementById('apiKey').addEventListener('input',upd);
@@ -2783,6 +2824,12 @@ try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hid
     <div class="cmd-list" id="cmdList"></div>
     <div class="cmd-hint">Navigate hub · <span class="kbd">Ctrl</span>+<span class="kbd">K</span> open · <span class="kbd">Esc</span> close · <span class="kbd">Ctrl</span>+<span class="kbd">J</span> AI Agent</div>
   </div>
+</div>
+
+
+<div class="pro-fab-row" id="proFabRow">
+  <button type="button" class="pro-fab" title="Command Palette" onclick="openCmd()" aria-label="Command palette">⌘</button>
+  <button type="button" class="pro-fab" title="AI Agent" onclick="openAgentPanel()" aria-label="Open AI Agent">✦</button>
 </div>
 
 </body>
