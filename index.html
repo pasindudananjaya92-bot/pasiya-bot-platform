@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>PASIYA NEXUS // Free AI Control App by Pasiya Max</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" async></script>
 <link rel="manifest" href="manifest.json">
@@ -209,7 +209,7 @@ textarea{min-height:70px;resize:vertical}
   .side-nav{transform:translateX(-105%)}
   .side-nav.open{transform:translateX(0)}
   .main-stage{margin-left:0;width:100%}
-  .menu-toggle.cyber-orb{display:flex!important;align-items:center;justify-content:center}
+  .menu-toggle.cyber-orb{touch-action:manipulation;display:flex!important;align-items:center;justify-content:center}
   .side-overlay.open{display:block}
 }
 .settings-grid{display:grid;gap:12px}
@@ -471,7 +471,7 @@ body.agent-open .pro-fab-row{display:none}
 
 
 /* ===== DIGITAL MENU MAGIC + GOLD ===== */
-.menu-toggle.cyber-orb{
+.menu-toggle.cyber-orb{touch-action:manipulation;
   display:flex !important;align-items:center;justify-content:center;
   position:fixed;top:10px;left:12px;z-index:960;
   width:46px;height:46px;border-radius:14px;padding:0;cursor:pointer;
@@ -488,7 +488,7 @@ body.agent-open .pro-fab-row{display:none}
   position:relative;z-index:1;width:22px;height:22px}
 .menu-toggle.cyber-orb svg{width:22px;height:22px;display:block}
 @keyframes orbSpin{to{transform:rotate(360deg)}}
-body.side-open .menu-toggle.cyber-orb{
+body.side-open .menu-toggle.cyber-orb{touch-action:manipulation;
   border-color:rgba(0,255,157,.6);box-shadow:0 0 22px rgba(0,255,157,.4)}
 
 .side-nav{
@@ -832,6 +832,37 @@ body.agent-open .home-chip{right:min(430px,94vw)}
 .desk-taskbar button{
   padding:6px 10px;border-radius:6px;border:1px solid rgba(0,240,255,.3);
   background:rgba(0,240,255,.1);color:var(--c);font-size:10px;cursor:pointer}
+
+
+/* ===== ZOOM + DUAL PC FIX ===== */
+html, body {
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+}
+input, textarea, select, button, .vk-preview, [contenteditable] {
+  font-size: 16px !important; /* stops iOS focus zoom */
+  max-width: 100%;
+  touch-action: manipulation;
+}
+.vkbd-wrap, .vkbd, .vkbd button {
+  touch-action: manipulation;
+}
+.side-nav, .agent-drawer, .vdesk, .vwin {
+  touch-action: pan-y pan-x;
+}
+.pc-mode-bar{
+  display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 12px}
+.pc-mode-bar button{
+  flex:1;min-width:120px;padding:10px;border-radius:8px;cursor:pointer;
+  border:1px solid rgba(0,240,255,.35);background:rgba(0,240,255,.1);color:var(--c);
+  font-family:'Orbitron',sans-serif;font-size:10px}
+.pc-mode-bar button.on{border-color:var(--gold);background:rgba(245,197,66,.15);color:var(--gold)}
+.vdesk.classic-mode .vwin{
+  position:relative !important;left:auto !important;top:auto !important;
+  width:100% !important;height:auto !important;min-height:220px;
+  margin-bottom:10px;resize:none;display:none}
+.vdesk.classic-mode .vwin.open{display:flex}
+.vdesk.classic-mode .desk-taskbar{position:relative}
 
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
@@ -4250,6 +4281,76 @@ document.addEventListener('focusin', function(e){
 document.addEventListener('DOMContentLoaded', function(){
   document.querySelectorAll('.vwin').forEach(function(w){ enableWinDrag(w); });
 });
+
+
+function setPcMode(mode){
+  var desk=document.getElementById('vdesk');
+  var a=document.getElementById('pcModeActive');
+  var c=document.getElementById('pcModeClassic');
+  if(!desk) return;
+  if(mode==='classic'){
+    desk.classList.add('classic-mode');
+    if(a) a.classList.remove('on'); if(c) c.classList.add('on');
+    localStorage.setItem('pasiya_pc_mode','classic');
+  } else {
+    desk.classList.remove('classic-mode');
+    if(c) c.classList.remove('on'); if(a) a.classList.add('on');
+    localStorage.setItem('pasiya_pc_mode','active');
+  }
+  if(typeof showToast==='function') showToast(mode==='classic'?'Classic PC':'Active PC');
+}
+document.addEventListener('DOMContentLoaded', function(){
+  var m=localStorage.getItem('pasiya_pc_mode')||'active';
+  setPcMode(m);
+});
+// Extra keyboard row: control-ish helpers
+function buildVKbdFull(){
+  var box=document.getElementById('vkbd'); if(!box) return;
+  box.innerHTML='';
+  var VK_SHIFT=window.VK_SHIFT||false;
+  var VK_SYM=window.VK_SYM||false;
+  var rows;
+  if(VK_SYM){
+    rows=[
+      ['1','2','3','4','5','6','7','8','9','0'],
+      ['@','#','$','%','&','*','-','+','(',')'],
+      ['!','"',"'",':',';','/', '?',',','.','_'],
+      ['{','}','[',']','<','>','\\','|','=','~'],
+      ['TAB','ABC','SPACE','BACK','ENTER']
+    ];
+  } else if(VK_SHIFT){
+    rows=[
+      ['1','2','3','4','5','6','7','8','9','0'],
+      ['Q','W','E','R','T','Y','U','I','O','P'],
+      ['A','S','D','F','G','H','J','K','L'],
+      ['SHIFT','Z','X','C','V','B','N','M','BACK'],
+      ['TAB','123','SPACE','.','ENTER']
+    ];
+  } else {
+    rows=[
+      ['1','2','3','4','5','6','7','8','9','0'],
+      ['q','w','e','r','t','y','u','i','o','p'],
+      ['a','s','d','f','g','h','j','k','l'],
+      ['SHIFT','z','x','c','v','b','n','m','BACK'],
+      ['TAB','123','SPACE','.',',','ENTER']
+    ];
+  }
+  rows.forEach(function(r){
+    var row=document.createElement('div'); row.className='row';
+    r.forEach(function(ch){
+      var b=document.createElement('button'); b.type='button';
+      if(ch==='SPACE'){ b.className='space'; b.textContent='space'; b.onclick=function(){ vkInsert(' '); }; }
+      else if(ch==='BACK'){ b.className='wide'; b.textContent='⌫'; b.onclick=function(){ vkBack(); }; }
+      else if(ch==='ENTER'){ b.className='wide'; b.textContent='↵'; b.onclick=function(){ vkEnter(); }; }
+      else if(ch==='TAB'){ b.className='fn'; b.textContent='tab'; b.onclick=function(){ vkInsert('  '); }; }
+      else if(ch==='SHIFT'){ b.className='fn'+(VK_SHIFT?' lit':''); b.textContent='⇧'; b.onclick=function(){ window.VK_SHIFT=!VK_SHIFT; buildVKbdFull(); }; }
+      else if(ch==='123'||ch==='ABC'){ b.className='fn'; b.textContent=ch; b.onclick=function(){ window.VK_SYM=(ch==='123'); if(ch==='ABC') window.VK_SYM=false; buildVKbdFull(); }; }
+      else { b.textContent=ch; b.onclick=function(){ vkInsert(ch); if(window.VK_SHIFT && ch.length===1){ window.VK_SHIFT=false; buildVKbdFull(); } }; }
+      row.appendChild(b);
+    });
+    box.appendChild(row);
+  });
+}
 
 try{loadConfig();}catch(e){console.warn(e);}
 try{upd();}catch(e){console.warn(e);}
