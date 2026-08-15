@@ -785,6 +785,54 @@ body.agent-open .home-chip{right:min(430px,94vw)}
   cursor:pointer;font-size:12px}
 .tpl-btn b{color:var(--gold);display:block;font-family:'Orbitron',sans-serif;font-size:11px}
 
+
+/* ===== ACTIVE DESKTOP v3 ===== */
+.vdesk{position:relative;touch-action:manipulation;user-select:none}
+.vdesk.typing-select{user-select:text}
+.vwin{
+  display:none;position:absolute;z-index:10;
+  left:6%;top:12%;width:88%;height:70%;
+  max-width:100%;flex-direction:column;
+  resize:both;overflow:hidden;
+  min-width:200px;min-height:160px;
+  background:rgba(6,12,24,.97);border:1px solid rgba(0,240,255,.4);
+  border-radius:10px;box-shadow:0 12px 40px rgba(0,0,0,.55)}
+.vwin.open{display:flex}
+.vwin.focused{border-color:var(--gold);box-shadow:0 0 0 1px rgba(245,197,66,.35),0 12px 40px rgba(0,0,0,.6);z-index:30}
+.vwin-h{cursor:grab;touch-action:none;flex-shrink:0}
+.vwin-h:active{cursor:grabbing}
+.vwin-h .vwin-actions{display:flex;gap:4px}
+.vwin-h .vwin-actions button{width:28px;height:26px;font-size:11px}
+.vwin-b{flex:1;overflow:auto;user-select:text;-webkit-user-select:text}
+.vkbd-wrap{
+  display:none;position:fixed;left:0;right:0;bottom:0;z-index:980;
+  padding:6px 6px 10px;background:rgba(4,8,16,.98);
+  border-top:2px solid rgba(245,197,66,.4);max-height:55vh;overflow:auto}
+.vkbd-wrap.open{display:block}
+.vk-preview{
+  width:100%;max-width:720px;margin:0 auto 6px;padding:10px 12px;
+  border-radius:8px;border:1px solid rgba(0,240,255,.35);
+  background:#000;color:#0f0;font-family:'Share Tech Mono',monospace;font-size:14px;
+  min-height:42px;word-break:break-word}
+.vkbd{display:flex;flex-direction:column;gap:3px;max-width:720px;margin:0 auto}
+.vkbd .row{display:flex;gap:3px;justify-content:center;flex-wrap:nowrap}
+.vkbd button{
+  flex:1;min-width:0;padding:11px 2px;border-radius:6px;
+  border:1px solid rgba(0,240,255,.28);background:rgba(20,30,50,.95);
+  color:var(--t);font-size:13px;font-weight:600;cursor:pointer;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.vkbd button:active,.vkbd button.lit{background:rgba(0,240,255,.3);color:var(--c)}
+.vkbd button.wide{flex:1.4}
+.vkbd button.space{flex:4}
+.vkbd button.fn{flex:.9;font-size:10px;color:var(--gold)}
+.desk-taskbar{
+  position:absolute;left:0;right:0;bottom:0;z-index:8;
+  display:flex;gap:6px;flex-wrap:wrap;padding:6px 8px;
+  background:rgba(0,0,0,.55);border-top:1px solid rgba(0,240,255,.2)}
+.desk-taskbar button{
+  padding:6px 10px;border-radius:6px;border:1px solid rgba(0,240,255,.3);
+  background:rgba(0,240,255,.1);color:var(--c);font-size:10px;cursor:pointer}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -4029,6 +4077,180 @@ async function copilotSend(){
   }
 }
 
+/* ACTIVE_KBD_V3 */
+
+/* Active desktop: multi-window, drag, full keyboard */
+var VK_SHIFT=false, VK_SYM=false;
+function vwinFocus(el){
+  document.querySelectorAll('.vwin').forEach(function(w){ w.classList.remove('focused'); });
+  if(el){ el.classList.add('focused'); el.style.zIndex=String(20+document.querySelectorAll('.vwin.open').length); }
+}
+function openVWin(name){
+  var ids=['files','terminal','notes','calc','editor','projects','devtools','cloudide','botlab','copilot'];
+  var w=document.getElementById('vwin-'+name);
+  if(!w) return;
+  w.classList.add('open');
+  vwinFocus(w);
+  enableWinDrag(w);
+  if(name==='notes'){ var t=document.getElementById('vnotes'); if(t) t.value=localStorage.getItem('pasiya_vnotes')||''; }
+  if(name==='calc' && typeof buildCalc==='function') buildCalc();
+  if(name==='editor' && typeof edLoad==='function') edLoad();
+  if(name==='projects' && typeof projLoad==='function') projLoad();
+  if(name==='botlab' && typeof botLabLoad==='function') botLabLoad();
+  // multi-open: do NOT close others
+}
+function closeVWin(name){
+  var w=document.getElementById('vwin-'+name);
+  if(w){ w.classList.remove('open'); w.classList.remove('focused'); }
+}
+function enableWinDrag(win){
+  if(!win || win.dataset.dragReady) return;
+  var head=win.querySelector('.vwin-h'); if(!head) return;
+  win.dataset.dragReady='1';
+  var ox=0,oy=0,sx=0,sy=0,dragging=false;
+  function down(e){
+    if(e.target.closest('button')) return;
+    dragging=true; vwinFocus(win);
+    var t=e.touches?e.touches[0]:e;
+    sx=t.clientX; sy=t.clientY;
+    var r=win.getBoundingClientRect();
+    var parent=win.offsetParent||document.getElementById('vdesk');
+    var pr=parent.getBoundingClientRect();
+    ox=r.left-pr.left; oy=r.top-pr.top;
+    e.preventDefault();
+  }
+  function move(e){
+    if(!dragging) return;
+    var t=e.touches?e.touches[0]:e;
+    var nx=ox+(t.clientX-sx), ny=oy+(t.clientY-sy);
+    win.style.left=Math.max(0,nx)+'px';
+    win.style.top=Math.max(0,ny)+'px';
+    win.style.right='auto'; win.style.bottom='auto';
+    win.style.width=win.offsetWidth+'px';
+    win.style.height=win.offsetHeight+'px';
+  }
+  function up(){ dragging=false; }
+  head.addEventListener('mousedown', down);
+  head.addEventListener('touchstart', down, {passive:false});
+  window.addEventListener('mousemove', move);
+  window.addEventListener('touchmove', move, {passive:false});
+  window.addEventListener('mouseup', up);
+  window.addEventListener('touchend', up);
+  win.addEventListener('mousedown', function(){ vwinFocus(win); });
+  win.addEventListener('touchstart', function(){ vwinFocus(win); }, {passive:true});
+}
+function toggleVKbd(force){
+  var k=document.getElementById('vkbdWrap'); if(!k)return;
+  var open=force===false?false:force===true?true:!k.classList.contains('open');
+  k.classList.toggle('open', open);
+  if(open){ buildVKbdFull(); syncVkPreview(); var p=document.getElementById('vkPreview'); if(p) p.focus(); }
+}
+function buildVKbdFull(){
+  var box=document.getElementById('vkbd'); if(!box) return;
+  box.innerHTML=''; box.dataset.ready='1';
+  var rows;
+  if(VK_SYM){
+    rows=[
+      ['1','2','3','4','5','6','7','8','9','0'],
+      ['@','#','$','%','&','*','-','+','(',')'],
+      ['!', '"', "'", ':', ';', '/', '?', ',', '.', '_'],
+      ['{','}','[',']','<','>','\\','|','=','~'],
+      ['ABC','SPACE','BACK','ENTER']
+    ];
+  } else if(VK_SHIFT){
+    rows=[
+      ['1','2','3','4','5','6','7','8','9','0'],
+      ['Q','W','E','R','T','Y','U','I','O','P'],
+      ['A','S','D','F','G','H','J','K','L'],
+      ['SHIFT','Z','X','C','V','B','N','M','BACK'],
+      ['123','SPACE','ENTER']
+    ];
+  } else {
+    rows=[
+      ['1','2','3','4','5','6','7','8','9','0'],
+      ['q','w','e','r','t','y','u','i','o','p'],
+      ['a','s','d','f','g','h','j','k','l'],
+      ['SHIFT','z','x','c','v','b','n','m','BACK'],
+      ['123','SPACE','.',',','ENTER']
+    ];
+  }
+  rows.forEach(function(r){
+    var row=document.createElement('div'); row.className='row';
+    r.forEach(function(ch){
+      var b=document.createElement('button'); b.type='button';
+      if(ch==='SPACE'){ b.className='space'; b.textContent='space'; b.onclick=function(){ vkInsert(' '); }; }
+      else if(ch==='BACK'){ b.className='wide'; b.textContent='⌫'; b.onclick=function(){ vkBack(); }; }
+      else if(ch==='ENTER'){ b.className='wide'; b.textContent='↵'; b.onclick=function(){ vkEnter(); }; }
+      else if(ch==='SHIFT'){ b.className='fn'+(VK_SHIFT?' lit':''); b.textContent='⇧'; b.onclick=function(){ VK_SHIFT=!VK_SHIFT; buildVKbdFull(); }; }
+      else if(ch==='123'||ch==='ABC'){ b.className='fn'; b.textContent=ch; b.onclick=function(){ VK_SYM=!VK_SYM; if(ch==='ABC') VK_SYM=false; buildVKbdFull(); }; }
+      else { b.textContent=ch; b.onclick=function(){ vkInsert(ch); if(VK_SHIFT && ch.length===1){ VK_SHIFT=false; buildVKbdFull(); } }; }
+      row.appendChild(b);
+    });
+    box.appendChild(row);
+  });
+}
+function vkTarget(){
+  var a=document.activeElement;
+  if(a && (a.tagName==='INPUT' || a.tagName==='TEXTAREA' || a.id==='vkPreview' || a.isContentEditable)) return a;
+  var focused=document.querySelector('.vwin.focused.open textarea, .vwin.focused.open input');
+  if(focused) return focused;
+  var ed=document.getElementById('veditor'); if(ed && document.getElementById('vwin-editor')?.classList.contains('open')) return ed;
+  return document.getElementById('vkPreview') || document.getElementById('vtermIn') || document.getElementById('agentInpFull');
+}
+function vkInsert(ch){
+  var t=vkTarget(); if(!t) return;
+  if(t.isContentEditable || t.id==='vkPreview'){
+    t.focus();
+    try{ document.execCommand('insertText', false, ch); }catch(e){ t.textContent=(t.textContent||'')+ch; }
+    syncVkPreviewFromTarget();
+    return;
+  }
+  var s=t.selectionStart!=null?t.selectionStart:t.value.length;
+  var e=t.selectionEnd!=null?t.selectionEnd:s;
+  t.value=t.value.slice(0,s)+ch+t.value.slice(e);
+  try{ t.selectionStart=t.selectionEnd=s+ch.length; }catch(err){}
+  t.focus();
+  t.dispatchEvent(new Event('input',{bubbles:true}));
+  syncVkPreviewFromTarget();
+}
+function vkBack(){
+  var t=vkTarget(); if(!t) return;
+  if(t.isContentEditable || t.id==='vkPreview'){
+    t.focus();
+    try{ document.execCommand('delete'); }catch(e){ t.textContent=(t.textContent||'').slice(0,-1); }
+    syncVkPreviewFromTarget(); return;
+  }
+  var s=t.selectionStart!=null?t.selectionStart:t.value.length;
+  var e=t.selectionEnd!=null?t.selectionEnd:s;
+  if(s===e && s>0){ t.value=t.value.slice(0,s-1)+t.value.slice(e); try{t.selectionStart=t.selectionEnd=s-1;}catch(err){} }
+  else { t.value=t.value.slice(0,s)+t.value.slice(e); try{t.selectionStart=t.selectionEnd=s;}catch(err){} }
+  t.focus(); t.dispatchEvent(new Event('input',{bubbles:true}));
+  syncVkPreviewFromTarget();
+}
+function vkEnter(){
+  var t=vkTarget();
+  if(t && t.id==='vtermIn' && typeof vtermExec==='function'){ vtermExec(); return; }
+  if(t && t.id==='agentInpFull' && typeof sendAgentFull==='function'){ sendAgentFull(); return; }
+  if(t && t.id==='copilotIn' && typeof copilotSend==='function'){ copilotSend(); return; }
+  vkInsert('\\n');
+}
+function syncVkPreview(){
+  var p=document.getElementById('vkPreview'); var t=vkTarget();
+  if(!p) return;
+  if(t && t!==p && (t.tagName==='TEXTAREA'||t.tagName==='INPUT')) p.textContent=t.value||'';
+}
+function syncVkPreviewFromTarget(){
+  var p=document.getElementById('vkPreview'); var t=vkTarget();
+  if(p && t && t!==p && t.value!=null) p.textContent=t.value;
+}
+document.addEventListener('focusin', function(e){
+  if(e.target && (e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')) syncVkPreview();
+});
+// enable drag on all existing wins after load
+document.addEventListener('DOMContentLoaded', function(){
+  document.querySelectorAll('.vwin').forEach(function(w){ enableWinDrag(w); });
+});
+
 try{loadConfig();}catch(e){console.warn(e);}
 try{upd();}catch(e){console.warn(e);}
 try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hide'); __p.style.display='none';}}catch(e){}document.getElementById('apiKey').addEventListener('input',upd);
@@ -4066,7 +4288,14 @@ try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hid
 </div>
 
 
-<div class="vkbd-wrap" id="vkbdWrap">
+<!-- vk -->
+  <div class="vk-top">
+    <span style="font-size:10px;color:var(--gold);font-family:Orbitron,sans-serif">KEYBOARD // type into focused field</span>
+    <button type="button" onclick="toggleVKbd(false)">&lt; CLOSE</button>
+  </div>
+  <div class="vk-preview" id="vkPreview" contenteditable="true" spellcheck="false" data-placeholder="Type here or in Editor/Notes..."></div>
+  <div class="vkbd" id="vkbd"></div>
+</div>
   <div class="vk-top">
     <span style="font-size:10px;color:var(--gold);font-family:Orbitron,sans-serif">ON-SCREEN KEYBOARD</span>
     <button type="button" onclick="toggleVKbd(false)">&lt; CLOSE</button>
