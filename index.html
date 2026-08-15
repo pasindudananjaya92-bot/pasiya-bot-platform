@@ -772,6 +772,19 @@ body.agent-open .home-chip{right:min(430px,94vw)}
 .proj-list li button{font-size:10px;padding:4px 8px;cursor:pointer;border-radius:4px;
   border:1px solid rgba(255,42,109,.4);background:rgba(255,42,109,.1);color:#ff8}
 
+
+/* ===== BOT LAB PC ===== */
+.botlab-step{
+  border:1px solid rgba(0,240,255,.25);border-radius:10px;padding:12px;margin:8px 0;
+  background:rgba(0,240,255,.05)}
+.botlab-step h4{font-family:'Orbitron',sans-serif;font-size:11px;color:var(--c);margin:0 0 6px}
+.botlab-step .done{color:#00ff9d;font-size:10px}
+.tpl-btn{
+  display:block;width:100%;text-align:left;padding:10px;margin:6px 0;border-radius:8px;
+  border:1px solid rgba(245,197,66,.3);background:rgba(245,197,66,.07);color:var(--t);
+  cursor:pointer;font-size:12px}
+.tpl-btn b{color:var(--gold);display:block;font-family:'Orbitron',sans-serif;font-size:11px}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -1568,6 +1581,8 @@ RULES:
       <button type="button" onclick="openVWin('terminal')"><span class="ic">⬛</span>Term</button>
       <button type="button" onclick="openVWin('notes')"><span class="ic">📄</span>Notes</button>
       
+      <button type="button" onclick="openVWin('botlab')"><span class="ic">🤖</span>Bot Lab</button>
+      <button type="button" onclick="openVWin('copilot')"><span class="ic">✦</span>Copilot</button>
       <button type="button" onclick="openVWin('editor')"><span class="ic">📝</span>Editor</button>
       <button type="button" onclick="openVWin('projects')"><span class="ic">📂</span>Projects</button>
       <button type="button" onclick="openVWin('devtools')"><span class="ic">🛠</span>DevTools</button>
@@ -1613,6 +1628,73 @@ Commands: help | agent | tools | clear
       </div>
     </div>
   
+    
+    <div class="vwin" id="vwin-botlab">
+      <div class="vwin-h"><span>BOT LAB // build &amp; ship (phone path)</span><button type="button" onclick="closeVWin('botlab')">&lt;</button></div>
+      <div class="vwin-b">
+        <p class="desk-hint">Official-style bot path using free stack already on this hub. Not a toy chat only — checklist to production webhook.</p>
+        <div class="botlab-step">
+          <h4>1) PLAN</h4>
+          <p class="desk-hint">What does the bot do? (support, sales, n8n automation, site helper)</p>
+          <textarea id="botPlan" class="editor-area" style="min-height:70px" placeholder="Bot purpose, language (SI/EN), menus..."></textarea>
+        </div>
+        <div class="botlab-step">
+          <h4>2) BRAIN (AI)</h4>
+          <p class="desk-hint">Free: Groq key in n8n credentials · or Google AI Studio · keep secrets out of public HTML</p>
+          <div class="tool-row">
+            <button type="button" onclick="window.open('https://console.groq.com','_blank')">Groq Console</button>
+            <button type="button" onclick="window.open('https://aistudio.google.com','_blank')">AI Studio</button>
+            <button type="button" onclick="window.open('https://pasiyamax.app.n8n.cloud','_blank')">Open n8n</button>
+          </div>
+        </div>
+        <div class="botlab-step">
+          <h4>3) WORKFLOW (n8n)</h4>
+          <p class="desk-hint">Webhook → AI Agent → Respond to Webhook. Publish production URL → paste in Settings.</p>
+          <div class="tool-row">
+            <button type="button" onclick="goPage('settings')">Hub Settings</button>
+            <button type="button" onclick="goPage('apibridge')">API Bridge help</button>
+            <button type="button" onclick="openAgentPanel()">Test Agent</button>
+          </div>
+        </div>
+        <div class="botlab-step">
+          <h4>4) CHANNELS</h4>
+          <p class="desk-hint">Telegram BotFather · WhatsApp Business (limits) · Web widget on this hub · Discord later</p>
+          <div class="tool-row">
+            <button type="button" onclick="window.open('https://t.me/BotFather','_blank')">Telegram BotFather</button>
+            <button type="button" onclick="window.open('https://botpress.com','_blank')">Botpress</button>
+          </div>
+        </div>
+        <div class="botlab-step">
+          <h4>5) TEMPLATES (copy to Editor)</h4>
+          <button type="button" class="tpl-btn" onclick="botTpl('webhook')"><b>n8n webhook JSON</b>Sample body your site already sends</button>
+          <button type="button" class="tpl-btn" onclick="botTpl('system')"><b>System prompt</b>Professional multi-menu bot personality</button>
+          <button type="button" class="tpl-btn" onclick="botTpl('menu')"><b>Bot menu script</b>Text menu structure users can tap</button>
+          <button type="button" class="tpl-btn" onclick="botTpl('monetize')"><b>Monetize notes</b>Ethical free→paid path ideas</button>
+        </div>
+        <div class="botlab-step">
+          <h4>6) SAVE LAB STATE</h4>
+          <div class="tool-row">
+            <button type="button" onclick="botLabSave()">SAVE PLAN</button>
+            <button type="button" onclick="botLabLoad()">LOAD PLAN</button>
+            <button type="button" onclick="projAddFromBot()">ADD TO PROJECTS</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="vwin" id="vwin-copilot">
+      <div class="vwin-h"><span>AI COPILOT // same bridge as Agent</span><button type="button" onclick="closeVWin('copilot')">&lt;</button></div>
+      <div class="vwin-b">
+        <p class="desk-hint">Chat while you build. Uses your n8n production webhook (Groq inside n8n). This is the practical “Grok-like” helper on phone — official Grok app is separate; here the hub Agent is wired in.</p>
+        <div id="copilotChat" class="ad-chat" style="min-height:180px;max-height:40vh;border:1px solid rgba(0,240,255,.2);border-radius:8px;padding:8px;margin-bottom:8px;overflow:auto"></div>
+        <textarea id="copilotIn" class="editor-area" style="min-height:60px" placeholder="Ask: how to add Telegram to n8n bot..."></textarea>
+        <div class="tool-row">
+          <button type="button" onclick="copilotSend()">SEND</button>
+          <button type="button" onclick="openAgentPanel()">Full Agent panel</button>
+          <button type="button" onclick="goPage('promptlab')">Prompt Lab</button>
+        </div>
+      </div>
+    </div>
+
     <div class="vwin" id="vwin-editor">
       <div class="vwin-h"><span>CODE EDITOR // local draft</span><button type="button" onclick="closeVWin('editor')">&lt;</button></div>
       <div class="vwin-b">
@@ -3531,7 +3613,7 @@ if(_agentAddFull){
 
 
 function openVWin(name){
-  ['files','terminal','notes','calc','editor','projects','devtools','cloudide'].forEach(function(n){
+  ['files','terminal','notes','calc','editor','projects','devtools','cloudide','botlab','copilot'].forEach(function(n){
     var w=document.getElementById('vwin-'+n);
     if(w) w.classList.toggle('open', n===name);
   });
@@ -3868,7 +3950,7 @@ function devCountUp(){
 (function(){
   var _ov=typeof openVWin==='function'?openVWin:null;
   openVWin=function(name){
-    ['files','terminal','notes','calc','editor','projects','devtools','cloudide'].forEach(function(n){
+    ['files','terminal','notes','calc','editor','projects','devtools','cloudide','botlab','copilot'].forEach(function(n){
       var w=document.getElementById('vwin-'+n);
       if(w) w.classList.toggle('open', n===name);
     });
@@ -3876,8 +3958,76 @@ function devCountUp(){
     if(name==='calc' && typeof buildCalc==='function') buildCalc();
     if(name==='editor') edLoad();
     if(name==='projects') projLoad();
+    if(name==='botlab') botLabLoad();
   };
 })();
+
+
+function botTpl(kind){
+  var t='';
+  if(kind==='webhook'){
+    t='{\n  "chatInput": "Hello bot",\n  "message": "Hello bot",\n  "source": "pasiya-hub"\n}';
+  }
+  if(kind==='system'){
+    t='You are an official assistant for a small business. Offer a clear text menu: 1) Info 2) Pricing 3) Support 4) Human. Reply in the user language (Sinhala or English). Be short, professional, never invent payment links. If unsure, ask one clarifying question.';
+  }
+  if(kind==='menu'){
+    t='MAIN MENU\\n1. About us\\n2. Services / Pricing\\n3. Support FAQ\\n4. Talk to human\\n\\nReply with a number.\\n\\n[1] ...\\n[2] ...';
+  }
+  if(kind==='monetize'){
+    t='Free tier: basic Q&A bot on web/Telegram.\\nPaid: custom workflows, CRM connect, priority support.\\nDo not promise guaranteed income.\\nUse legal invoices; keep API keys private.';
+  }
+  var ed=document.getElementById('veditor');
+  openVWin('editor');
+  if(ed){ ed.value=(ed.value?ed.value+'\\n\\n':'')+t; }
+  if(typeof showToast==='function') showToast('Template → Editor');
+}
+function botLabSave(){
+  var p=document.getElementById('botPlan');
+  if(p) localStorage.setItem('pasiya_botlab_plan', p.value||'');
+  if(typeof showToast==='function') showToast('Bot plan saved');
+}
+function botLabLoad(){
+  var p=document.getElementById('botPlan');
+  if(p) p.value=localStorage.getItem('pasiya_botlab_plan')||'';
+}
+function projAddFromBot(){
+  var p=document.getElementById('botPlan');
+  var name='Bot project';
+  var note=(p&&p.value||'').slice(0,120);
+  var list=[];
+  try{ list=JSON.parse(localStorage.getItem('pasiya_projects')||'[]'); }catch(e){}
+  list.unshift({name:name, note:note, ts:Date.now()});
+  localStorage.setItem('pasiya_projects', JSON.stringify(list.slice(0,50)));
+  if(typeof showToast==='function') showToast('Added to Projects');
+  openVWin('projects'); if(typeof projLoad==='function') projLoad();
+}
+function copilotAdd(role, text){
+  var box=document.getElementById('copilotChat'); if(!box)return;
+  var d=document.createElement('div');
+  d.className='ad-msg '+(role==='user'?'user':'bot');
+  d.style.cssText='margin:6px 0;padding:8px;border-radius:8px;font-size:12px;white-space:pre-wrap';
+  d.style.background=role==='user'?'rgba(176,38,255,.2)':'rgba(0,240,255,.12)';
+  d.textContent=text; box.appendChild(d); box.scrollTop=box.scrollHeight;
+}
+async function copilotSend(){
+  var inp=document.getElementById('copilotIn'); if(!inp)return;
+  var msg=(inp.value||'').trim(); if(!msg)return;
+  inp.value=''; copilotAdd('user', msg); copilotAdd('bot', '// thinking...');
+  var url=(typeof getAgentWebhook==='function')?getAgentWebhook(): (localStorage.getItem('pasiya_n8n_chat')||'https://pasiyamax.app.n8n.cloud/webhook/2c3ef6f3-d4cd-4ccd-a889-e7894ad490bb');
+  try{
+    var res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chatInput:msg,message:msg,source:'pasiya-copilot'})});
+    var text=await res.text(); var reply=text;
+    try{ var j=JSON.parse(text); reply=j.output||j.text||j.message||j.reply||text; if(typeof reply!=='string') reply=JSON.stringify(reply);}catch(e){}
+    var box=document.getElementById('copilotChat');
+    if(box&&box.lastChild) box.removeChild(box.lastChild);
+    copilotAdd('bot', (reply||'Empty').slice(0,8000));
+  }catch(err){
+    var box=document.getElementById('copilotChat');
+    if(box&&box.lastChild) box.removeChild(box.lastChild);
+    copilotAdd('bot', 'Offline: '+err.message+' — check n8n Published + Settings webhook');
+  }
+}
 
 try{loadConfig();}catch(e){console.warn(e);}
 try{upd();}catch(e){console.warn(e);}
