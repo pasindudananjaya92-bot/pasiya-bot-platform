@@ -324,6 +324,69 @@ textarea{min-height:70px;resize:vertical}
 .side-visitors .sv-row{display:flex;justify-content:space-between;font-size:11px;color:var(--t);margin:2px 0}
 .side-visitors .sv-row b{color:#00ff9d}
 
+
+/* ===== AI AGENT RIGHT DRAWER (Replit-style) ===== */
+.agent-drawer{
+  position:fixed;top:52px;right:0;bottom:0;width:min(420px,92vw);z-index:920;
+  background:rgba(4,10,22,.97);border-left:1px solid rgba(0,240,255,.3);
+  backdrop-filter:blur(14px);display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .28s ease;
+  box-shadow:-8px 0 40px rgba(0,0,0,.45)}
+.agent-drawer.open{transform:translateX(0)}
+.agent-drawer .ad-head{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:12px 14px;border-bottom:1px solid rgba(0,240,255,.2)}
+.agent-drawer .ad-head h3{
+  font-family:'Orbitron',sans-serif;font-size:12px;letter-spacing:1.5px;color:var(--c);margin:0;
+  display:flex;align-items:center;gap:8px}
+.agent-drawer .ad-head .pulse{
+  width:8px;height:8px;border-radius:50%;background:#00ff9d;box-shadow:0 0 8px #00ff9d;
+  animation:agentPulse 1.6s ease infinite}
+.agent-drawer .ad-close{
+  width:36px;height:36px;border-radius:8px;border:1px solid rgba(0,240,255,.35);
+  background:rgba(0,240,255,.08);color:var(--c);font-size:18px;cursor:pointer;line-height:1}
+.agent-drawer .ad-close:hover{background:rgba(0,240,255,.2)}
+.agent-drawer .ad-sub{
+  padding:8px 14px;font-size:10px;color:var(--m);font-family:'Share Tech Mono',monospace;
+  border-bottom:1px solid rgba(0,240,255,.1);line-height:1.4}
+.agent-drawer .ad-chat{
+  flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px}
+.agent-drawer .ad-msg{
+  max-width:95%;padding:10px 12px;border-radius:8px;font-size:12px;line-height:1.55;
+  white-space:pre-wrap;word-break:break-word}
+.agent-drawer .ad-msg.user{
+  align-self:flex-end;background:rgba(176,38,255,.18);border:1px solid rgba(176,38,255,.35);color:#f0e8ff}
+.agent-drawer .ad-msg.bot{
+  align-self:flex-start;background:rgba(0,240,255,.1);border:1px solid rgba(0,240,255,.28);color:#c8f7ff}
+.agent-drawer .ad-msg.sys{align-self:center;color:var(--m);font-size:10px;border:none;background:transparent}
+.agent-drawer .ad-foot{
+  padding:10px 12px;border-top:1px solid rgba(0,240,255,.2);display:flex;gap:8px;align-items:flex-end}
+.agent-drawer .ad-foot textarea{
+  flex:1;min-height:44px;max-height:120px;resize:vertical;padding:10px;
+  border-radius:8px;border:1px solid rgba(0,240,255,.28);background:rgba(0,0,0,.4);
+  color:var(--t);font-family:'Share Tech Mono',monospace;font-size:12px}
+.agent-drawer .ad-foot button{
+  padding:12px 16px;border-radius:8px;border:1px solid rgba(0,240,255,.45);
+  background:rgba(0,240,255,.18);color:var(--c);font-family:'Orbitron',sans-serif;
+  font-size:11px;cursor:pointer;white-space:nowrap}
+.agent-drawer .ad-foot button:hover{background:rgba(0,240,255,.3)}
+.agent-fab{
+  display:none;position:fixed;bottom:18px;right:18px;z-index:915;
+  width:48px;height:48px;border-radius:50%;border:1px solid rgba(0,240,255,.45);
+  background:rgba(0,20,40,.95);color:var(--c);font-size:20px;cursor:pointer;
+  box-shadow:0 0 20px rgba(0,240,255,.3)}
+body.agent-open .agent-fab{display:none}
+.studio-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+.studio-grid a,.studio-grid .card{
+  display:block;padding:14px;border-radius:10px;border:1px solid rgba(0,240,255,.22);
+  background:rgba(0,240,255,.05);color:var(--t);text-decoration:none}
+.studio-grid a:hover{border-color:var(--c);color:var(--c);box-shadow:0 0 14px rgba(0,240,255,.2)}
+.studio-grid b{display:block;font-family:'Orbitron',sans-serif;font-size:11px;color:var(--c);margin-bottom:6px}
+.studio-steps{margin:8px 0 0 18px;font-size:13px;line-height:1.7;color:var(--t)}
+@media(max-width:860px){
+  .agent-drawer{width:100%;top:48px}
+}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -353,11 +416,31 @@ footer a{color:var(--c);text-decoration:none}
 
 <button class="menu-toggle" type="button" onclick="toggleSide()" aria-label="Menu">☰</button>
 <div class="side-overlay" id="sideOverlay" onclick="toggleSide(false)"></div>
+
+<aside class="agent-drawer" id="agentDrawer" aria-label="AI Agent panel">
+  <div class="ad-head">
+    <h3><span class="pulse"></span> PASIYA AI AGENT</h3>
+    <button type="button" class="ad-close" onclick="closeAgentPanel()" title="Collapse">&lt;</button>
+  </div>
+  <div class="ad-sub">Full-height agent // free n8n + Groq bridge // ask setup help in English or Sinhala</div>
+  <div class="ad-chat" id="agentChatFull">
+    <div class="ad-msg sys">// Agent ready — ask how to connect Groq, n8n, Make, Vercel, or build a free site</div>
+  </div>
+  <div class="ad-foot">
+    <textarea id="agentInpFull" placeholder="Message the agent..." rows="2" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAgentFull();}"></textarea>
+    <button type="button" onclick="sendAgentFull()">SEND</button>
+  </div>
+</aside>
+
 <aside class="side-nav" id="sideNav">
   <div class="nav-title">PASIYA OS // MENU</div>
   <input class="side-search" id="sideSearch" placeholder="Filter menu..." oninput="filterMenu(this.value)">
   <div class="kbd-help">Tip: Menu opens internal pages • Mobile: ☰ button</div>
   <a class="nav-item active" href="#page-app" data-page="app" onclick="return goPage('app',this)"><span class="ic">✦</span> Pasiya Nexus</a>
+  <a class="nav-item" href="#page-agent" data-page="agent" onclick="return openAgentPanel()"><span class="ic">✦</span> AI Agent</a>
+  <a class="nav-item" href="#page-webstudio" data-page="webstudio" onclick="return goPage('webstudio',this)"><span class="ic">🌐</span> Web Studio</a>
+  <a class="nav-item" href="#page-autostudio" data-page="autostudio" onclick="return goPage('autostudio',this)"><span class="ic">⚡</span> Auto Studio</a>
+
   <a class="nav-item" href="#page-home" data-page="home" onclick="return goPage('home',this)"><span class="ic">⌂</span> Dashboard</a>
   <a class="nav-item" href="#page-bots" data-page="bots" onclick="return goPage('bots',this)"><span class="ic">🤖</span> AI Bots</a>
   <a class="nav-item" href="#page-n8n" data-page="n8n" onclick="return goPage('n8n',this)"><span class="ic">⚡</span> N8N Public Bot</a>
@@ -384,18 +467,7 @@ footer a{color:var(--c);text-decoration:none}
     <div class="sv-row"><span>Today</span><b id="sideVisitToday">—</b></div>
     <div class="sv-row"><span>Session</span><b id="sideVisitSession">1</b></div>
   </div>
-  <div class="side-agent" id="sideAgent">
-    <h4><span class="pulse"></span> BUILD AGENT</h4>
-    <div class="agent-hint">Ask in English how to connect free tools (n8n, Make, Groq, Vercel…). Uses your public N8N bot when available.</div>
-    <div class="agent-chat" id="agentChat">
-      <div class="am sys">// Build Agent online — ask: "How do I get a free Groq API key?"</div>
-    </div>
-    <div class="agent-row">
-      <input id="agentInp" placeholder="Type help request..." onkeydown="if(event.key==='Enter'){sendAgent();}">
-      <button type="button" onclick="sendAgent()">GO</button>
-    </div>
-  </div>
-
+  <!-- side agent moved to right drawer -->
 </aside>
 <div class="app-shell"><div class="main-stage" id="mainStage">
 
@@ -1021,6 +1093,82 @@ RULES:
   </div>
 </section>
 
+
+<section id="page-webstudio" class="page-view" data-page="webstudio">
+  <div class="st">◆ WEB STUDIO // BUILD A FREE WEBSITE</div>
+  <p class="ss">Guide visitors to create a real site using only free tools already linked to this hub</p>
+  <div class="panel">
+    <h3>🎯 WHAT YOU CAN BUILD</h3>
+    <p class="desk-hint">Portfolio, blog, AI landing page, or simple business site — no credit card required.</p>
+  </div>
+  <div class="panel">
+    <h3>🛠 FREE BUILD PATHS</h3>
+    <div class="studio-grid">
+      <a href="https://github.com/new" target="_blank" rel="noopener"><b>GITHUB PAGES</b>Free static host from a repo</a>
+      <a href="https://vercel.com/signup" target="_blank" rel="noopener"><b>VERCEL</b>Deploy HTML/JS in minutes</a>
+      <a href="https://www.netlify.com" target="_blank" rel="noopener"><b>NETLIFY</b>Drag-drop free hosting</a>
+      <a href="https://replit.com" target="_blank" rel="noopener"><b>REPLIT</b>Code + host online</a>
+      <a href="https://glitch.com" target="_blank" rel="noopener"><b>GLITCH</b>Remix starter apps</a>
+      <a href="https://codepen.io" target="_blank" rel="noopener"><b>CODEPEN</b>Front-end prototypes</a>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>📋 STEP MENU (DO THIS ORDER)</h3>
+    <ol class="studio-steps">
+      <li>Create a free GitHub account (email login OK)</li>
+      <li>New repository → upload <code>index.html</code> (or use this hub as a template)</li>
+      <li>Settings → Pages → deploy from main branch</li>
+      <li>Optional: connect same repo to Vercel for HTTPS + speed</li>
+      <li>Ask <b>AI Agent</b> (left menu): “Help me publish a free GitHub Pages site”</li>
+      <li>Share your live URL on Social Nexus channels</li>
+    </ol>
+  </div>
+  <div class="panel">
+    <h3>🤖 ASK THE AGENT</h3>
+    <p class="desk-hint">Open <b>AI Agent</b> and paste: “Give me a minimal free index.html for a portfolio and steps to put it on GitHub Pages.”</p>
+    <div class="follow-bar">
+      <a href="#" onclick="openAgentPanel();return false;">Open AI Agent</a>
+      <a href="#page-guides" onclick="return goPage('guides')">Guides</a>
+      <a href="#page-workspace" onclick="return goPage('workspace')">Workspace</a>
+    </div>
+  </div>
+</section>
+
+<section id="page-autostudio" class="page-view" data-page="autostudio">
+  <div class="st">◆ AUTO STUDIO // FREE AUTOMATION</div>
+  <p class="ss">Connect webhooks, sheets, and AI replies without paying for a closed platform</p>
+  <div class="panel">
+    <h3>⚡ AUTOMATION MENU</h3>
+    <div class="studio-grid">
+      <a href="https://pasiyamax.app.n8n.cloud" target="_blank" rel="noopener"><b>N8N CLOUD</b>Your agent + workflows</a>
+      <a href="https://www.make.com" target="_blank" rel="noopener"><b>MAKE.COM</b>Visual scenarios</a>
+      <a href="https://zapier.com" target="_blank" rel="noopener"><b>ZAPIER</b>Simple zaps free tier</a>
+      <a href="https://console.groq.com" target="_blank" rel="noopener"><b>GROQ</b>Free fast LLM keys</a>
+      <a href="https://docs.google.com/spreadsheets" target="_blank" rel="noopener"><b>GOOGLE SHEETS</b>Log data for free</a>
+      <a href="https://webhook.site" target="_blank" rel="noopener"><b>WEBHOOK.SITE</b>Test incoming hooks</a>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>📋 STARTER FLOWS</h3>
+    <ol class="studio-steps">
+      <li><b>Website → n8n bot:</b> already live on this hub (BUILD / AI Agent)</li>
+      <li><b>Form → Mongo + Make:</b> Power Feedback page</li>
+      <li><b>Email → Sheet:</b> use n8n Gmail + Google Sheets nodes</li>
+      <li><b>Blog → AI summary:</b> your Blogspot trigger path</li>
+      <li>Ask AI Agent: “How do I connect a Make webhook to this site?”</li>
+    </ol>
+  </div>
+  <div class="panel">
+    <h3>🔐 SAFETY</h3>
+    <p class="desk-hint">API keys and tokens stay in n8n/Make credentials — never paste secrets into public chat or GitHub HTML.</p>
+    <div class="follow-bar">
+      <a href="#" onclick="openAgentPanel();return false;">Open AI Agent</a>
+      <a href="#page-feedback" onclick="return goPage('feedback')">Power Feedback</a>
+      <a href="#page-status" onclick="return goPage('status')">Status Board</a>
+    </div>
+  </div>
+</section>
+
 <section id="page-map" class="page-view" data-page="map">
   <div class="st">◆ HUB MAP // FULL MENU</div>
   <p class="ss">One screen overview of every internal page in Pasiya Max OS</p>
@@ -1038,7 +1186,10 @@ RULES:
     <a href="#page-templates" onclick="return goPage('templates')"><b>TEMPLATES</b>Copy prompts</a>
     <a href="#page-changelog" onclick="return goPage('changelog')"><b>CHANGELOG</b>Waves</a>
     <a href="#page-stats" onclick="return goPage('stats')"><b>ANALYTICS</b>Visits</a>
+    <a href="#page-webstudio" onclick="return goPage('webstudio')"><b>WEB STUDIO</b>Build free site</a>
+    <a href="#page-autostudio" onclick="return goPage('autostudio')"><b>AUTO STUDIO</b>Automations</a>
     <a href="#page-settings" onclick="return goPage('settings')"><b>SETTINGS</b>Webhooks</a>
+    <a href="#" onclick="openAgentPanel();return false;"><b>AI AGENT</b>Right panel</a>
     <a href="#page-support" onclick="return goPage('support')"><b>SUPPORT</b>Contact</a>
     <a href="#page-legal" onclick="return goPage('legal')"><b>LEGAL</b>Disclaimer</a>
   </div>
@@ -1920,6 +2071,9 @@ function handleImage(input, which){
 
 
 const PAGE_MAP = {
+  webstudio: ['page-webstudio'],
+  autostudio: ['page-autostudio'],
+  agent: ['page-app'],
   auth: ['page-auth'],
   myspace: ['page-myspace'],
   help: ['page-help'],
@@ -2031,7 +2185,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 document.addEventListener('DOMContentLoaded', function(){
   
-  ['page-faq','page-templates','page-changelog','page-map','page-support','page-legal','page-auth','page-myspace','page-help','page-app'].forEach(function(id){
+  ['page-faq','page-templates','page-changelog','page-map','page-support','page-legal','page-auth','page-myspace','page-help','page-app','page-webstudio','page-autostudio'].forEach(function(id){
     var n=document.getElementById(id); if(n){n.classList.add('page-view'); n.classList.remove('active');}
   });
 
@@ -2320,6 +2474,64 @@ function syncSideVisitors(){
 }
 setInterval(syncSideVisitors, 2000);
 document.addEventListener('DOMContentLoaded', function(){ setTimeout(syncSideVisitors, 500); setTimeout(syncSideVisitors, 2000); });
+
+
+function openAgentPanel(){
+  var d=document.getElementById('agentDrawer');
+  if(d) d.classList.add('open');
+  document.body.classList.add('agent-open');
+  try{ history.replaceState(null,'','#page-agent'); }catch(e){}
+  var inp=document.getElementById('agentInpFull'); if(inp) setTimeout(function(){inp.focus();},200);
+  return false;
+}
+function closeAgentPanel(){
+  var d=document.getElementById('agentDrawer');
+  if(d) d.classList.remove('open');
+  document.body.classList.remove('agent-open');
+  return false;
+}
+function agentAddFull(role, text){
+  var box=document.getElementById('agentChatFull'); if(!box)return;
+  var d=document.createElement('div'); d.className='ad-msg '+role;
+  d.textContent=text; box.appendChild(d); box.scrollTop=box.scrollHeight;
+}
+async function sendAgentFull(){
+  var inp=document.getElementById('agentInpFull'); if(!inp)return;
+  var msg=(inp.value||'').trim(); if(!msg)return;
+  inp.value='';
+  agentAddFull('user', msg);
+  agentAddFull('sys', '// contacting free n8n agent bridge...');
+  var url = (typeof getAgentWebhook==='function') ? getAgentWebhook() : 'https://pasiyamax.app.n8n.cloud/webhook/2c3ef6f3-d4cd-4ccd-a889-e7894ad490bb';
+  try{
+    var res=await fetch(url,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chatInput:msg, message:msg, query:msg, text:msg, source:'pasiya-agent-drawer'})
+    });
+    var text=await res.text();
+    var reply=text;
+    try{
+      var j=JSON.parse(text);
+      reply=j.output||j.text||j.message||j.reply||j.data||text;
+      if(typeof reply!=='string') reply=JSON.stringify(reply);
+    }catch(e){}
+    var box=document.getElementById('agentChatFull');
+    if(box){ var sys=box.querySelectorAll('.ad-msg.sys'); if(sys.length) sys[sys.length-1].remove(); }
+    agentAddFull('bot', (reply||'Empty reply — check n8n is Published.').slice(0,8000));
+  }catch(err){
+    var box=document.getElementById('agentChatFull');
+    if(box){ var sys=box.querySelectorAll('.ad-msg.sys'); if(sys.length) sys[sys.length-1].remove(); }
+    agentAddFull('bot', 'Bridge offline. Settings → paste Production webhook. Error: '+err.message);
+  }
+}
+// Prefer full drawer if old sendAgent still referenced
+if(typeof sendAgent==='function'){
+  var _sendAgentOld = sendAgent;
+  sendAgent = function(){ openAgentPanel(); return sendAgentFull(); };
+}
+document.addEventListener('DOMContentLoaded', function(){
+  if((location.hash||'')==='#page-agent') openAgentPanel();
+});
 
 try{loadConfig();}catch(e){console.warn(e);}
 try{upd();}catch(e){console.warn(e);}
