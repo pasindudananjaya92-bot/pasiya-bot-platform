@@ -387,6 +387,28 @@ body.agent-open .agent-fab{display:none}
   .agent-drawer{width:100%;top:48px}
 }
 
+
+/* ===== NEXUS APP DASHBOARD ===== */
+.app-shell-dash{
+  border:1px solid rgba(0,240,255,.28);border-radius:14px;padding:18px;
+  background:linear-gradient(165deg,rgba(0,240,255,.07),rgba(176,38,255,.08),rgba(1,3,8,.95));
+  margin-bottom:14px}
+.app-shell-dash .app-top{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+.app-shell-dash .app-title{
+  font-family:'Orbitron',sans-serif;font-size:clamp(16px,3.5vw,22px);
+  background:linear-gradient(90deg,#00f0ff,#b026ff,#00ff9d);-webkit-background-clip:text;background-clip:text;color:transparent}
+.app-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+.app-tiles a,.app-tiles button{
+  display:flex;flex-direction:column;align-items:flex-start;gap:6px;text-align:left;
+  padding:14px;border-radius:10px;border:1px solid rgba(0,240,255,.25);
+  background:rgba(0,0,0,.35);color:var(--t);text-decoration:none;cursor:pointer;
+  font-family:'Share Tech Mono',monospace;font-size:11px}
+.app-tiles a:hover,.app-tiles button:hover{border-color:var(--c);box-shadow:0 0 16px rgba(0,240,255,.2);color:var(--c)}
+.app-tiles .t-ic{font-size:20px}
+.app-tiles .t-name{font-family:'Orbitron',sans-serif;font-size:11px;color:var(--c);letter-spacing:1px}
+.page-view.active{display:block !important}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -492,6 +514,27 @@ footer a{color:var(--c);text-decoration:none}
       <a href="#page-bridge" onclick="return goPage('bridge')">Control Bridge</a>
       <a href="#page-map" onclick="return goPage('map')">Hub Map</a>
       <a href="#" onclick="shareHub();return false;">Share App Link</a>
+    </div>
+  </div>
+
+  
+  <div class="app-shell-dash" id="nexusAppDash">
+    <div class="app-top">
+      <div class="app-title">NEXUS CONTROL DECK</div>
+      <span class="status-pill" style="border-color:rgba(0,255,157,.4)">APP ONLINE</span>
+    </div>
+    <p class="desk-hint" style="margin-bottom:12px">Tap a service tile — intermediate free hub (like n8n / Make / Vercel control center)</p>
+    <div class="app-tiles">
+      <button type="button" onclick="openAgentPanel()"><span class="t-ic">✦</span><span class="t-name">AI AGENT</span>Full-height setup agent</button>
+      <a href="#page-webstudio" onclick="return goPage('webstudio')"><span class="t-ic">🌐</span><span class="t-name">WEB STUDIO</span>Build free websites</a>
+      <a href="#page-autostudio" onclick="return goPage('autostudio')"><span class="t-ic">⚡</span><span class="t-name">AUTO STUDIO</span>n8n Make Zapier</a>
+      <a href="#page-n8n" onclick="return goPage('n8n')"><span class="t-ic">🤖</span><span class="t-name">PUBLIC BOT</span>Chat without API key</a>
+      <a href="#page-feedback" onclick="return goPage('feedback')"><span class="t-ic">💾</span><span class="t-name">FEEDBACK HUB</span>Mongo Make Pipedream</a>
+      <a href="#page-bridge" onclick="return goPage('bridge')"><span class="t-ic">◈</span><span class="t-name">CONTROL BRIDGE</span>Service map</a>
+      <a href="#page-creator" onclick="return goPage('creator')"><span class="t-ic">🎨</span><span class="t-name">CREATOR LAB</span>Content & media tools</a>
+      <a href="#page-deploy" onclick="return goPage('deploy')"><span class="t-ic">🚀</span><span class="t-name">DEPLOY DESK</span>Host free projects</a>
+      <a href="#page-promptlab" onclick="return goPage('promptlab')"><span class="t-ic">🧪</span><span class="t-name">PROMPT LAB</span>Ready prompts</a>
+      <a href="#page-settings" onclick="return goPage('settings')"><span class="t-ic">⚙</span><span class="t-name">SETTINGS</span>Webhooks & keys</a>
     </div>
   </div>
 
@@ -1094,6 +1137,85 @@ RULES:
 </section>
 
 
+
+<section id="page-creator" class="page-view" data-page="creator">
+  <div class="st">◆ CREATOR LAB // FREE MEDIA & CONTENT</div>
+  <p class="ss">Intermediate tools for posts, images, video — free tiers only</p>
+  <div class="panel">
+    <h3>🎨 CREATE MENU</h3>
+    <div class="studio-grid">
+      <a href="https://www.canva.com" target="_blank" rel="noopener"><b>CANVA</b>Design posts free</a>
+      <a href="https://www.capcut.com" target="_blank" rel="noopener"><b>CAPCUT</b>Video edit free</a>
+      <a href="https://remove.bg" target="_blank" rel="noopener"><b>REMOVE.BG</b>Background remove</a>
+      <a href="https://leonardo.ai" target="_blank" rel="noopener"><b>LEONARDO</b>AI images free tier</a>
+      <a href="https://elevenlabs.io" target="_blank" rel="noopener"><b>ELEVENLABS</b>Voice free tier</a>
+      <a href="https://huggingface.co" target="_blank" rel="noopener"><b>HUGGING FACE</b>Open models</a>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>📋 FLOW</h3>
+    <ol class="studio-steps">
+      <li>Pick a tool above (free account with Google/email OK)</li>
+      <li>Create asset → export</li>
+      <li>Ask <b>AI Agent</b> for captions / hashtags</li>
+      <li>Publish via Social Nexus links on this hub</li>
+    </ol>
+    <div class="follow-bar"><a href="#" onclick="openAgentPanel();return false;">Open AI Agent</a></div>
+  </div>
+</section>
+
+<section id="page-deploy" class="page-view" data-page="deploy">
+  <div class="st">◆ DEPLOY DESK // HOST FOR FREE</div>
+  <p class="ss">Ship projects without a credit card — static & serverless free paths</p>
+  <div class="panel">
+    <h3>🚀 HOST MENU</h3>
+    <div class="studio-grid">
+      <a href="https://github.com/new" target="_blank" rel="noopener"><b>GITHUB</b>Repo + Pages</a>
+      <a href="https://vercel.com" target="_blank" rel="noopener"><b>VERCEL</b>Frontend + API</a>
+      <a href="https://www.netlify.com" target="_blank" rel="noopener"><b>NETLIFY</b>Drop deploy</a>
+      <a href="https://render.com" target="_blank" rel="noopener"><b>RENDER</b>Free web services</a>
+      <a href="https://railway.app" target="_blank" rel="noopener"><b>RAILWAY</b>Trial host</a>
+      <a href="https://replit.com" target="_blank" rel="noopener"><b>REPLIT</b>Code + run</a>
+    </div>
+  </div>
+  <div class="panel">
+    <h3>📋 DEPLOY STEPS</h3>
+    <ol class="studio-steps">
+      <li>Code in Replit/GitHub</li>
+      <li>Connect repo to Vercel or enable GitHub Pages</li>
+      <li>Add env secrets only in host dashboard (not in public HTML)</li>
+      <li>Test live URL → share from this hub</li>
+    </ol>
+    <div class="follow-bar">
+      <a href="#page-webstudio" onclick="return goPage('webstudio')">Web Studio</a>
+      <a href="#" onclick="openAgentPanel();return false;">Ask Agent</a>
+    </div>
+  </div>
+</section>
+
+<section id="page-promptlab" class="page-view" data-page="promptlab">
+  <div class="st">◆ PROMPT LAB // READY COMMANDS</div>
+  <p class="ss">Copy prompts for AI Agent / N8N bot — faster results</p>
+  <div class="guide-card">
+    <h4>Free website publish</h4>
+    <pre id="pl1" style="white-space:pre-wrap;font-size:11px;color:#b8f0ff">Give step-by-step free GitHub Pages + Vercel deploy for a simple HTML portfolio. No paid plans.</pre>
+    <button class="btn btn-c" type="button" onclick="copyTpl('pl1')">COPY</button>
+    <button class="btn btn-g" type="button" onclick="openAgentPanel();setTimeout(function(){var i=document.getElementById('agentInpFull');if(i){i.value=document.getElementById('pl1').innerText;}},200)">SEND TO AGENT</button>
+  </div>
+  <div class="guide-card">
+    <h4>n8n webhook connect</h4>
+    <pre id="pl2" style="white-space:pre-wrap;font-size:11px;color:#b8f0ff">Explain how to connect a production n8n webhook to a static website form. Include CORS notes.</pre>
+    <button class="btn btn-c" type="button" onclick="copyTpl('pl2')">COPY</button>
+    <button class="btn btn-g" type="button" onclick="openAgentPanel();setTimeout(function(){var i=document.getElementById('agentInpFull');if(i){i.value=document.getElementById('pl2').innerText;}},200)">SEND TO AGENT</button>
+  </div>
+  <div class="guide-card">
+    <h4>Pipedream + Make + Mongo</h4>
+    <pre id="pl3" style="white-space:pre-wrap;font-size:11px;color:#b8f0ff">How do I fan-out one feedback form to MongoDB, Make.com, and Pipedream safely on a free stack?</pre>
+    <button class="btn btn-c" type="button" onclick="copyTpl('pl3')">COPY</button>
+    <button class="btn btn-g" type="button" onclick="openAgentPanel();setTimeout(function(){var i=document.getElementById('agentInpFull');if(i){i.value=document.getElementById('pl3').innerText;}},200)">SEND TO AGENT</button>
+  </div>
+</section>
+
 <section id="page-webstudio" class="page-view" data-page="webstudio">
   <div class="st">◆ WEB STUDIO // BUILD A FREE WEBSITE</div>
   <p class="ss">Guide visitors to create a real site using only free tools already linked to this hub</p>
@@ -1590,6 +1712,8 @@ https://pasiya-bot-platform.vercel.app</pre>
     <label>Supabase anon public key</label>
     <input id="setSbAnon" placeholder="eyJhbGciOi...">
 
+    <label>Pipedream Webhook</label>
+    <input id="setPipeHook" placeholder="https://xxxx.m.pipedream.net">
     <label>Make.com Webhook</label>
     <input id="setMakeHook" placeholder="https://hook.eu1.make.com/...">
     <div class="row" style="margin-top:10px">
@@ -2071,6 +2195,9 @@ function handleImage(input, which){
 
 
 const PAGE_MAP = {
+  creator: ['page-creator'],
+  deploy: ['page-deploy'],
+  promptlab: ['page-promptlab'],
   webstudio: ['page-webstudio'],
   autostudio: ['page-autostudio'],
   agent: ['page-app'],
@@ -2135,7 +2262,15 @@ function goPage(name, el){
     if(name==='workspace' || name==='settings'){
       // hide other heavy sections optional - just scroll
     }
-    if(first){ first.scrollIntoView({behavior:'smooth',block:'start'}); }
+    if(first){
+      first.scrollIntoView({behavior:'smooth',block:'start'});
+      // NEXUS_GO_FIX: ensure app/studio pages visible
+      if(first.classList.contains('page-view')) first.classList.add('active');
+    }
+    if(name==='app'){
+      var ap=document.getElementById('page-app');
+      if(ap){ ap.classList.add('page-view'); ap.classList.add('active'); ap.scrollIntoView({behavior:'smooth',block:'start'}); }
+    }
     if(name==='settings') loadSettingsUI();
     toggleSide(false);
     try{ history.replaceState(null,'','#page-'+name); }catch(e){}
@@ -2166,6 +2301,7 @@ function loadSettingsUI(){
   if(el1) el1.value=st.n8nChat||'https://pasiyamax.app.n8n.cloud/webhook/2c3ef6f3-d4cd-4ccd-a889-e7894ad490bb';
   if(el2) el2.value=st.n8nIssue||hooks.issue||'';
   if(el3) el3.value=st.make||localStorage.getItem('pasiya_make_hook')||'https://hook.eu1.make.com/41k8qajbe6y1ctqgd1ewsutdko8hwt3h';
+  var elPipe=document.getElementById('setPipeHook'); if(elPipe) elPipe.value=st.pipe||localStorage.getItem('pasiya_pipe_hook')||'https://eof67cbcwtmde2i.m.pipedream.net';
 }
 function setChatTall(on){
   document.querySelectorAll('.chat').forEach(function(c){
@@ -2185,7 +2321,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 document.addEventListener('DOMContentLoaded', function(){
   
-  ['page-faq','page-templates','page-changelog','page-map','page-support','page-legal','page-auth','page-myspace','page-help','page-app','page-webstudio','page-autostudio'].forEach(function(id){
+  ['page-faq','page-templates','page-changelog','page-map','page-support','page-legal','page-auth','page-myspace','page-help','page-app','page-webstudio','page-autostudio','page-creator','page-deploy','page-promptlab'].forEach(function(id){
     var n=document.getElementById(id); if(n){n.classList.add('page-view'); n.classList.remove('active');}
   });
 
@@ -2384,10 +2520,12 @@ saveSettings = function(){
   st.n8nChat=(document.getElementById('setN8nChat')&&document.getElementById('setN8nChat').value||'').trim();
   st.n8nIssue=(document.getElementById('setN8nIssue')&&document.getElementById('setN8nIssue').value||'').trim();
   st.make=(document.getElementById('setMakeHook')&&document.getElementById('setMakeHook').value||'').trim();
+  st.pipe=(document.getElementById('setPipeHook')&&document.getElementById('setPipeHook').value||'').trim();
   st.sbUrl=(document.getElementById('setSbUrl')&&document.getElementById('setSbUrl').value||'').trim();
   st.sbAnon=(document.getElementById('setSbAnon')&&document.getElementById('setSbAnon').value||'').trim();
   localStorage.setItem('pasiya_settings', JSON.stringify(st));
   if(st.make) localStorage.setItem('pasiya_make_hook', st.make);
+  if(st.pipe) localStorage.setItem('pasiya_pipe_hook', st.pipe);
   var hooks={issue:st.n8nIssue, file:(JSON.parse(localStorage.getItem('pasiya_gh_hooks')||'{}').file||'')};
   localStorage.setItem('pasiya_gh_hooks', JSON.stringify(hooks));
   var s=document.getElementById('setStatus');
@@ -2407,6 +2545,7 @@ loadSettingsUI = function(){
   if(el1) el1.value=st.n8nChat||'https://pasiyamax.app.n8n.cloud/webhook/2c3ef6f3-d4cd-4ccd-a889-e7894ad490bb';
   if(el2) el2.value=st.n8nIssue||hooks.issue||'';
   if(el3) el3.value=st.make||localStorage.getItem('pasiya_make_hook')||'https://hook.eu1.make.com/41k8qajbe6y1ctqgd1ewsutdko8hwt3h';
+  var elPipe=document.getElementById('setPipeHook'); if(elPipe) elPipe.value=st.pipe||localStorage.getItem('pasiya_pipe_hook')||'https://eof67cbcwtmde2i.m.pipedream.net';
   if(el4) el4.value=st.sbUrl||'';
   if(el5) el5.value=st.sbAnon||'';
 };
