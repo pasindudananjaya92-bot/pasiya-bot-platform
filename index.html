@@ -753,6 +753,25 @@ body.agent-open .home-chip{right:min(430px,94vw)}
   background:#00ff9d;box-shadow:0 0 8px #00ff9d}
 .net-dot.off{background:#ff2a6d;box-shadow:0 0 8px #ff2a6d}
 
+
+/* ===== WORK PC v2 ===== */
+.vdesk .editor-area{
+  width:100%;min-height:220px;padding:12px;border-radius:8px;
+  border:1px solid rgba(0,240,255,.3);background:#05080f;color:#c8f7ff;
+  font-family:'Share Tech Mono',monospace;font-size:12px;line-height:1.45}
+.vdesk .tool-row{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.vdesk .tool-row button{
+  padding:8px 10px;border-radius:6px;border:1px solid rgba(0,240,255,.3);
+  background:rgba(0,240,255,.08);color:var(--c);font-size:10px;cursor:pointer;
+  font-family:'Orbitron',sans-serif}
+.proj-list{list-style:none;padding:0;margin:0}
+.proj-list li{
+  display:flex;justify-content:space-between;align-items:center;gap:8px;
+  padding:8px;margin:4px 0;border-radius:6px;border:1px solid rgba(0,240,255,.2);
+  background:rgba(0,0,0,.25);font-size:12px}
+.proj-list li button{font-size:10px;padding:4px 8px;cursor:pointer;border-radius:4px;
+  border:1px solid rgba(255,42,109,.4);background:rgba(255,42,109,.1);color:#ff8}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -1548,6 +1567,11 @@ RULES:
       <button type="button" onclick="openVWin('files')"><span class="ic">📁</span>Files</button>
       <button type="button" onclick="openVWin('terminal')"><span class="ic">⬛</span>Term</button>
       <button type="button" onclick="openVWin('notes')"><span class="ic">📄</span>Notes</button>
+      
+      <button type="button" onclick="openVWin('editor')"><span class="ic">📝</span>Editor</button>
+      <button type="button" onclick="openVWin('projects')"><span class="ic">📂</span>Projects</button>
+      <button type="button" onclick="openVWin('devtools')"><span class="ic">🛠</span>DevTools</button>
+      <button type="button" onclick="openVWin('cloudide')"><span class="ic">☁</span>Cloud IDE</button>
       <button type="button" onclick="toggleVKbd()"><span class="ic">⌨️</span>Keys</button>
       <button type="button" onclick="openVWin('calc')"><span class="ic">🔢</span>Calc</button>
       <button type="button" onclick="shareHub()"><span class="ic">📤</span>Share</button>
@@ -1588,7 +1612,70 @@ Commands: help | agent | tools | clear
         <button type="button" class="btn btn-c" style="margin-top:8px" onclick="saveVNotes()">SAVE NOTES</button>
       </div>
     </div>
-  </div>
+  
+    <div class="vwin" id="vwin-editor">
+      <div class="vwin-h"><span>CODE EDITOR // local draft</span><button type="button" onclick="closeVWin('editor')">&lt;</button></div>
+      <div class="vwin-b">
+        <p class="desk-hint">Phone draft pad — copy to GitHub / Replit when ready. Saved on this device.</p>
+        <div class="tool-row">
+          <button type="button" onclick="edSave()">SAVE</button>
+          <button type="button" onclick="edLoad()">LOAD</button>
+          <button type="button" onclick="edCopy()">COPY ALL</button>
+          <button type="button" onclick="edClear()">CLEAR</button>
+        </div>
+        <textarea id="veditor" class="editor-area" placeholder="// paste code, README, notes..."></textarea>
+      </div>
+    </div>
+    <div class="vwin" id="vwin-projects">
+      <div class="vwin-h"><span>PROJECT BOARD // resume work</span><button type="button" onclick="closeVWin('projects')">&lt;</button></div>
+      <div class="vwin-b">
+        <p class="desk-hint">Track phone-stopped projects. Data stays in this browser only.</p>
+        <input id="projName" placeholder="Project name" style="width:100%;padding:8px;margin:4px 0;border-radius:6px;border:1px solid rgba(0,240,255,.3);background:#000;color:#fff">
+        <input id="projNote" placeholder="Next step / link" style="width:100%;padding:8px;margin:4px 0;border-radius:6px;border:1px solid rgba(0,240,255,.3);background:#000;color:#fff">
+        <div class="tool-row">
+          <button type="button" onclick="projAdd()">ADD PROJECT</button>
+        </div>
+        <ul class="proj-list" id="projList"></ul>
+      </div>
+    </div>
+    <div class="vwin" id="vwin-devtools">
+      <div class="vwin-h"><span>DEV TOOLS // quick utilities</span><button type="button" onclick="closeVWin('devtools')">&lt;</button></div>
+      <div class="vwin-b">
+        <label class="desk-hint">JSON format</label>
+        <textarea id="devJson" class="editor-area" style="min-height:100px" placeholder='{"a":1}'></textarea>
+        <div class="tool-row">
+          <button type="button" onclick="devFormatJson()">FORMAT JSON</button>
+          <button type="button" onclick="devCopy('devJson')">COPY</button>
+        </div>
+        <label class="desk-hint">Base64 encode / decode</label>
+        <textarea id="devB64" class="editor-area" style="min-height:80px" placeholder="text or base64"></textarea>
+        <div class="tool-row">
+          <button type="button" onclick="devB64enc()">TO BASE64</button>
+          <button type="button" onclick="devB64dec()">FROM BASE64</button>
+        </div>
+        <label class="desk-hint">Word / char count</label>
+        <textarea id="devCount" class="editor-area" style="min-height:80px" oninput="devCountUp()"></textarea>
+        <p id="devCountOut" class="desk-hint">0 chars · 0 words</p>
+      </div>
+    </div>
+    <div class="vwin" id="vwin-cloudide">
+      <div class="vwin-h"><span>CLOUD IDE // real coding on phone</span><button type="button" onclick="closeVWin('cloudide')">&lt;</button></div>
+      <div class="vwin-b">
+        <p class="desk-hint">Full editors run on free cloud — open and continue real projects (best path without a PC).</p>
+        <div class="studio-grid">
+          <a href="https://replit.com" target="_blank" rel="noopener"><b>REPLIT</b>Code + run + host</a>
+          <a href="https://stackblitz.com" target="_blank" rel="noopener"><b>STACKBLITZ</b>VS Code in browser</a>
+          <a href="https://codesandbox.io" target="_blank" rel="noopener"><b>CODESANDBOX</b>Web apps</a>
+          <a href="https://github.dev" target="_blank" rel="noopener"><b>GITHUB.DEV</b>Edit repos in browser</a>
+          <a href="https://vscode.dev" target="_blank" rel="noopener"><b>VSCODE.DEV</b>Lightweight VS Code</a>
+          <a href="https://codepen.io" target="_blank" rel="noopener"><b>CODEPEN</b>Front-end labs</a>
+          <a href="https://glitch.com" target="_blank" rel="noopener"><b>GLITCH</b>Remix apps</a>
+          <a href="https://gitpod.io" target="_blank" rel="noopener"><b>GITPOD</b>Cloud dev envs</a>
+        </div>
+        <p class="desk-hint" style="margin-top:10px">Tip: put project next-steps in <b>Projects</b> window, code drafts in <b>Editor</b>, then finish in Replit/GitHub.dev.</p>
+      </div>
+    </div>
+</div>
 </section>
 
 
@@ -3444,7 +3531,7 @@ if(_agentAddFull){
 
 
 function openVWin(name){
-  ['files','terminal','notes','calc'].forEach(function(n){
+  ['files','terminal','notes','calc','editor','projects','devtools','cloudide'].forEach(function(n){
     var w=document.getElementById('vwin-'+n);
     if(w) w.classList.toggle('open', n===name);
   });
@@ -3551,6 +3638,9 @@ function vtermExec(){
   else if(cmd==='tools'){ goPage('toolkit'); pre.textContent += '\\n[toolkit]'; }
   else if(cmd==='clear'){ pre.textContent='PASIYA OS terminal helper\\n'; }
   else if(cmd==='desktop'){ goPage('desktop'); }
+  else if(cmd==='editor'){ openVWin('editor'); pre.textContent += '\n[editor]'; }
+  else if(cmd==='projects'){ openVWin('projects'); pre.textContent += '\n[projects]'; }
+  else if(cmd==='cloud'){ openVWin('cloudide'); pre.textContent += '\n[cloud ide]'; }
   else pre.textContent += '\\nunknown — try help';
   pre.scrollTop=pre.scrollHeight;
 }
@@ -3701,6 +3791,93 @@ if(typeof CMD_ITEMS!=='undefined' && CMD_ITEMS && !CMD_ITEMS.some(function(x){re
   CMD_ITEMS.push({t:'Free Cloud services', a:function(){ goPage('freecloud'); }});
   CMD_ITEMS.push({t:'Virtual PC desktop', a:function(){ goPage('desktop'); }});
 }
+
+
+function edSave(){
+  var t=document.getElementById('veditor'); if(!t)return;
+  localStorage.setItem('pasiya_editor', t.value||'');
+  if(typeof showToast==='function') showToast('Editor saved'); else alert('Saved');
+}
+function edLoad(){
+  var t=document.getElementById('veditor'); if(!t)return;
+  t.value=localStorage.getItem('pasiya_editor')||'';
+}
+function edCopy(){
+  var t=document.getElementById('veditor'); if(!t)return;
+  if(navigator.clipboard) navigator.clipboard.writeText(t.value||'');
+  else { t.select(); document.execCommand('copy'); }
+  if(typeof showToast==='function') showToast('Copied');
+}
+function edClear(){ var t=document.getElementById('veditor'); if(t) t.value=''; }
+function projLoad(){
+  var ul=document.getElementById('projList'); if(!ul)return;
+  var list=[];
+  try{ list=JSON.parse(localStorage.getItem('pasiya_projects')||'[]'); }catch(e){ list=[]; }
+  ul.innerHTML='';
+  list.forEach(function(p,i){
+    var li=document.createElement('li');
+    li.innerHTML='<span><b>'+esc(p.name)+'</b><br><small>'+esc(p.note||'')+'</small></span>';
+    var b=document.createElement('button'); b.type='button'; b.textContent='DEL';
+    b.onclick=function(){ projDel(i); };
+    li.appendChild(b); ul.appendChild(li);
+  });
+}
+function esc(s){ return String(s).replace(/[&<>"']/g,function(c){return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]);}); }
+function projAdd(){
+  var n=document.getElementById('projName'); var note=document.getElementById('projNote');
+  if(!n||!n.value.trim()) return alert('Name required');
+  var list=[];
+  try{ list=JSON.parse(localStorage.getItem('pasiya_projects')||'[]'); }catch(e){ list=[]; }
+  list.unshift({name:n.value.trim(), note:(note&&note.value||'').trim(), ts:Date.now()});
+  localStorage.setItem('pasiya_projects', JSON.stringify(list.slice(0,50)));
+  n.value=''; if(note) note.value='';
+  projLoad();
+}
+function projDel(i){
+  var list=[];
+  try{ list=JSON.parse(localStorage.getItem('pasiya_projects')||'[]'); }catch(e){ list=[]; }
+  list.splice(i,1);
+  localStorage.setItem('pasiya_projects', JSON.stringify(list));
+  projLoad();
+}
+function devFormatJson(){
+  var t=document.getElementById('devJson'); if(!t)return;
+  try{ t.value=JSON.stringify(JSON.parse(t.value),null,2); }
+  catch(e){ alert('Invalid JSON'); }
+}
+function devCopy(id){
+  var t=document.getElementById(id); if(!t)return;
+  if(navigator.clipboard) navigator.clipboard.writeText(t.value||'');
+}
+function devB64enc(){
+  var t=document.getElementById('devB64'); if(!t)return;
+  try{ t.value=btoa(unescape(encodeURIComponent(t.value||''))); }catch(e){ alert('Encode fail'); }
+}
+function devB64dec(){
+  var t=document.getElementById('devB64'); if(!t)return;
+  try{ t.value=decodeURIComponent(escape(atob(t.value||''))); }catch(e){ alert('Decode fail'); }
+}
+function devCountUp(){
+  var t=document.getElementById('devCount'); var o=document.getElementById('devCountOut');
+  if(!t||!o)return;
+  var v=t.value||'';
+  var words=v.trim()?v.trim().split(/\s+/).length:0;
+  o.textContent=v.length+' chars · '+words+' words';
+}
+// patch openVWin to load editor/projects
+(function(){
+  var _ov=typeof openVWin==='function'?openVWin:null;
+  openVWin=function(name){
+    ['files','terminal','notes','calc','editor','projects','devtools','cloudide'].forEach(function(n){
+      var w=document.getElementById('vwin-'+n);
+      if(w) w.classList.toggle('open', n===name);
+    });
+    if(name==='notes'){ var t=document.getElementById('vnotes'); if(t) t.value=localStorage.getItem('pasiya_vnotes')||''; }
+    if(name==='calc' && typeof buildCalc==='function') buildCalc();
+    if(name==='editor') edLoad();
+    if(name==='projects') projLoad();
+  };
+})();
 
 try{loadConfig();}catch(e){console.warn(e);}
 try{upd();}catch(e){console.warn(e);}
