@@ -652,6 +652,60 @@ body.side-open .main-stage{margin-left:248px;width:calc(100% - 248px)}
   background:rgba(0,0,0,.25);font-family:'Share Tech Mono',monospace}
 .toolkit-strip a:hover{border-color:var(--gold);color:var(--gold)}
 
+
+/* ===== VIRTUAL PC DESKTOP ===== */
+.vdesk{
+  min-height:calc(100vh - 60px);border-radius:12px;padding:12px;
+  background:
+    radial-gradient(ellipse at 20% 0%,rgba(0,240,255,.12),transparent 50%),
+    radial-gradient(ellipse at 80% 100%,rgba(245,197,66,.1),transparent 45%),
+    linear-gradient(160deg,#050a14,#0a0618 50%,#030810);
+  border:1px solid rgba(0,240,255,.25);position:relative;overflow:hidden}
+.vdesk-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;
+  padding:8px 10px;margin-bottom:12px;border-radius:8px;
+  background:rgba(0,0,0,.4);border:1px solid rgba(245,197,66,.25)}
+.vdesk-bar .vt{font-family:'Orbitron',sans-serif;font-size:11px;color:var(--gold);letter-spacing:1px}
+.vdesk-icons{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(76px,1fr));gap:10px;padding:6px 4px 100px}
+.vdesk-icons button{
+  display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 4px;
+  border:1px solid transparent;border-radius:10px;background:transparent;color:var(--t);
+  cursor:pointer;font-family:'Share Tech Mono',monospace;font-size:10px}
+.vdesk-icons button:hover{border-color:rgba(0,240,255,.35);background:rgba(0,240,255,.08);color:var(--c)}
+.vdesk-icons .ic{font-size:26px;line-height:1}
+.vwin{
+  display:none;position:absolute;left:8px;right:8px;top:56px;bottom:64px;z-index:5;
+  background:rgba(6,12,24,.96);border:1px solid rgba(0,240,255,.35);border-radius:10px;
+  flex-direction:column;overflow:hidden;box-shadow:0 0 40px rgba(0,0,0,.5)}
+.vwin.open{display:flex}
+.vwin-h{
+  display:flex;align-items:center;justify-content:space-between;padding:8px 12px;
+  border-bottom:1px solid rgba(0,240,255,.2);background:rgba(0,240,255,.06)}
+.vwin-h span{font-family:'Orbitron',sans-serif;font-size:11px;color:var(--c)}
+.vwin-h button{border:1px solid rgba(0,240,255,.3);background:rgba(0,0,0,.3);color:var(--c);
+  width:32px;height:28px;border-radius:6px;cursor:pointer}
+.vwin-b{flex:1;overflow:auto;padding:12px}
+.vkbd-wrap{
+  display:none;position:fixed;left:0;right:0;bottom:0;z-index:980;
+  padding:8px;background:rgba(4,8,16,.97);border-top:1px solid rgba(245,197,66,.35);
+  box-shadow:0 -8px 30px rgba(0,0,0,.5)}
+.vkbd-wrap.open{display:block}
+.vkbd-wrap .vk-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.vkbd-wrap .vk-top button{border:1px solid rgba(0,240,255,.3);background:rgba(0,240,255,.1);color:var(--c);
+  padding:4px 12px;border-radius:6px;cursor:pointer}
+.vkbd{display:flex;flex-direction:column;gap:4px;max-width:720px;margin:0 auto}
+.vkbd .row{display:flex;gap:4px;justify-content:center;flex-wrap:wrap}
+.vkbd button{
+  min-width:28px;padding:10px 6px;border-radius:6px;border:1px solid rgba(0,240,255,.25);
+  background:rgba(20,30,50,.9);color:var(--t);font-size:12px;cursor:pointer}
+.vkbd button:active{background:rgba(0,240,255,.25);color:var(--c)}
+.vkbd button.wide{min-width:64px}
+.vkbd button.space{min-width:42%;flex:1}
+.spa-mode .legacy-block{display:none !important}
+.page-view{display:none}
+.page-view.active{display:block !important}
+
 footer{text-align:center;padding:36px 16px;border-top:1px solid rgba(0,240,255,.12);font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--m)}
 footer a{color:var(--c);text-decoration:none}
 </style>
@@ -717,7 +771,7 @@ footer a{color:var(--c);text-decoration:none}
   <hr class="gold-line">
   <input class="side-search" id="sideSearch" placeholder="Filter menu..." oninput="filterMenu(this.value)">
   <div class="kbd-help">Tip: Menu opens internal pages • Mobile: ☰ button</div>
-  <a class="nav-item active" href="#page-app" data-page="app" onclick="return goPage('app',this)"><span class="ic">✦</span> Pasiya Nexus</a>
+  <a class="nav-item active" href="#page-app" data-page="app" onclick="return goPage('desktop',this)"><span class="ic">✦</span> Pasiya Nexus</a>
   <a class="nav-item" href="#page-agent" data-page="agent" onclick="return openAgentPanel()"><span class="ic">✦</span> AI Agent</a>
   <a class="nav-item" href="#page-webstudio" data-page="webstudio" onclick="return goPage('webstudio',this)"><span class="ic">🌐</span> Web Studio</a>
   <a class="nav-item" href="#page-autostudio" data-page="autostudio" onclick="return goPage('autostudio',this)"><span class="ic">⚡</span> Auto Studio</a>
@@ -807,6 +861,7 @@ footer a{color:var(--c);text-decoration:none}
     </div>
     <p class="desk-hint" style="margin-bottom:12px">Tap a service tile — intermediate free hub (like n8n / Make / Vercel control center)</p>
     <div class="app-tiles">
+      <button type="button" onclick="goPage('desktop')"><span class="t-ic">💻</span><span class="t-name">VIRTUAL PC</span>Phone computer mode</button>
       <button type="button" onclick="openAgentPanel()"><span class="t-ic">✦</span><span class="t-name">AI AGENT</span>Full-height setup agent</button>
       <a href="#page-webstudio" onclick="return goPage('webstudio')"><span class="t-ic">🌐</span><span class="t-name">WEB STUDIO</span>Build free websites</a>
       <a href="#page-autostudio" onclick="return goPage('autostudio')"><span class="t-ic">⚡</span><span class="t-name">AUTO STUDIO</span>n8n Make Zapier</a>
@@ -877,7 +932,7 @@ footer a{color:var(--c);text-decoration:none}
   </nav>
 </header>
 
-<section class="hero" id="home">
+<section class="hero legacy-block"  id="home" class="legacy-block">
   <div class="status"><i></i> SYSTEM ONLINE // FREE NODES ACTIVE // v3.0</div>
   <h1><span class="c">ULTIMATE FREE</span><br><span class="p">AI COMMAND CENTER</span></h1>
   <p>The most complete free cybernetic hub. Build AI bots, access free LLMs, automation, hosting, creative AI and hundreds of tools — all from one glowing interface. Zero cost. Forever.</p>
@@ -894,7 +949,7 @@ footer a{color:var(--c);text-decoration:none}
   </div>
 </section>
 
-<section id="core">
+<section id="core" class="legacy-block">
   <div class="st">◆ BOT CORE // NEURAL INTERFACE</div>
   <p class="ss">Inject free API key → Activate → Communicate with your AI</p>
   <div class="panel">
@@ -1022,7 +1077,7 @@ RULES:
 
 
 
-<section id="desk">
+<section id="desk" class="legacy-block">
   <div class="st">◆ AI SERVICE DESK</div>
   <p class="ss">Type what you need • Auto-routes to the right free service or N8N bot</p>
   <div class="panel desk">
@@ -1050,7 +1105,7 @@ RULES:
 </section>
 
 
-<section id="tools-plus">
+<section id="tools-plus" class="legacy-block">
   <div class="st">◆ BOT POWER TOOLS</div>
   <p class="ss">Copy-ready code • URL analysis • Special actions • Long answers</p>
   <div class="panel">
@@ -1076,7 +1131,7 @@ RULES:
   </div>
 </section>
 
-<section id="n8n">
+<section id="n8n" class="legacy-block">
   <div class="st">◆ N8N BOT // PUBLIC AI ASSISTANT</div>
   <p class="ss">No API key needed • Powered by n8n Cloud + Groq • Live on this website</p>
   <div class="panel">
@@ -1116,7 +1171,7 @@ RULES:
   </div>
 </section>
 
-<section id="auto">
+<section id="auto" class="legacy-block">
   <div class="st">◆ AUTOMATION & AGENTS</div>
   <p class="ss">Workflow + AI agent engines</p>
   <div class="grid">
@@ -1169,7 +1224,7 @@ RULES:
   </div>
 </section>
 
-<section id="social">
+<section id="social" class="legacy-block">
   <div class="st">◆ SOCIAL NEXUS</div>
   <p class="ss">All channels // one center</p>
   <div class="grid">
@@ -1226,7 +1281,7 @@ RULES:
 </section>
 
 
-<section id="github-auto">
+<section id="github-auto" class="legacy-block">
   <div class="st">◆ GITHUB API AUTOMATION</div>
   <p class="ss">Feedback → Issue • Bug report • File update via n8n + GitHub token</p>
 
@@ -1421,6 +1476,62 @@ RULES:
 
 
 
+
+
+<section id="page-desktop" class="page-view" data-page="desktop">
+  <div class="vdesk" id="vdesk">
+    <div class="vdesk-bar">
+      <span class="vt">PASIYA OS // VIRTUAL PC</span>
+      <span style="font-size:10px;color:var(--m)">Phone computer mode</span>
+      <button type="button" class="btn btn-c" style="padding:6px 10px;font-size:10px" onclick="toggleVKbd()">KEYBOARD</button>
+      <button type="button" class="btn btn-g" style="padding:6px 10px;font-size:10px" onclick="openAgentPanel()">AI AGENT</button>
+    </div>
+    <div class="vdesk-icons">
+      <button type="button" onclick="goPage('app')"><span class="ic">✦</span>Nexus</button>
+      <button type="button" onclick="openAgentPanel()"><span class="ic">🤖</span>Agent</button>
+      <button type="button" onclick="goPage('toolkit')"><span class="ic">🧰</span>Tools</button>
+      <button type="button" onclick="goPage('webstudio')"><span class="ic">🌐</span>Web</button>
+      <button type="button" onclick="goPage('autostudio')"><span class="ic">⚡</span>Auto</button>
+      <button type="button" onclick="goPage('deploy')"><span class="ic">🚀</span>Deploy</button>
+      <button type="button" onclick="goPage('n8n')"><span class="ic">💬</span>Bot</button>
+      <button type="button" onclick="goPage('feedback')"><span class="ic">📝</span>Feedback</button>
+      <button type="button" onclick="goPage('settings')"><span class="ic">⚙</span>Settings</button>
+      <button type="button" onclick="goPage('guides')"><span class="ic">📖</span>Guides</button>
+      <button type="button" onclick="openVWin('files')"><span class="ic">📁</span>Files</button>
+      <button type="button" onclick="openVWin('terminal')"><span class="ic">⬛</span>Term</button>
+      <button type="button" onclick="openVWin('notes')"><span class="ic">📄</span>Notes</button>
+      <button type="button" onclick="toggleVKbd()"><span class="ic">⌨️</span>Keys</button>
+      <button type="button" onclick="goPage('learn')"><span class="ic">📚</span>Learn</button>
+      <button type="button" onclick="goPage('apibridge')"><span class="ic">🔌</span>API</button>
+    </div>
+    <div class="vwin" id="vwin-files">
+      <div class="vwin-h"><span>FILES // shortcuts</span><button type="button" onclick="closeVWin('files')">&lt;</button></div>
+      <div class="vwin-b desk-hint">
+        <p>Use Tool Kit + Deploy Desk for real files on GitHub/Vercel.</p>
+        <p><a href="#page-toolkit" onclick="return goPage('toolkit')" style="color:var(--c)">Open Tool Kit Hub</a></p>
+        <p><a href="#page-deploy" onclick="return goPage('deploy')" style="color:var(--c)">Open Deploy Desk</a></p>
+      </div>
+    </div>
+    <div class="vwin" id="vwin-terminal">
+      <div class="vwin-h"><span>TERMINAL // helper</span><button type="button" onclick="closeVWin('terminal')">&lt;</button></div>
+      <div class="vwin-b">
+        <pre id="vterm" style="font-size:11px;color:#00ff9d;white-space:pre-wrap">PASIYA OS terminal helper
+Type below or use on-screen keyboard.
+Commands: help | agent | tools | clear
+</pre>
+        <input id="vtermIn" style="width:100%;margin-top:8px;padding:8px;border-radius:6px;border:1px solid rgba(0,240,255,.3);background:#000;color:#0f0;font-family:monospace"
+          onkeydown="if(event.key==='Enter'){vtermExec();}">
+      </div>
+    </div>
+    <div class="vwin" id="vwin-notes">
+      <div class="vwin-h"><span>NOTES // local</span><button type="button" onclick="closeVWin('notes')">&lt;</button></div>
+      <div class="vwin-b">
+        <textarea id="vnotes" style="width:100%;min-height:200px;padding:10px;border-radius:8px;border:1px solid rgba(0,240,255,.25);background:#000;color:var(--t)" placeholder="Notes saved in this phone browser only..."></textarea>
+        <button type="button" class="btn btn-c" style="margin-top:8px" onclick="saveVNotes()">SAVE NOTES</button>
+      </div>
+    </div>
+  </div>
+</section>
 
 <section id="page-toolkit" class="page-view" data-page="toolkit">
   <div class="st">◆ TOOL KIT HUB // FREE FACILITIES</div>
@@ -2026,7 +2137,7 @@ https://pasiya-bot-platform.vercel.app</pre>
   </div>
 </section>
 
-<section id="stats-pro">
+<section id="stats-pro" class="legacy-block">
   <div class="st">◆ LIVE ANALYTICS & FOLLOW</div>
   <p class="ss">Visitor counters update when the page loads • Follow Pasiya Max</p>
   <div class="panel analytics-panel">
@@ -2549,6 +2660,8 @@ function handleImage(input, which){
 
 
 const PAGE_MAP = {
+  desktop: ['page-desktop'],
+  pc: ['page-desktop'],
   toolkit: ['page-toolkit'],
   apibridge: ['page-apibridge'],
   learn: ['page-learn'],
@@ -2561,7 +2674,8 @@ const PAGE_MAP = {
   auth: ['page-auth'],
   myspace: ['page-myspace'],
   help: ['page-help'],
-  app: ['page-app'],
+  app: ['page-desktop'],
+  nexus: ['page-app'],
   map: ['page-map'],
   support: ['page-support'],
   legal: ['page-legal'],
@@ -2607,40 +2721,54 @@ function goPage(name, el){
       var link=document.querySelector('.side-nav a[data-page="'+name+'"]');
       if(link) link.classList.add('active');
     }
-    // hide all major sections that are page targets
-    var allIds = ['page-workspace','page-settings','core','n8n','desk','tools-plus','github-auto','stats-pro','auto','social'];
-    // also hero/home
-    document.querySelectorAll('section[id], .hero, #home').forEach(function(sec){
-      if(sec.id==='preloader')return;
-    });
-    // Show strategy: show mapped sections, scroll to first
     var targets = PAGE_MAP[name] || [name];
-    var first=null;
-    // For SPA-like: if workspace/settings use page-view class
-    document.querySelectorAll('.page-view').forEach(function(p){p.classList.remove('active')});
-    targets.forEach(function(id){
-      if(!id)return;
-      var node=document.getElementById(id) || document.querySelector('.'+id);
-      if(!node)return;
-      if(node.classList.contains('page-view')) node.classList.add('active');
-      if(!first) first=node;
-    });
-    if(name==='workspace' || name==='settings'){
-      // hide other heavy sections optional - just scroll
+    var spaIds = {};
+    document.querySelectorAll('.page-view[id]').forEach(function(p){ spaIds[p.id]=true; });
+    var isSpa = false;
+    targets.forEach(function(id){ if(id && spaIds[id]) isSpa = true; });
+    // home / bots / n8n style = legacy sections visible
+    var legacyNames = {home:1,bots:1,n8n:1,desk:1,tools:1,auto:1,social:1,stats:1};
+    if(legacyNames[name]) isSpa = false;
+
+    document.querySelectorAll('.page-view').forEach(function(p){ p.classList.remove('active'); });
+
+    if(isSpa){
+      document.body.classList.add('spa-mode');
+      var first=null;
+      targets.forEach(function(id){
+        if(!id) return;
+        var node=document.getElementById(id);
+        if(node && node.classList.contains('page-view')){
+          node.classList.add('active');
+          if(!first) first=node;
+        }
+      });
+      if(first){
+        try{ first.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
+        try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(e2){ window.scrollTo(0,0); }
+      }
+      try{ history.replaceState(null,'','#page-'+(targets[0]||name).replace(/^page-/,'')); }catch(e){}
+    } else {
+      document.body.classList.remove('spa-mode');
+      // reveal legacy: scroll to mapped ids
+      var first=null;
+      targets.forEach(function(id){
+        if(!id) return;
+        var node=document.getElementById(id) || document.querySelector('.'+id) || document.querySelector('#'+id);
+        if(node){ if(!first) first=node; }
+      });
+      if(name==='app'){
+        var ap=document.getElementById('page-app');
+        if(ap){ ap.classList.add('active'); document.body.classList.add('spa-mode'); first=ap; }
+      }
+      if(first) try{ first.scrollIntoView({behavior:'smooth',block:'start'}); }catch(e){}
     }
-    if(first){
-      first.scrollIntoView({behavior:'smooth',block:'start'});
-      // NEXUS_GO_FIX: ensure app/studio pages visible
-      if(first.classList.contains('page-view')) first.classList.add('active');
+    if(name==='desktop' || name==='pc'){
+      document.body.classList.add('spa-mode');
+      var d=document.getElementById('page-desktop');
+      if(d){ d.classList.add('active'); try{ window.scrollTo(0,0);}catch(e){} }
     }
-    if(name==='app'){
-      var ap=document.getElementById('page-app');
-      if(ap){ ap.classList.add('page-view'); ap.classList.add('active'); ap.scrollIntoView({behavior:'smooth',block:'start'}); }
-    }
-    if(name==='settings') loadSettingsUI();
-    /* keep menu open — user closes with < or orb */
-    try{ history.replaceState(null,'','#page-'+name); }catch(e){}
-  }catch(err){ console.error(err); }
+  }catch(err){ console.warn('goPage', err); }
   return false;
 }
 function saveSettings(){
@@ -2687,7 +2815,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 document.addEventListener('DOMContentLoaded', function(){
   
-  ['page-faq','page-templates','page-changelog','page-map','page-support','page-legal','page-auth','page-myspace','page-help','page-app','page-webstudio','page-autostudio','page-creator','page-deploy','page-promptlab','page-toolkit','page-apibridge','page-learn'].forEach(function(id){
+  ['page-faq','page-templates','page-changelog','page-map','page-support','page-legal','page-auth','page-myspace','page-help','page-app','page-webstudio','page-autostudio','page-creator','page-deploy','page-promptlab','page-toolkit','page-apibridge','page-learn','page-desktop'].forEach(function(id){
     var n=document.getElementById(id); if(n){n.classList.add('page-view'); n.classList.remove('active');}
   });
 
@@ -3152,6 +3280,95 @@ if(_agentAddFull){
   };
 }
 
+
+function openVWin(name){
+  ['files','terminal','notes'].forEach(function(n){
+    var w=document.getElementById('vwin-'+n);
+    if(w) w.classList.toggle('open', n===name);
+  });
+  if(name==='notes'){
+    var t=document.getElementById('vnotes');
+    if(t) t.value=localStorage.getItem('pasiya_vnotes')||'';
+  }
+}
+function closeVWin(name){
+  var w=document.getElementById('vwin-'+name);
+  if(w) w.classList.remove('open');
+}
+function saveVNotes(){
+  var t=document.getElementById('vnotes');
+  if(t) localStorage.setItem('pasiya_vnotes', t.value||'');
+  alert('Notes saved on this device');
+}
+function toggleVKbd(force){
+  var k=document.getElementById('vkbdWrap'); if(!k)return;
+  var open = force===false ? false : force===true ? true : !k.classList.contains('open');
+  k.classList.toggle('open', open);
+  if(open) buildVKbd();
+}
+function buildVKbd(){
+  var box=document.getElementById('vkbd'); if(!box || box.dataset.ready) return;
+  var rows=[
+    '1 2 3 4 5 6 7 8 9 0',
+    'q w e r t y u i o p',
+    'a s d f g h j k l',
+    'z x c v b n m',
+    'SPACE BACK ENTER'
+  ];
+  box.innerHTML='';
+  rows.forEach(function(r){
+    var row=document.createElement('div'); row.className='row';
+    r.split(' ').forEach(function(ch){
+      var b=document.createElement('button'); b.type='button';
+      if(ch==='SPACE'){ b.className='space'; b.textContent='space'; b.onclick=function(){ vkInsert(' '); }; }
+      else if(ch==='BACK'){ b.className='wide'; b.textContent='⌫'; b.onclick=function(){ vkBack(); }; }
+      else if(ch==='ENTER'){ b.className='wide'; b.textContent='↵'; b.onclick=function(){ vkEnter(); }; }
+      else { b.textContent=ch; b.onclick=function(){ vkInsert(ch); }; }
+      row.appendChild(b);
+    });
+    box.appendChild(row);
+  });
+  box.dataset.ready='1';
+}
+function vkTarget(){
+  var a=document.activeElement;
+  if(a && (a.tagName==='INPUT' || a.tagName==='TEXTAREA')) return a;
+  return document.getElementById('vtermIn') || document.getElementById('agentInpFull');
+}
+function vkInsert(ch){
+  var t=vkTarget(); if(!t) return;
+  var s=t.selectionStart||t.value.length, e=t.selectionEnd||s;
+  t.value = t.value.slice(0,s)+ch+t.value.slice(e);
+  try{ t.selectionStart=t.selectionEnd=s+ch.length; }catch(e){}
+  t.focus();
+}
+function vkBack(){
+  var t=vkTarget(); if(!t) return;
+  var s=t.selectionStart||t.value.length, e=t.selectionEnd||s;
+  if(s===e && s>0){ t.value=t.value.slice(0,s-1)+t.value.slice(e); try{t.selectionStart=t.selectionEnd=s-1;}catch(e){} }
+  else { t.value=t.value.slice(0,s)+t.value.slice(e); try{t.selectionStart=t.selectionEnd=s;}catch(e){} }
+  t.focus();
+}
+function vkEnter(){
+  var t=vkTarget();
+  if(t && t.id==='vtermIn') vtermExec();
+  else if(t && t.id==='agentInpFull') sendAgentFull();
+  else vkInsert('\\n');
+}
+function vtermExec(){
+  var inp=document.getElementById('vtermIn'); var pre=document.getElementById('vterm');
+  if(!inp||!pre)return;
+  var cmd=(inp.value||'').trim().toLowerCase(); inp.value='';
+  pre.textContent += '\\n> '+cmd;
+  if(cmd==='help') pre.textContent += '\\nhelp, agent, tools, clear, desktop';
+  else if(cmd==='agent'){ openAgentPanel(); pre.textContent += '\\n[open agent]'; }
+  else if(cmd==='tools'){ goPage('toolkit'); pre.textContent += '\\n[toolkit]'; }
+  else if(cmd==='clear'){ pre.textContent='PASIYA OS terminal helper\\n'; }
+  else if(cmd==='desktop'){ goPage('desktop'); }
+  else pre.textContent += '\\nunknown — try help';
+  pre.scrollTop=pre.scrollHeight;
+}
+
 try{loadConfig();}catch(e){console.warn(e);}
 try{upd();}catch(e){console.warn(e);}
 try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hide'); __p.style.display='none';}}catch(e){}document.getElementById('apiKey').addEventListener('input',upd);
@@ -3186,6 +3403,15 @@ try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hid
 <div class="pro-fab-row" id="proFabRow">
   <button type="button" class="pro-fab" title="Command Palette" onclick="openCmd()" aria-label="Command palette">⌘</button>
   <button type="button" class="pro-fab" title="AI Agent" onclick="openAgentPanel()" aria-label="Open AI Agent">✦</button>
+</div>
+
+
+<div class="vkbd-wrap" id="vkbdWrap">
+  <div class="vk-top">
+    <span style="font-size:10px;color:var(--gold);font-family:Orbitron,sans-serif">ON-SCREEN KEYBOARD</span>
+    <button type="button" onclick="toggleVKbd(false)">&lt; CLOSE</button>
+  </div>
+  <div class="vkbd" id="vkbd"></div>
 </div>
 
 </body>
