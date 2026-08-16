@@ -1301,9 +1301,64 @@ body:not(.pc-fullscreen) #page-desktop .pc-shell{
 }
 .pc-ctx button:active{ background:rgba(0,240,255,.15); }
 
+
+/* ===== PAGE NAV PRO v10 ===== */
+.page-loader{
+  position:fixed; inset:0; z-index:50000;
+  display:none; align-items:center; justify-content:center;
+  background:rgba(3,8,16,.82); backdrop-filter:blur(6px);
+}
+.page-loader.on{ display:flex; }
+.page-loader .spin{
+  width:56px; height:56px; border-radius:50%;
+  border:3px solid rgba(0,240,255,.2);
+  border-top-color:#00f0ff;
+  border-right-color:#f5c542;
+  animation:pSpin .7s linear infinite;
+  box-shadow:0 0 24px rgba(0,240,255,.25);
+}
+@keyframes pSpin{ to{ transform:rotate(360deg); } }
+.page-loader .ld-txt{
+  position:absolute; margin-top:100px;
+  font-family:Orbitron,sans-serif; font-size:11px; color:#0ff; letter-spacing:2px;
+}
+.dash-back{
+  position:fixed; top:10px; left:12px; z-index:9600;
+  width:44px; height:44px; border-radius:12px;
+  border:1px solid rgba(0,240,255,.45);
+  background:rgba(4,12,24,.92); color:#0ff;
+  font-size:20px; cursor:pointer;
+  display:none; align-items:center; justify-content:center;
+  box-shadow:0 0 16px rgba(0,240,255,.2);
+  touch-action:manipulation;
+}
+body.spa-mode .dash-back,
+body.pc-fullscreen .dash-back{ display:flex !important; }
+body.pc-fullscreen .dash-back{ left:12px; top:10px; }
+.page-hero{
+  padding:16px 12px 8px;
+  border-bottom:1px solid rgba(0,240,255,.15);
+  margin-bottom:12px;
+}
+.page-hero h2{
+  font-family:Orbitron,sans-serif; font-size:16px; color:#0ff; margin:0 0 6px;
+  letter-spacing:1px;
+}
+.page-hero p{ margin:0; font-size:12px; color:#8ab; }
+.page-view.active{
+  animation:pageIn .35s ease;
+}
+@keyframes pageIn{
+  from{ opacity:0; transform:translateY(12px); }
+  to{ opacity:1; transform:none; }
+}
+
 </style>
 </head>
 <body>
+<div class="page-loader" id="pageLoader" aria-hidden="true"><div class="spin"></div><div class="ld-txt">LOADING</div></div>
+<button type="button" class="dash-back" id="dashBack" title="Main Dashboard" aria-label="Back to dashboard">⌂</button>
+
 
 <div id="preloader">
   <div class="ring"></div>
@@ -2075,13 +2130,16 @@ RULES:
 
 
 <section id="page-desktop" class="page-view" data-page="desktop">
+  <div class="page-hero"><h2>◆ VIRTUAL PC</h2><p>Phone computer workspace</p>
+  <button type="button" class="btn btn-g" style="margin-top:8px" onclick="return goDashHome()">⌂ Main Dashboard</button></div>
+
   <div class="pc-shell" id="pcShell">
     <div class="pc-topbar">
       <span style="font-family:Orbitron,sans-serif;font-size:10px;color:#f5c542;margin-right:auto">PASIYA PC</span>
       <button type="button" id="btnPcFull">⛶ FULL</button>
       <button type="button" id="btnKbdToggle" class="on">⌨️ KEYBOARD</button>
       <button type="button" id="btnPcAgent">✦ AGENT</button>
-      <button type="button" onclick="goPage('home')">⌂ HOME</button>
+      <button type="button" onclick="return goDashHome()">⌂ DASHBOARD</button>
     </div>
     <div class="pc-taskbar" id="pcTaskbar"></div>
     <div class="pc-work" id="pcWork">
@@ -2206,6 +2264,9 @@ help | clear | note | agent
 
 
 <section id="page-freecloud" class="page-view" data-page="freecloud">
+  <div class="page-hero"><h2>◆ FREE CLOUD</h2><p>Free-tier platforms — full page view</p>
+  <button type="button" class="btn btn-g" style="margin-top:8px" onclick="return goDashHome()">⌂ Main Dashboard</button></div>
+
   <div class="st">◆ FREE CLOUD // MORE SERVICES</div>
   <p class="ss">Extra free-tier platforms you can use with this hub — open in new tab</p>
   <div class="panel">
@@ -2247,6 +2308,9 @@ help | clear | note | agent
 </section>
 
 <section id="page-toolkit" class="page-view" data-page="toolkit">
+  <div class="page-hero"><h2>◆ TOOL KIT HUB</h2><p>Free tools & facilities — full page view</p>
+  <button type="button" class="btn btn-g" style="margin-top:8px" onclick="return goDashHome()">⌂ Main Dashboard</button></div>
+
   <div class="st">◆ TOOL KIT HUB // FREE FACILITIES</div>
   <p class="desk-hint"><a href="#page-freecloud" onclick="return goPage('freecloud')" style="color:var(--c)">→ More on Free Cloud page</a></p>
   <p class="ss">Extended free toolkit — open accounts with email/Google, no card required for basic use</p>
@@ -2282,6 +2346,9 @@ help | clear | note | agent
 </section>
 
 <section id="page-apibridge" class="page-view" data-page="apibridge">
+  <div class="page-hero"><h2>◆ API BRIDGE</h2><p>Webhooks & bridges</p>
+  <button type="button" class="btn btn-g" style="margin-top:8px" onclick="return goDashHome()">⌂ Main Dashboard</button></div>
+
   <div class="st">◆ API BRIDGE // CONNECT FREELY</div>
   <p class="ss">How this hub talks to free backends — no secrets in public HTML</p>
   <div class="panel">
@@ -2305,6 +2372,9 @@ help | clear | note | agent
 </section>
 
 <section id="page-learn" class="page-view" data-page="learn">
+  <div class="page-hero"><h2>◆ LEARN FREE</h2><p>Learning paths</p>
+  <button type="button" class="btn btn-g" style="margin-top:8px" onclick="return goDashHome()">⌂ Main Dashboard</button></div>
+
   <div class="st">◆ LEARN FREE // SKILL PATHS</div>
   <p class="ss">Free learning links for builders using this hub</p>
   <div class="studio-grid">
@@ -2344,6 +2414,9 @@ help | clear | note | agent
 </section>
 
 <section id="page-deploy" class="page-view" data-page="deploy">
+  <div class="page-hero"><h2>◆ DEPLOY DESK</h2><p>Deploy & host helpers</p>
+  <button type="button" class="btn btn-g" style="margin-top:8px" onclick="return goDashHome()">⌂ Main Dashboard</button></div>
+
   <div class="st">◆ DEPLOY DESK // HOST FOR FREE</div>
   <p class="ss">Ship projects without a credit card — static & serverless free paths</p>
   <div class="panel">
@@ -2396,6 +2469,9 @@ help | clear | note | agent
 </section>
 
 <section id="page-webstudio" class="page-view" data-page="webstudio">
+  <div class="page-hero"><h2>◆ WEB STUDIO</h2><p>Build & ship web projects</p>
+  <button type="button" class="btn btn-g" style="margin-top:8px" onclick="return goDashHome()">⌂ Main Dashboard</button></div>
+
   <div class="st">◆ WEB STUDIO // BUILD A FREE WEBSITE</div>
   <p class="ss">Guide visitors to create a real site using only free tools already linked to this hub</p>
   <div class="panel">
@@ -2436,6 +2512,9 @@ help | clear | note | agent
 </section>
 
 <section id="page-autostudio" class="page-view" data-page="autostudio">
+  <div class="page-hero"><h2>◆ AUTO STUDIO</h2><p>Automation studio</p>
+  <button type="button" class="btn btn-g" style="margin-top:8px" onclick="return goDashHome()">⌂ Main Dashboard</button></div>
+
   <div class="st">◆ AUTO STUDIO // FREE AUTOMATION</div>
   <p class="ss">Connect webhooks, sheets, and AI replies without paying for a closed platform</p>
   <div class="panel">
@@ -2877,6 +2956,9 @@ https://pasiya-bot-platform.vercel.app</pre>
 
 </div>
 <section id="page-settings" class="page-view" data-page="settings">
+  <div class="page-hero"><h2>◆ SETTINGS</h2><p>Control panel — full page view</p>
+  <button type="button" class="btn btn-g" style="margin-top:8px" onclick="return goDashHome()">⌂ Main Dashboard</button></div>
+
   <div class="st">◆ SETTINGS // CONTROL PANEL</div>
   <p class="ss">Saved in this browser only • Connect webhooks & preferences</p>
   <div class="panel settings-grid">
@@ -5184,6 +5266,67 @@ try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hid
   if(document.readyState!=='loading') bind();
   window.pasiyaPcOpenApp=openApp;
   window.pasiyaPcSetKbd=setKbd;
+})();
+
+</script>
+<script>
+
+/* PAGE_NAV_V10 */
+function showPageLoader(ms){
+  var el=document.getElementById('pageLoader');
+  if(!el) return;
+  el.classList.add('on');
+  el.setAttribute('aria-hidden','false');
+  clearTimeout(window.__plT);
+  window.__plT=setTimeout(function(){
+    el.classList.remove('on');
+    el.setAttribute('aria-hidden','true');
+  }, typeof ms==='number'?ms:420);
+}
+function goDashHome(){
+  try{
+    document.body.classList.remove('pc-fullscreen');
+    document.body.classList.remove('spa-mode');
+    document.body.classList.remove('kbd-open');
+    document.querySelectorAll('.page-view').forEach(function(p){ p.classList.remove('active'); });
+    var desk=document.getElementById('page-desktop');
+    if(desk){ desk.classList.remove('kbd-on'); }
+    var floatK=document.getElementById('vkbdWrap');
+    if(floatK) floatK.classList.remove('open');
+    // show home / hero / main
+    var home=document.getElementById('page-app')||document.querySelector('.hero')||document.getElementById('home');
+    if(home && home.classList.contains('page-view')) home.classList.add('active');
+    showPageLoader(380);
+    setTimeout(function(){
+      try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(e){ window.scrollTo(0,0); }
+      if(typeof goPage==='function'){
+        try{ goPage('home'); }catch(e2){}
+      }
+    }, 50);
+    try{ history.replaceState(null,'','#home'); }catch(e){}
+  }catch(err){ console.warn(err); }
+  return false;
+}
+document.addEventListener('DOMContentLoaded', function(){
+  var b=document.getElementById('dashBack');
+  if(b) b.onclick=function(){ goDashHome(); };
+});
+// wrap goPage once
+(function(){
+  if(typeof goPage!=='function' || goPage.__navWrapped) return;
+  var orig=goPage;
+  goPage=function(name, el){
+    showPageLoader(400);
+    if(name==='home'||name==='bots'){
+      document.body.classList.remove('pc-fullscreen');
+    }
+    if(name==='desktop'||name==='pc'){
+      // optional soft full feel
+    }
+    var r=orig.apply(this, arguments);
+    return r;
+  };
+  goPage.__navWrapped=true;
 })();
 
 </script>
