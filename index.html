@@ -1117,6 +1117,106 @@ body.kbd-open .vkbd-wrap {
 /* prevent double keyboards stacking visual */
 .vkbd-wrap + .vkbd-wrap { display: none !important; }
 
+
+/* ===== REAL PC SHELL v8 ===== */
+#page-desktop.page-view.active{
+  display:flex !important;
+  flex-direction:column !important;
+  min-height:calc(100vh - 48px);
+  padding:8px !important;
+  box-sizing:border-box;
+}
+#page-desktop .pc-shell{
+  display:flex;
+  flex-direction:column;
+  flex:1;
+  min-height:0;
+  border:1px solid rgba(0,240,255,.35);
+  border-radius:12px;
+  overflow:hidden;
+  background:#050a12;
+}
+#page-desktop .pc-work{
+  flex:1;
+  min-height:180px;
+  overflow:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:8px;
+  position:relative;
+}
+#page-desktop .pc-kbd-dock{
+  flex-shrink:0;
+  display:none;
+  background:#0a101c;
+  border-top:2px solid #f5c542;
+  padding:6px 4px 10px;
+  touch-action:manipulation;
+}
+#page-desktop.kbd-on .pc-kbd-dock{ display:block !important; }
+#page-desktop.kbd-on .pc-work{
+  max-height:48vh;
+}
+.pc-topbar{
+  display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+  padding:8px;border-bottom:1px solid rgba(0,240,255,.2);
+  background:rgba(0,20,40,.5);
+}
+.pc-topbar button{
+  padding:8px 10px;border-radius:8px;border:1px solid rgba(0,240,255,.35);
+  background:rgba(0,240,255,.1);color:#0ff;font-size:11px;cursor:pointer;
+  touch-action:manipulation;-webkit-tap-highlight-color:transparent;
+}
+.pc-topbar button.on{border-color:#f5c542;color:#f5c542;background:rgba(245,197,66,.12)}
+.pc-icons{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:8px;padding:8px 4px 16px;
+}
+.pc-icons button{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:10px 4px;border:1px solid transparent;border-radius:10px;
+  background:transparent;color:#cfe;font-size:10px;cursor:pointer;
+  touch-action:manipulation;
+}
+.pc-icons button:active{background:rgba(0,240,255,.15)}
+.pc-icons .ic{font-size:24px}
+.pc-win{
+  display:none;margin:8px 0;border:1px solid rgba(0,240,255,.35);border-radius:10px;
+  background:rgba(6,12,24,.95);overflow:hidden;
+}
+.pc-win.open{display:block}
+.pc-win-h{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:8px 10px;background:rgba(0,240,255,.08);border-bottom:1px solid rgba(0,240,255,.2);
+  font-size:11px;color:#0ff;font-family:Orbitron,sans-serif;
+}
+.pc-win-h button{border:1px solid rgba(0,240,255,.3);background:#000;color:#0ff;padding:4px 10px;border-radius:6px;cursor:pointer}
+.pc-win-b{padding:10px}
+.pc-win-b textarea, .pc-win-b input[type=text]{
+  width:100%;box-sizing:border-box;padding:10px;border-radius:8px;
+  border:1px solid rgba(0,240,255,.3);background:#000;color:#cfc;
+  font-size:16px !important;min-height:120px;
+}
+.pc-kbd-preview{
+  width:100%;box-sizing:border-box;margin:0 0 6px;padding:10px 12px;
+  border-radius:8px;border:1px solid rgba(0,240,255,.4);
+  background:#000;color:#0f0;font-size:16px !important;font-family:monospace;
+}
+.pc-kbd{display:flex;flex-direction:column;gap:4px}
+.pc-kbd .r{display:flex;gap:3px}
+.pc-kbd button{
+  flex:1;min-height:40px;border-radius:6px;border:1px solid rgba(0,240,255,.3);
+  background:#182238;color:#eef;font-size:15px;font-weight:600;
+  touch-action:manipulation;-webkit-user-select:none;user-select:none;
+  -webkit-tap-highlight-color:rgba(0,240,255,.25);
+}
+.pc-kbd button:active{background:#0ff;color:#000}
+.pc-kbd button.sp{flex:3.2}
+.pc-kbd button.wd{flex:1.35}
+.pc-kbd button.fn{flex:1.15;font-size:11px;color:#f5c542}
+/* hide old floating keyboard when on desktop page with new system */
+#page-desktop.kbd-on ~ * .vkbd-wrap,
+body:has(#page-desktop.kbd-on) .vkbd-wrap{display:none !important}
+body.kbd-open .vkbd-wrap{display:none !important}
+
 </style>
 </head>
 <body>
@@ -1889,213 +1989,134 @@ RULES:
 
 
 
+
 <section id="page-desktop" class="page-view" data-page="desktop">
-  <div class="pc-mode-bar" id="pcModeBarTop">
-    <button type="button" id="pcModeActive" class="on" onclick="setPcMode('active')">💻 ACTIVE PC</button>
-    <button type="button" id="pcModeClassic" onclick="setPcMode('classic')">📋 CLASSIC PC</button>
-    <button type="button" class="btn btn-c" onclick="toggleVKbd(true)">⌨️ OPEN KEYBOARD</button>
-  </div>
-
-  <div class="vdesk" id="vdesk">
-    <div class="vdesk-bar">
-      <span class="vt">PASIYA OS // VIRTUAL PC</span>
-      <span style="font-size:10px;color:var(--m)">Phone computer mode</span>
-      <button type="button" class="btn btn-c" style="padding:6px 10px;font-size:10px" onclick="toggleVKbd()">KEYBOARD</button>
-      <button type="button" class="btn btn-g" style="padding:6px 10px;font-size:10px" onclick="openAgentPanel()">AI AGENT</button>
+  <div class="pc-shell" id="pcShell">
+    <div class="pc-topbar">
+      <span style="font-family:Orbitron,sans-serif;font-size:10px;color:#f5c542;margin-right:auto">PASIYA PC</span>
+      <button type="button" id="btnKbdToggle" class="on">⌨️ KEYBOARD</button>
+      <button type="button" id="btnPcAgent">✦ AGENT</button>
+      <button type="button" onclick="goPage('home')">⌂ HOME</button>
     </div>
-    <div class="vdesk-icons">
-      <button type="button" onclick="goPage('app')"><span class="ic">✦</span>Nexus</button>
-      <button type="button" onclick="openAgentPanel()"><span class="ic">🤖</span>Agent</button>
-      <button type="button" onclick="goPage('toolkit')"><span class="ic">🧰</span>Tools</button>
-      <button type="button" onclick="goPage('webstudio')"><span class="ic">🌐</span>Web</button>
-      <button type="button" onclick="goPage('autostudio')"><span class="ic">⚡</span>Auto</button>
-      <button type="button" onclick="goPage('deploy')"><span class="ic">🚀</span>Deploy</button>
-      <button type="button" onclick="goPage('n8n')"><span class="ic">💬</span>Bot</button>
-      <button type="button" onclick="goPage('feedback')"><span class="ic">📝</span>Feedback</button>
-      <button type="button" onclick="goPage('settings')"><span class="ic">⚙</span>Settings</button>
-      <button type="button" onclick="goPage('guides')"><span class="ic">📖</span>Guides</button>
-      <button type="button" onclick="openVWin('files')"><span class="ic">📁</span>Files</button>
-      <button type="button" onclick="openVWin('terminal')"><span class="ic">⬛</span>Term</button>
-      <button type="button" onclick="openVWin('notes')"><span class="ic">📄</span>Notes</button>
-      
-      <button type="button" onclick="openVWin('botlab')"><span class="ic">🤖</span>Bot Lab</button>
-      <button type="button" onclick="openVWin('copilot')"><span class="ic">✦</span>Copilot</button>
-      <button type="button" onclick="openVWin('editor')"><span class="ic">📝</span>Editor</button>
-      <button type="button" onclick="openVWin('projects')"><span class="ic">📂</span>Projects</button>
-      <button type="button" onclick="openVWin('devtools')"><span class="ic">🛠</span>DevTools</button>
-      <button type="button" onclick="openVWin('cloudide')"><span class="ic">☁</span>Cloud IDE</button>
-      <button type="button" onclick="toggleVKbd()"><span class="ic">⌨️</span>Keys</button>
-      <button type="button" onclick="openVWin('calc')"><span class="ic">🔢</span>Calc</button>
-      <button type="button" onclick="shareHub()"><span class="ic">📤</span>Share</button>
-      <button type="button" onclick="goPage('status')"><span class="ic">📡</span>Status</button>
-      <button type="button" onclick="goPage('learn')"><span class="ic">📚</span>Learn</button>
-      <button type="button" onclick="goPage('apibridge')"><span class="ic">🔌</span>API</button>
-    </div>
-    <div class="vwin" id="vwin-files">
-      <div class="vwin-h"><span>FILES // shortcuts</span><button type="button" onclick="closeVWin('files')">&lt;</button></div>
-      <div class="vwin-b desk-hint">
-        <p>Use Tool Kit + Deploy Desk for real files on GitHub/Vercel.</p>
-        <p><a href="#page-toolkit" onclick="return goPage('toolkit')" style="color:var(--c)">Open Tool Kit Hub</a></p>
-        <p><a href="#page-deploy" onclick="return goPage('deploy')" style="color:var(--c)">Open Deploy Desk</a></p>
+    <div class="pc-work" id="pcWork">
+      <div class="pc-icons" id="pcIcons">
+        <button type="button" data-app="notepad"><span class="ic">📝</span>Notepad</button>
+        <button type="button" data-app="files"><span class="ic">📁</span>Files</button>
+        <button type="button" data-app="calc"><span class="ic">🔢</span>Calc</button>
+        <button type="button" data-app="term"><span class="ic">⬛</span>Terminal</button>
+        <button type="button" data-app="browser"><span class="ic">🌐</span>Browser</button>
+        <button type="button" data-app="tools"><span class="ic">🛠</span>Tools</button>
+        <button type="button" data-app="projects"><span class="ic">📂</span>Projects</button>
+        <button type="button" data-app="botlab"><span class="ic">🤖</span>Bot Lab</button>
+        <button type="button" data-app="settings"><span class="ic">⚙</span>Settings</button>
+        <button type="button" data-app="cloud"><span class="ic">☁</span>Cloud IDE</button>
       </div>
-    </div>
-    <div class="vwin" id="vwin-terminal">
-      <div class="vwin-h"><span>TERMINAL // helper</span><button type="button" onclick="closeVWin('terminal')">&lt;</button></div>
-      <div class="vwin-b">
-        <pre id="vterm" style="font-size:11px;color:#00ff9d;white-space:pre-wrap">PASIYA OS terminal helper
-Type below or use on-screen keyboard.
-Commands: help | agent | tools | clear
+
+      <div class="pc-win" id="pcApp-notepad">
+        <div class="pc-win-h"><span>NOTEPAD</span><button type="button" data-close="notepad">✕</button></div>
+        <div class="pc-win-b">
+          <textarea id="pcNotepad" placeholder="Type with KEYBOARD below..."></textarea>
+          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+            <button type="button" class="btn btn-c" id="pcNoteSave">SAVE</button>
+            <button type="button" class="btn btn-g" id="pcNoteLoad">LOAD</button>
+            <button type="button" class="btn btn-g" id="pcNoteCopy">COPY</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="pc-win" id="pcApp-files">
+        <div class="pc-win-h"><span>FILES // local drafts</span><button type="button" data-close="files">✕</button></div>
+        <div class="pc-win-b">
+          <p class="desk-hint">Saved on this phone browser only.</p>
+          <ul id="pcFileList" style="font-size:13px;color:#9cf"></ul>
+          <button type="button" class="btn btn-c" id="pcFileRefresh">REFRESH LIST</button>
+        </div>
+      </div>
+
+      <div class="pc-win" id="pcApp-calc">
+        <div class="pc-win-h"><span>CALCULATOR</span><button type="button" data-close="calc">✕</button></div>
+        <div class="pc-win-b">
+          <input type="text" id="pcCalcOut" readonly value="" style="min-height:44px;text-align:right;font-size:20px !important">
+          <div id="pcCalcPad" style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px"></div>
+        </div>
+      </div>
+
+      <div class="pc-win" id="pcApp-term">
+        <div class="pc-win-h"><span>TERMINAL</span><button type="button" data-close="term">✕</button></div>
+        <div class="pc-win-b">
+          <pre id="pcTermOut" style="min-height:100px;background:#000;color:#0f0;padding:8px;border-radius:8px;font-size:12px;overflow:auto">Pasiya PC terminal
+help | clear | note | agent
 </pre>
-        <input id="vtermIn" style="width:100%;margin-top:8px;padding:8px;border-radius:6px;border:1px solid rgba(0,240,255,.3);background:#000;color:#0f0;font-family:monospace"
-          onkeydown="if(event.key==='Enter'){vtermExec();}">
+          <input type="text" id="pcTermIn" placeholder="command..." style="min-height:44px">
+        </div>
       </div>
-    </div>
-    <div class="vwin" id="vwin-calc">
-      <div class="vwin-h"><span>CALCULATOR</span><button type="button" onclick="closeVWin('calc')">&lt;</button></div>
-      <div class="vwin-b">
-        <input id="vcalc" readonly style="width:100%;padding:12px;font-size:20px;text-align:right;background:#000;color:#0f0;border:1px solid rgba(0,240,255,.3);border-radius:8px;margin-bottom:8px">
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px" id="vcalcPad"></div>
+
+      <div class="pc-win" id="pcApp-browser">
+        <div class="pc-win-h"><span>BROWSER // shortcuts</span><button type="button" data-close="browser">✕</button></div>
+        <div class="pc-win-b studio-grid">
+          <a href="https://google.com" target="_blank" rel="noopener"><b>GOOGLE</b>Search</a>
+          <a href="https://github.com" target="_blank" rel="noopener"><b>GITHUB</b>Code</a>
+          <a href="https://replit.com" target="_blank" rel="noopener"><b>REPLIT</b>IDE</a>
+          <a href="https://stackoverflow.com" target="_blank" rel="noopener"><b>STACK</b>Help</a>
+          <a href="https://chat.openai.com" target="_blank" rel="noopener"><b>CHATGPT</b>AI</a>
+          <a href="https://console.groq.com" target="_blank" rel="noopener"><b>GROQ</b>Keys</a>
+        </div>
       </div>
-    </div>
-    <div class="vwin" id="vwin-notes">
-      <div class="vwin-h"><span>NOTES // local</span><button type="button" onclick="closeVWin('notes')">&lt;</button></div>
-      <div class="vwin-b">
-        <textarea id="vnotes" style="width:100%;min-height:200px;padding:10px;border-radius:8px;border:1px solid rgba(0,240,255,.25);background:#000;color:var(--t)" placeholder="Notes saved in this phone browser only..."></textarea>
-        <button type="button" class="btn btn-c" style="margin-top:8px" onclick="saveVNotes()">SAVE NOTES</button>
-      </div>
-    </div>
-  
-    
-    <div class="vwin" id="vwin-botlab">
-      <div class="vwin-h"><span>BOT LAB // build &amp; ship (phone path)</span><button type="button" onclick="closeVWin('botlab')">&lt;</button></div>
-      <div class="vwin-b">
-        <p class="desk-hint">Official-style bot path using free stack already on this hub. Not a toy chat only — checklist to production webhook.</p>
-        <div class="botlab-step">
-          <h4>1) PLAN</h4>
-          <p class="desk-hint">What does the bot do? (support, sales, n8n automation, site helper)</p>
-          <textarea id="botPlan" class="editor-area" style="min-height:70px" placeholder="Bot purpose, language (SI/EN), menus..."></textarea>
-        </div>
-        <div class="botlab-step">
-          <h4>2) BRAIN (AI)</h4>
-          <p class="desk-hint">Free: Groq key in n8n credentials · or Google AI Studio · keep secrets out of public HTML</p>
-          <div class="tool-row">
-            <button type="button" onclick="window.open('https://console.groq.com','_blank')">Groq Console</button>
-            <button type="button" onclick="window.open('https://aistudio.google.com','_blank')">AI Studio</button>
-            <button type="button" onclick="window.open('https://pasiyamax.app.n8n.cloud','_blank')">Open n8n</button>
-          </div>
-        </div>
-        <div class="botlab-step">
-          <h4>3) WORKFLOW (n8n)</h4>
-          <p class="desk-hint">Webhook → AI Agent → Respond to Webhook. Publish production URL → paste in Settings.</p>
-          <div class="tool-row">
-            <button type="button" onclick="goPage('settings')">Hub Settings</button>
-            <button type="button" onclick="goPage('apibridge')">API Bridge help</button>
-            <button type="button" onclick="openAgentPanel()">Test Agent</button>
-          </div>
-        </div>
-        <div class="botlab-step">
-          <h4>4) CHANNELS</h4>
-          <p class="desk-hint">Telegram BotFather · WhatsApp Business (limits) · Web widget on this hub · Discord later</p>
-          <div class="tool-row">
-            <button type="button" onclick="window.open('https://t.me/BotFather','_blank')">Telegram BotFather</button>
-            <button type="button" onclick="window.open('https://botpress.com','_blank')">Botpress</button>
-          </div>
-        </div>
-        <div class="botlab-step">
-          <h4>5) TEMPLATES (copy to Editor)</h4>
-          <button type="button" class="tpl-btn" onclick="botTpl('webhook')"><b>n8n webhook JSON</b>Sample body your site already sends</button>
-          <button type="button" class="tpl-btn" onclick="botTpl('system')"><b>System prompt</b>Professional multi-menu bot personality</button>
-          <button type="button" class="tpl-btn" onclick="botTpl('menu')"><b>Bot menu script</b>Text menu structure users can tap</button>
-          <button type="button" class="tpl-btn" onclick="botTpl('monetize')"><b>Monetize notes</b>Ethical free→paid path ideas</button>
-        </div>
-        <div class="botlab-step">
-          <h4>6) SAVE LAB STATE</h4>
-          <div class="tool-row">
-            <button type="button" onclick="botLabSave()">SAVE PLAN</button>
-            <button type="button" onclick="botLabLoad()">LOAD PLAN</button>
-            <button type="button" onclick="projAddFromBot()">ADD TO PROJECTS</button>
+
+      <div class="pc-win" id="pcApp-tools">
+        <div class="pc-win-h"><span>TOOLS</span><button type="button" data-close="tools">✕</button></div>
+        <div class="pc-win-b">
+          <p class="desk-hint">JSON / Base64 utilities</p>
+          <textarea id="pcToolBox" placeholder="paste text..."></textarea>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+            <button type="button" class="btn btn-c" id="pcJsonFmt">FORMAT JSON</button>
+            <button type="button" class="btn btn-g" id="pcB64e">TO BASE64</button>
+            <button type="button" class="btn btn-g" id="pcB64d">FROM BASE64</button>
           </div>
         </div>
       </div>
-    </div>
-    <div class="vwin" id="vwin-copilot">
-      <div class="vwin-h"><span>AI COPILOT // same bridge as Agent</span><button type="button" onclick="closeVWin('copilot')">&lt;</button></div>
-      <div class="vwin-b">
-        <p class="desk-hint">Chat while you build. Uses your n8n production webhook (Groq inside n8n). This is the practical “Grok-like” helper on phone — official Grok app is separate; here the hub Agent is wired in.</p>
-        <div id="copilotChat" class="ad-chat" style="min-height:180px;max-height:40vh;border:1px solid rgba(0,240,255,.2);border-radius:8px;padding:8px;margin-bottom:8px;overflow:auto"></div>
-        <textarea id="copilotIn" class="editor-area" style="min-height:60px" placeholder="Ask: how to add Telegram to n8n bot..."></textarea>
-        <div class="tool-row">
-          <button type="button" onclick="copilotSend()">SEND</button>
-          <button type="button" onclick="openAgentPanel()">Full Agent panel</button>
-          <button type="button" onclick="goPage('promptlab')">Prompt Lab</button>
+
+      <div class="pc-win" id="pcApp-projects">
+        <div class="pc-win-h"><span>PROJECTS</span><button type="button" data-close="projects">✕</button></div>
+        <div class="pc-win-b">
+          <input type="text" id="pcProjName" placeholder="Project name" style="min-height:44px;margin-bottom:6px">
+          <input type="text" id="pcProjNote" placeholder="Next step" style="min-height:44px;margin-bottom:6px">
+          <button type="button" class="btn btn-c" id="pcProjAdd">ADD</button>
+          <ul id="pcProjList" style="margin-top:10px;font-size:13px"></ul>
+        </div>
+      </div>
+
+      <div class="pc-win" id="pcApp-botlab">
+        <div class="pc-win-h"><span>BOT LAB</span><button type="button" data-close="botlab">✕</button></div>
+        <div class="pc-win-b">
+          <textarea id="pcBotPlan" placeholder="Bot idea / menu plan..."></textarea>
+          <button type="button" class="btn btn-c" id="pcBotSave" style="margin-top:8px">SAVE PLAN</button>
+          <p class="desk-hint">Later: n8n + Telegram. For now plan on phone.</p>
+        </div>
+      </div>
+
+      <div class="pc-win" id="pcApp-cloud">
+        <div class="pc-win-h"><span>CLOUD IDE</span><button type="button" data-close="cloud">✕</button></div>
+        <div class="pc-win-b studio-grid">
+          <a href="https://replit.com" target="_blank" rel="noopener"><b>REPLIT</b></a>
+          <a href="https://stackblitz.com" target="_blank" rel="noopener"><b>STACKBLITZ</b></a>
+          <a href="https://vscode.dev" target="_blank" rel="noopener"><b>VSCODE.DEV</b></a>
+          <a href="https://github.dev" target="_blank" rel="noopener"><b>GITHUB.DEV</b></a>
         </div>
       </div>
     </div>
 
-    <div class="vwin" id="vwin-editor">
-      <div class="vwin-h"><span>CODE EDITOR // local draft</span><button type="button" onclick="closeVWin('editor')">&lt;</button></div>
-      <div class="vwin-b">
-        <p class="desk-hint">Phone draft pad — copy to GitHub / Replit when ready. Saved on this device.</p>
-        <div class="tool-row">
-          <button type="button" onclick="edSave()">SAVE</button>
-          <button type="button" onclick="edLoad()">LOAD</button>
-          <button type="button" onclick="edCopy()">COPY ALL</button>
-          <button type="button" onclick="edClear()">CLEAR</button>
-        </div>
-        <textarea id="veditor" class="editor-area" placeholder="// paste code, README, notes..."></textarea>
+    <div class="pc-kbd-dock" id="pcKbdDock">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <span style="font-size:10px;color:#f5c542">KEYBOARD → active field</span>
+        <button type="button" id="btnKbdClose" style="padding:6px 12px;border-radius:6px;border:1px solid #0ff;background:#000;color:#0ff">CLOSE</button>
       </div>
+      <input type="text" class="pc-kbd-preview" id="pcKbdField" inputmode="none" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Tap Notepad/Terminal then type keys...">
+      <div class="pc-kbd" id="pcKbd"></div>
     </div>
-    <div class="vwin" id="vwin-projects">
-      <div class="vwin-h"><span>PROJECT BOARD // resume work</span><button type="button" onclick="closeVWin('projects')">&lt;</button></div>
-      <div class="vwin-b">
-        <p class="desk-hint">Track phone-stopped projects. Data stays in this browser only.</p>
-        <input id="projName" placeholder="Project name" style="width:100%;padding:8px;margin:4px 0;border-radius:6px;border:1px solid rgba(0,240,255,.3);background:#000;color:#fff">
-        <input id="projNote" placeholder="Next step / link" style="width:100%;padding:8px;margin:4px 0;border-radius:6px;border:1px solid rgba(0,240,255,.3);background:#000;color:#fff">
-        <div class="tool-row">
-          <button type="button" onclick="projAdd()">ADD PROJECT</button>
-        </div>
-        <ul class="proj-list" id="projList"></ul>
-      </div>
-    </div>
-    <div class="vwin" id="vwin-devtools">
-      <div class="vwin-h"><span>DEV TOOLS // quick utilities</span><button type="button" onclick="closeVWin('devtools')">&lt;</button></div>
-      <div class="vwin-b">
-        <label class="desk-hint">JSON format</label>
-        <textarea id="devJson" class="editor-area" style="min-height:100px" placeholder='{"a":1}'></textarea>
-        <div class="tool-row">
-          <button type="button" onclick="devFormatJson()">FORMAT JSON</button>
-          <button type="button" onclick="devCopy('devJson')">COPY</button>
-        </div>
-        <label class="desk-hint">Base64 encode / decode</label>
-        <textarea id="devB64" class="editor-area" style="min-height:80px" placeholder="text or base64"></textarea>
-        <div class="tool-row">
-          <button type="button" onclick="devB64enc()">TO BASE64</button>
-          <button type="button" onclick="devB64dec()">FROM BASE64</button>
-        </div>
-        <label class="desk-hint">Word / char count</label>
-        <textarea id="devCount" class="editor-area" style="min-height:80px" oninput="devCountUp()"></textarea>
-        <p id="devCountOut" class="desk-hint">0 chars · 0 words</p>
-      </div>
-    </div>
-    <div class="vwin" id="vwin-cloudide">
-      <div class="vwin-h"><span>CLOUD IDE // real coding on phone</span><button type="button" onclick="closeVWin('cloudide')">&lt;</button></div>
-      <div class="vwin-b">
-        <p class="desk-hint">Full editors run on free cloud — open and continue real projects (best path without a PC).</p>
-        <div class="studio-grid">
-          <a href="https://replit.com" target="_blank" rel="noopener"><b>REPLIT</b>Code + run + host</a>
-          <a href="https://stackblitz.com" target="_blank" rel="noopener"><b>STACKBLITZ</b>VS Code in browser</a>
-          <a href="https://codesandbox.io" target="_blank" rel="noopener"><b>CODESANDBOX</b>Web apps</a>
-          <a href="https://github.dev" target="_blank" rel="noopener"><b>GITHUB.DEV</b>Edit repos in browser</a>
-          <a href="https://vscode.dev" target="_blank" rel="noopener"><b>VSCODE.DEV</b>Lightweight VS Code</a>
-          <a href="https://codepen.io" target="_blank" rel="noopener"><b>CODEPEN</b>Front-end labs</a>
-          <a href="https://glitch.com" target="_blank" rel="noopener"><b>GLITCH</b>Remix apps</a>
-          <a href="https://gitpod.io" target="_blank" rel="noopener"><b>GITPOD</b>Cloud dev envs</a>
-        </div>
-        <p class="desk-hint" style="margin-top:10px">Tip: put project next-steps in <b>Projects</b> window, code drafts in <b>Editor</b>, then finish in Replit/GitHub.dev.</p>
-      </div>
-    </div>
-</div>
+  </div>
 </section>
+
 
 
 <section id="page-freecloud" class="page-view" data-page="freecloud">
@@ -4697,93 +4718,239 @@ try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hid
 </div>
 
 
+
 <script>
 
-/* KBD_DOCK_V7 */
-window.VK_SHIFT=false; window.VK_SYM=false;
-function toggleVKbd(force){
-  var k=document.getElementById('vkbdWrap');
-  if(!k){ console.warn('no vkbdWrap'); return; }
-  var open = force===false ? false : force===true ? true : !k.classList.contains('open');
-  k.classList.toggle('open', open);
-  document.body.classList.toggle('kbd-open', open);
-  if(open){
-    buildVKbdFull();
-    try{
-      var desk=document.getElementById('page-desktop')||document.getElementById('vdesk');
-      if(desk) desk.scrollIntoView({behavior:'smooth', block:'start'});
-    }catch(e){}
-    setTimeout(function(){
-      var p=document.getElementById('vkPreview');
-      if(p){ try{ p.focus({preventScroll:true}); }catch(e){ try{p.focus();}catch(e2){} } }
-    }, 50);
+/* PASIYA_PC_V8 */
+(function(){
+  var shift=false, sym=false;
+  var activeInput=null;
+
+  function $(id){ return document.getElementById(id); }
+
+  function setKbd(on){
+    var page=$('page-desktop');
+    if(!page) return;
+    page.classList.toggle('kbd-on', !!on);
+    document.body.classList.remove('kbd-open');
+    var floatK=document.getElementById('vkbdWrap');
+    if(floatK) floatK.classList.remove('open');
+    if(on) buildKbd();
   }
-}
-function buildVKbdFull(){
-  var box=document.getElementById('vkbd'); if(!box) return;
-  box.innerHTML='';
-  var rows;
-  if(window.VK_SYM){
-    rows=[['1','2','3','4','5','6','7','8','9','0'],['@','#','$','%','&','*','-','+','(',')'],['!','"',"'",':',';','/','?',',','.','_'],['ABC','SPACE','BACK','ENTER']];
-  } else if(window.VK_SHIFT){
-    rows=[['1','2','3','4','5','6','7','8','9','0'],['Q','W','E','R','T','Y','U','I','O','P'],['A','S','D','F','G','H','J','K','L'],['SHIFT','Z','X','C','V','B','N','M','BACK'],['123','SPACE','.','ENTER']];
-  } else {
-    rows=[['1','2','3','4','5','6','7','8','9','0'],['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['SHIFT','z','x','c','v','b','n','m','BACK'],['123','SPACE','.','ENTER']];
+
+  function openApp(name){
+    if(name==='settings'){ if(typeof goPage==='function') goPage('settings'); return; }
+    document.querySelectorAll('#pcWork .pc-win').forEach(function(w){ w.classList.remove('open'); });
+    var w=$('pcApp-'+name);
+    if(w) w.classList.add('open');
+    if(name==='notepad'){ activeInput=$('pcNotepad'); loadNote(); }
+    if(name==='term'){ activeInput=$('pcTermIn'); }
+    if(name==='tools'){ activeInput=$('pcToolBox'); }
+    if(name==='botlab'){ activeInput=$('pcBotPlan'); var p=$('pcBotPlan'); if(p) p.value=localStorage.getItem('pasiya_botlab_plan')||''; }
+    if(name==='projects'){ renderProj(); activeInput=$('pcProjName'); }
+    if(name==='files'){ renderFiles(); }
+    if(name==='calc'){ buildCalc(); activeInput=$('pcCalcOut'); }
+    if(activeInput){ try{ activeInput.focus({preventScroll:true}); }catch(e){ try{activeInput.focus();}catch(e2){} } }
+    setKbd(true);
   }
-  rows.forEach(function(r){
-    var row=document.createElement('div'); row.className='row';
-    r.forEach(function(ch){
-      var b=document.createElement('button'); b.type='button';
-      b.addEventListener('touchstart', function(ev){ ev.preventDefault(); }, {passive:false});
-      if(ch==='SPACE'){ b.className='space'; b.textContent='space'; b.onclick=function(e){e.preventDefault();vkInsert(' ');}; }
-      else if(ch==='BACK'){ b.className='wide'; b.textContent='⌫'; b.onclick=function(e){e.preventDefault();vkBack();}; }
-      else if(ch==='ENTER'){ b.className='wide'; b.textContent='↵'; b.onclick=function(e){e.preventDefault();vkEnter();}; }
-      else if(ch==='SHIFT'){ b.className='fn'; b.textContent='⇧'; b.onclick=function(e){e.preventDefault();window.VK_SHIFT=!window.VK_SHIFT;buildVKbdFull();}; }
-      else if(ch==='123'||ch==='ABC'){ b.className='fn'; b.textContent=ch; b.onclick=function(e){e.preventDefault();window.VK_SYM=(ch==='123');if(ch==='ABC')window.VK_SYM=false;buildVKbdFull();}; }
-      else { b.textContent=ch; b.onclick=function(e){e.preventDefault();vkInsert(ch);if(window.VK_SHIFT){window.VK_SHIFT=false;buildVKbdFull();}}; }
-      row.appendChild(b);
+
+  function closeApp(name){
+    var w=$('pcApp-'+name);
+    if(w) w.classList.remove('open');
+  }
+
+  function buildKbd(){
+    var box=$('pcKbd'); if(!box) return;
+    box.innerHTML='';
+    var rows;
+    if(sym){
+      rows=[['1','2','3','4','5','6','7','8','9','0'],['@','#','$','%','&','*','(',')','-','_'],['!','.',',','/','?',':',';','"',"'",'+'],['ABC','SPACE','DEL','ENT']];
+    } else if(shift){
+      rows=[['1','2','3','4','5','6','7','8','9','0'],['Q','W','E','R','T','Y','U','I','O','P'],['A','S','D','F','G','H','J','K','L'],['SH','Z','X','C','V','B','N','M','DEL'],['123','SPACE','ENT']];
+    } else {
+      rows=[['1','2','3','4','5','6','7','8','9','0'],['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['SH','z','x','c','v','b','n','m','DEL'],['123','SPACE','.','ENT']];
+    }
+    rows.forEach(function(row){
+      var r=document.createElement('div'); r.className='r';
+      row.forEach(function(ch){
+        var b=document.createElement('button');
+        b.type='button';
+        if(ch==='SPACE'){ b.className='sp'; b.textContent='space'; }
+        else if(ch==='DEL'){ b.className='wd'; b.textContent='⌫'; }
+        else if(ch==='ENT'){ b.className='wd'; b.textContent='↵'; }
+        else if(ch==='SH'||ch==='123'||ch==='ABC'){ b.className='fn'; b.textContent=ch==='SH'?'⇧':ch; }
+        else b.textContent=ch;
+        function fire(ev){
+          if(ev){ ev.preventDefault(); ev.stopPropagation(); }
+          onKey(ch);
+        }
+        b.addEventListener('click', fire);
+        b.addEventListener('touchend', function(ev){ fire(ev); }, {passive:false});
+        r.appendChild(b);
+      });
+      box.appendChild(r);
     });
-    box.appendChild(row);
-  });
-}
-function vkTarget(){
-  var a=document.activeElement;
-  if(a && a.id==='vkPreview') return a;
-  if(a && (a.tagName==='TEXTAREA'||a.tagName==='INPUT') && a.id!=='sideSearch') return a;
-  var f=document.querySelector('.vwin.open textarea, .vwin.open input:not([type=button])');
-  if(f) return f;
-  return document.getElementById('vkPreview');
-}
-function vkInsert(ch){
-  var t=vkTarget(); if(!t) return;
-  if(t.tagName==='INPUT'||t.tagName==='TEXTAREA'){
+  }
+
+  function target(){
+    if(activeInput && document.body.contains(activeInput)) return activeInput;
+    var a=document.activeElement;
+    if(a && (a.tagName==='TEXTAREA'||a.tagName==='INPUT') && a.id!=='sideSearch') return a;
+    return $('pcKbdField');
+  }
+
+  function onKey(ch){
+    var t=target(); if(!t) return;
+    if(ch==='SH'){ shift=!shift; buildKbd(); return; }
+    if(ch==='123'){ sym=true; buildKbd(); return; }
+    if(ch==='ABC'){ sym=false; buildKbd(); return; }
+    if(ch==='DEL'){
+      var v=t.value||'';
+      var s=t.selectionStart!=null?t.selectionStart:v.length;
+      var e=t.selectionEnd!=null?t.selectionEnd:s;
+      if(s===e && s>0){ t.value=v.slice(0,s-1)+v.slice(e); try{t.selectionStart=t.selectionEnd=s-1;}catch(err){} }
+      else { t.value=v.slice(0,s)+v.slice(e); try{t.selectionStart=t.selectionEnd=s;}catch(err){} }
+    } else if(ch==='ENT'){
+      if(t.id==='pcTermIn'){ runTerm(); return; }
+      if(t.tagName==='TEXTAREA') insert(t,'\n');
+    } else if(ch==='SPACE'){
+      insert(t,' ');
+    } else {
+      insert(t, ch);
+      if(shift && ch.length===1){ shift=false; buildKbd(); }
+    }
+    syncPreview(t);
+  }
+
+  function insert(t, ch){
     var v=t.value||'';
     var s=t.selectionStart!=null?t.selectionStart:v.length;
     var e=t.selectionEnd!=null?t.selectionEnd:s;
     t.value=v.slice(0,s)+ch+v.slice(e);
     try{ t.selectionStart=t.selectionEnd=s+ch.length; }catch(err){}
-    try{ t.dispatchEvent(new Event('input',{bubbles:true})); }catch(e2){}
+    try{ t.dispatchEvent(new Event('input',{bubbles:true})); }catch(e){}
   }
-}
-function vkBack(){
-  var t=vkTarget(); if(!t) return;
-  var v=t.value||'';
-  var s=t.selectionStart!=null?t.selectionStart:v.length;
-  var e=t.selectionEnd!=null?t.selectionEnd:s;
-  if(s===e && s>0){ t.value=v.slice(0,s-1)+v.slice(e); try{t.selectionStart=t.selectionEnd=s-1;}catch(err){} }
-  else { t.value=v.slice(0,s)+v.slice(e); try{t.selectionStart=t.selectionEnd=s;}catch(err){} }
-  try{ t.dispatchEvent(new Event('input',{bubbles:true})); }catch(e2){}
-}
-function vkEnter(){
-  var t=vkTarget();
-  if(t && t.id==='vtermIn' && typeof vtermExec==='function') return vtermExec();
-  if(t && t.id==='copilotIn' && typeof copilotSend==='function') return copilotSend();
-  if(t && t.id==='vkPreview') return; // stay on one line in preview bar
-  vkInsert('\n');
-}
-// Block pinch-zoom gestures on keyboard area
-document.addEventListener('gesturestart', function(e){ e.preventDefault(); }, {passive:false});
-document.addEventListener('gesturechange', function(e){ e.preventDefault(); }, {passive:false});
+
+  function syncPreview(t){
+    var p=$('pcKbdField');
+    if(p && t && t!==p) p.value=t.value||'';
+  }
+
+  function loadNote(){
+    var t=$('pcNotepad'); if(t) t.value=localStorage.getItem('pasiya_pc_note')||'';
+  }
+  function saveNote(){
+    var t=$('pcNotepad'); if(t) localStorage.setItem('pasiya_pc_note', t.value||'');
+    alert('Saved');
+  }
+  function renderFiles(){
+    var ul=$('pcFileList'); if(!ul) return;
+    ul.innerHTML='';
+    var items=[
+      {k:'pasiya_pc_note', n:'Notepad draft'},
+      {k:'pasiya_projects', n:'Projects JSON'},
+      {k:'pasiya_botlab_plan', n:'Bot plan'}
+    ];
+    items.forEach(function(it){
+      var v=localStorage.getItem(it.k);
+      var li=document.createElement('li');
+      li.textContent=it.n+' — '+(v? (v.length+' chars'):'empty');
+      ul.appendChild(li);
+    });
+  }
+  function buildCalc(){
+    var pad=$('pcCalcPad'); if(!pad||pad.dataset.ready) return;
+    pad.dataset.ready='1';
+    ['7','8','9','/','4','5','6','*','1','2','3','-','0','.','=','+','C'].forEach(function(k){
+      var b=document.createElement('button'); b.type='button'; b.textContent=k;
+      b.style.cssText='padding:12px;border-radius:6px;border:1px solid rgba(0,240,255,.3);background:#111;color:#fff;font-size:16px';
+      b.onclick=function(){
+        var o=$('pcCalcOut'); if(!o) return;
+        if(k==='C') o.value='';
+        else if(k==='='){ try{ o.value=String(Function('"use strict";return('+o.value+')')()); }catch(e){ o.value='Error'; } }
+        else o.value=(o.value||'')+k;
+      };
+      pad.appendChild(b);
+    });
+  }
+  function runTerm(){
+    var inp=$('pcTermIn'); var out=$('pcTermOut');
+    if(!inp||!out) return;
+    var cmd=(inp.value||'').trim(); inp.value='';
+    out.textContent += '\n> '+cmd;
+    var c=cmd.toLowerCase();
+    if(c==='help') out.textContent += '\nhelp clear note agent projects';
+    else if(c==='clear') out.textContent='Pasiya PC terminal\n';
+    else if(c==='note') openApp('notepad');
+    else if(c==='agent'){ if(typeof openAgentPanel==='function') openAgentPanel(); }
+    else if(c==='projects') openApp('projects');
+    else out.textContent += '\nunknown';
+    out.scrollTop=out.scrollHeight;
+  }
+  function renderProj(){
+    var ul=$('pcProjList'); if(!ul) return;
+    var list=[]; try{ list=JSON.parse(localStorage.getItem('pasiya_projects')||'[]'); }catch(e){}
+    ul.innerHTML='';
+    list.forEach(function(p,i){
+      var li=document.createElement('li');
+      li.textContent=(p.name||'')+' — '+(p.note||'');
+      ul.appendChild(li);
+    });
+  }
+
+  function bind(){
+    var page=$('page-desktop'); if(!page) return;
+    page.querySelectorAll('#pcIcons button[data-app]').forEach(function(b){
+      b.addEventListener('click', function(){ openApp(b.getAttribute('data-app')); });
+    });
+    page.querySelectorAll('[data-close]').forEach(function(b){
+      b.addEventListener('click', function(){ closeApp(b.getAttribute('data-close')); });
+    });
+    var tk=$('btnKbdToggle');
+    if(tk) tk.onclick=function(){ setKbd(!page.classList.contains('kbd-on')); };
+    var tc=$('btnKbdClose');
+    if(tc) tc.onclick=function(){ setKbd(false); };
+    var ag=$('btnPcAgent');
+    if(ag) ag.onclick=function(){ if(typeof openAgentPanel==='function') openAgentPanel(); };
+    var ns=$('pcNoteSave'); if(ns) ns.onclick=saveNote;
+    var nl=$('pcNoteLoad'); if(nl) nl.onclick=loadNote;
+    var nc=$('pcNoteCopy'); if(nc) nc.onclick=function(){ var t=$('pcNotepad'); if(t&&navigator.clipboard) navigator.clipboard.writeText(t.value||''); };
+    var fr=$('pcFileRefresh'); if(fr) fr.onclick=renderFiles;
+    var pj=$('pcProjAdd');
+    if(pj) pj.onclick=function(){
+      var n=$('pcProjName'); var note=$('pcProjNote');
+      if(!n||!n.value.trim()) return;
+      var list=[]; try{ list=JSON.parse(localStorage.getItem('pasiya_projects')||'[]'); }catch(e){}
+      list.unshift({name:n.value.trim(), note:(note&&note.value)||'', ts:Date.now()});
+      localStorage.setItem('pasiya_projects', JSON.stringify(list.slice(0,40)));
+      n.value=''; if(note) note.value=''; renderProj();
+    };
+    var bs=$('pcBotSave');
+    if(bs) bs.onclick=function(){ var t=$('pcBotPlan'); if(t) localStorage.setItem('pasiya_botlab_plan', t.value||''); alert('Plan saved'); };
+    var jf=$('pcJsonFmt');
+    if(jf) jf.onclick=function(){ var t=$('pcToolBox'); try{ t.value=JSON.stringify(JSON.parse(t.value),null,2);}catch(e){alert('Invalid JSON');} };
+    var be=$('pcB64e');
+    if(be) be.onclick=function(){ var t=$('pcToolBox'); try{ t.value=btoa(unescape(encodeURIComponent(t.value||''))); }catch(e){alert('fail');} };
+    var bd=$('pcB64d');
+    if(bd) bd.onclick=function(){ var t=$('pcToolBox'); try{ t.value=decodeURIComponent(escape(atob(t.value||''))); }catch(e){alert('fail');} };
+    // focus tracking
+    page.addEventListener('focusin', function(e){
+      if(e.target && (e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')) activeInput=e.target;
+    });
+    var kf=$('pcKbdField');
+    if(kf){
+      kf.addEventListener('focus', function(){ activeInput=kf; });
+    }
+    // default keyboard on when entering desktop once
+  }
+
+  document.addEventListener('DOMContentLoaded', bind);
+  if(document.readyState!=='loading') bind();
+
+  // expose for menu
+  window.pasiyaPcOpenApp=openApp;
+  window.pasiyaPcSetKbd=setKbd;
+})();
 
 </script>
 </body>
