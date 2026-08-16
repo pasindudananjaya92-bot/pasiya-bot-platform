@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>PASIYA NEXUS // Free AI Control App by Pasiya Max</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" async></script>
 <link rel="manifest" href="manifest.json">
@@ -1003,6 +1003,119 @@ body.side-open .main-stage{
   background:rgba(20,14,0,.55) !important;
 }
 #page-desktop .pc-mode-bar{ order:-1; }
+
+
+/* ===== KBD DOCK + NO ZOOM v7 ===== */
+html, body {
+  touch-action: manipulation !important;
+  -webkit-text-size-adjust: 100% !important;
+  text-size-adjust: 100% !important;
+  overscroll-behavior: none;
+}
+input, textarea, select, button, .vk-preview, [contenteditable="true"] {
+  font-size: 16px !important;
+  line-height: 1.35 !important;
+  touch-action: manipulation !important;
+  -webkit-user-select: text;
+  user-select: text;
+}
+/* When keyboard open: reserve bottom space so PC stays visible above */
+body.kbd-open {
+  padding-bottom: min(42vh, 320px) !important;
+}
+body.kbd-open #page-desktop.page-view.active,
+body.kbd-open #page-desktop {
+  padding-bottom: 8px !important;
+}
+body.kbd-open .vdesk {
+  max-height: calc(100vh - min(42vh, 320px) - 70px) !important;
+  min-height: 200px !important;
+  overflow: auto !important;
+}
+body.kbd-open .vkbd-wrap {
+  display: block !important;
+}
+.vkbd-wrap {
+  display: none;
+  position: fixed !important;
+  left: 0; right: 0; bottom: 0;
+  z-index: 20000 !important;
+  height: min(42vh, 320px);
+  max-height: 42vh;
+  padding: 6px 4px 8px !important;
+  margin: 0 !important;
+  background: #060a12 !important;
+  border-top: 2px solid #f5c542 !important;
+  box-sizing: border-box;
+  overflow: hidden !important;
+  transform: none !important;
+  touch-action: manipulation !important;
+  -webkit-transform: none !important;
+}
+.vkbd-wrap.open { display: flex !important; flex-direction: column; }
+.vkbd-wrap .vk-top {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 4px 4px;
+}
+.vk-preview, #vkPreview {
+  flex-shrink: 0;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 0 6px !important;
+  padding: 10px 12px !important;
+  min-height: 40px !important;
+  max-height: 56px !important;
+  overflow: auto !important;
+  border-radius: 8px !important;
+  border: 1px solid rgba(0,240,255,.4) !important;
+  background: #000 !important;
+  color: #0f0 !important;
+  font-size: 16px !important;
+  font-family: monospace !important;
+  -webkit-user-select: text;
+  user-select: text;
+  touch-action: manipulation !important;
+}
+.vkbd {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-width: 100%;
+  margin: 0 auto;
+  width: 100%;
+}
+.vkbd .row {
+  display: flex;
+  gap: 3px;
+  justify-content: stretch;
+  flex: 1;
+}
+.vkbd button {
+  flex: 1;
+  min-width: 0;
+  padding: 0 !important;
+  min-height: 36px;
+  border-radius: 6px;
+  border: 1px solid rgba(0,240,255,.3);
+  background: #141e32 !important;
+  color: #e8f7ff !important;
+  font-size: 15px !important;
+  font-weight: 600;
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.vkbd button.space { flex: 3.5; }
+.vkbd button.wide { flex: 1.3; }
+.vkbd button.fn { flex: 1.1; font-size: 11px !important; color: #f5c542 !important; }
+/* prevent double keyboards stacking visual */
+.vkbd-wrap + .vkbd-wrap { display: none !important; }
 
 </style>
 </head>
@@ -4562,7 +4675,7 @@ try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hid
     <span style="font-size:10px;color:var(--gold);font-family:Orbitron,sans-serif">KEYBOARD // type into focused field</span>
     <button type="button" onclick="toggleVKbd(false)">&lt; CLOSE</button>
   </div>
-  <div class="vk-preview" id="vkPreview" contenteditable="true" spellcheck="false" data-placeholder="Type here or in Editor/Notes..."></div>
+  <input class="vk-preview" id="vkPreview" type="text" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Type here..." inputmode="none">
   <div class="vkbd" id="vkbd"></div>
 </div>
   <div class="vk-top">
@@ -4583,19 +4696,27 @@ try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hid
   <div class="vkbd" id="vkbd"></div>
 </div>
 
-<script>
-/* KBD_FIX_V6 */
 
+<script>
+
+/* KBD_DOCK_V7 */
 window.VK_SHIFT=false; window.VK_SYM=false;
 function toggleVKbd(force){
   var k=document.getElementById('vkbdWrap');
-  if(!k){ alert('Keyboard panel missing — re-upload index.html'); return; }
+  if(!k){ console.warn('no vkbdWrap'); return; }
   var open = force===false ? false : force===true ? true : !k.classList.contains('open');
   k.classList.toggle('open', open);
+  document.body.classList.toggle('kbd-open', open);
   if(open){
     buildVKbdFull();
-    var p=document.getElementById('vkPreview');
-    if(p){ try{ p.focus(); }catch(e){} }
+    try{
+      var desk=document.getElementById('page-desktop')||document.getElementById('vdesk');
+      if(desk) desk.scrollIntoView({behavior:'smooth', block:'start'});
+    }catch(e){}
+    setTimeout(function(){
+      var p=document.getElementById('vkPreview');
+      if(p){ try{ p.focus({preventScroll:true}); }catch(e){ try{p.focus();}catch(e2){} } }
+    }, 50);
   }
 }
 function buildVKbdFull(){
@@ -4603,22 +4724,23 @@ function buildVKbdFull(){
   box.innerHTML='';
   var rows;
   if(window.VK_SYM){
-    rows=[['1','2','3','4','5','6','7','8','9','0'],['@','#','$','%','&','*','-','+','(',')'],['!','"',"'",':',';','/','?',',','.','_'],['{','}','[',']','<','>','\\','|','=','~'],['ABC','SPACE','BACK','ENTER']];
+    rows=[['1','2','3','4','5','6','7','8','9','0'],['@','#','$','%','&','*','-','+','(',')'],['!','"',"'",':',';','/','?',',','.','_'],['ABC','SPACE','BACK','ENTER']];
   } else if(window.VK_SHIFT){
     rows=[['1','2','3','4','5','6','7','8','9','0'],['Q','W','E','R','T','Y','U','I','O','P'],['A','S','D','F','G','H','J','K','L'],['SHIFT','Z','X','C','V','B','N','M','BACK'],['123','SPACE','.','ENTER']];
   } else {
-    rows=[['1','2','3','4','5','6','7','8','9','0'],['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['SHIFT','z','x','c','v','b','n','m','BACK'],['123','SPACE','.',',','ENTER']];
+    rows=[['1','2','3','4','5','6','7','8','9','0'],['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['SHIFT','z','x','c','v','b','n','m','BACK'],['123','SPACE','.','ENTER']];
   }
   rows.forEach(function(r){
     var row=document.createElement('div'); row.className='row';
     r.forEach(function(ch){
       var b=document.createElement('button'); b.type='button';
-      if(ch==='SPACE'){ b.className='space'; b.textContent='space'; b.onclick=function(){vkInsert(' ');}; }
-      else if(ch==='BACK'){ b.className='wide'; b.textContent='⌫'; b.onclick=function(){vkBack();}; }
-      else if(ch==='ENTER'){ b.className='wide'; b.textContent='↵'; b.onclick=function(){vkEnter();}; }
-      else if(ch==='SHIFT'){ b.className='fn'; b.textContent='⇧'; b.onclick=function(){window.VK_SHIFT=!window.VK_SHIFT;buildVKbdFull();}; }
-      else if(ch==='123'||ch==='ABC'){ b.className='fn'; b.textContent=ch; b.onclick=function(){window.VK_SYM=(ch==='123');if(ch==='ABC')window.VK_SYM=false;buildVKbdFull();}; }
-      else { b.textContent=ch; b.onclick=function(){vkInsert(ch);if(window.VK_SHIFT){window.VK_SHIFT=false;buildVKbdFull();}}; }
+      b.addEventListener('touchstart', function(ev){ ev.preventDefault(); }, {passive:false});
+      if(ch==='SPACE'){ b.className='space'; b.textContent='space'; b.onclick=function(e){e.preventDefault();vkInsert(' ');}; }
+      else if(ch==='BACK'){ b.className='wide'; b.textContent='⌫'; b.onclick=function(e){e.preventDefault();vkBack();}; }
+      else if(ch==='ENTER'){ b.className='wide'; b.textContent='↵'; b.onclick=function(e){e.preventDefault();vkEnter();}; }
+      else if(ch==='SHIFT'){ b.className='fn'; b.textContent='⇧'; b.onclick=function(e){e.preventDefault();window.VK_SHIFT=!window.VK_SHIFT;buildVKbdFull();}; }
+      else if(ch==='123'||ch==='ABC'){ b.className='fn'; b.textContent=ch; b.onclick=function(e){e.preventDefault();window.VK_SYM=(ch==='123');if(ch==='ABC')window.VK_SYM=false;buildVKbdFull();}; }
+      else { b.textContent=ch; b.onclick=function(e){e.preventDefault();vkInsert(ch);if(window.VK_SHIFT){window.VK_SHIFT=false;buildVKbdFull();}}; }
       row.appendChild(b);
     });
     box.appendChild(row);
@@ -4626,43 +4748,42 @@ function buildVKbdFull(){
 }
 function vkTarget(){
   var a=document.activeElement;
-  if(a && (a.tagName==='TEXTAREA'||a.tagName==='INPUT'||a.id==='vkPreview'||a.isContentEditable)) return a;
-  var f=document.querySelector('.vwin.focused.open textarea, .vwin.open textarea, .vwin.open input');
+  if(a && a.id==='vkPreview') return a;
+  if(a && (a.tagName==='TEXTAREA'||a.tagName==='INPUT') && a.id!=='sideSearch') return a;
+  var f=document.querySelector('.vwin.open textarea, .vwin.open input:not([type=button])');
   if(f) return f;
-  return document.getElementById('vkPreview')||document.getElementById('veditor');
+  return document.getElementById('vkPreview');
 }
 function vkInsert(ch){
   var t=vkTarget(); if(!t) return;
-  if(t.id==='vkPreview'||t.isContentEditable){
-    t.focus();
-    try{ document.execCommand('insertText',false,ch); }catch(e){ t.textContent=(t.textContent||'')+ch; }
-    return;
+  if(t.tagName==='INPUT'||t.tagName==='TEXTAREA'){
+    var v=t.value||'';
+    var s=t.selectionStart!=null?t.selectionStart:v.length;
+    var e=t.selectionEnd!=null?t.selectionEnd:s;
+    t.value=v.slice(0,s)+ch+v.slice(e);
+    try{ t.selectionStart=t.selectionEnd=s+ch.length; }catch(err){}
+    try{ t.dispatchEvent(new Event('input',{bubbles:true})); }catch(e2){}
   }
-  var s=t.selectionStart!=null?t.selectionStart:(t.value||'').length;
-  var e=t.selectionEnd!=null?t.selectionEnd:s;
-  t.value=(t.value||'').slice(0,s)+ch+(t.value||'').slice(e);
-  try{ t.selectionStart=t.selectionEnd=s+ch.length; }catch(err){}
-  t.focus();
-  try{ t.dispatchEvent(new Event('input',{bubbles:true})); }catch(e2){}
 }
 function vkBack(){
   var t=vkTarget(); if(!t) return;
-  if(t.id==='vkPreview'||t.isContentEditable){
-    t.focus(); try{ document.execCommand('delete'); }catch(e){ t.textContent=(t.textContent||'').slice(0,-1); }
-    return;
-  }
-  var s=t.selectionStart!=null?t.selectionStart:(t.value||'').length;
+  var v=t.value||'';
+  var s=t.selectionStart!=null?t.selectionStart:v.length;
   var e=t.selectionEnd!=null?t.selectionEnd:s;
-  if(s===e && s>0){ t.value=t.value.slice(0,s-1)+t.value.slice(e); try{t.selectionStart=t.selectionEnd=s-1;}catch(err){} }
-  else { t.value=t.value.slice(0,s)+t.value.slice(e); try{t.selectionStart=t.selectionEnd=s;}catch(err){} }
-  t.focus();
+  if(s===e && s>0){ t.value=v.slice(0,s-1)+v.slice(e); try{t.selectionStart=t.selectionEnd=s-1;}catch(err){} }
+  else { t.value=v.slice(0,s)+v.slice(e); try{t.selectionStart=t.selectionEnd=s;}catch(err){} }
+  try{ t.dispatchEvent(new Event('input',{bubbles:true})); }catch(e2){}
 }
 function vkEnter(){
   var t=vkTarget();
   if(t && t.id==='vtermIn' && typeof vtermExec==='function') return vtermExec();
   if(t && t.id==='copilotIn' && typeof copilotSend==='function') return copilotSend();
+  if(t && t.id==='vkPreview') return; // stay on one line in preview bar
   vkInsert('\n');
 }
+// Block pinch-zoom gestures on keyboard area
+document.addEventListener('gesturestart', function(e){ e.preventDefault(); }, {passive:false});
+document.addEventListener('gesturechange', function(e){ e.preventDefault(); }, {passive:false});
 
 </script>
 </body>
