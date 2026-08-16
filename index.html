@@ -961,6 +961,49 @@ body.side-open .main-stage{
   font-size:11px !important;
 }
 
+
+/* ===== KBD + SEARCH GLOW v6 ===== */
+.vkbd-wrap{
+  display:none !important;
+  position:fixed !important;
+  left:0 !important;right:0 !important;bottom:0 !important;
+  z-index:20000 !important;
+  padding:8px 6px 12px !important;
+  background:rgba(2,6,14,.98) !important;
+  border-top:2px solid #f5c542 !important;
+  max-height:52vh !important;
+  overflow:auto !important;
+}
+.vkbd-wrap.open{ display:block !important; }
+.vk-preview{
+  width:100%;max-width:720px;margin:0 auto 8px;padding:12px !important;
+  min-height:44px;border-radius:8px;
+  border:1px solid rgba(0,240,255,.45);background:#000 !important;
+  color:#0f0 !important;font-size:16px !important;
+  font-family:monospace;
+}
+.side-search, input.side-search, #sideSearch{
+  border:1px solid rgba(0,240,255,.35) !important;
+  border-radius:8px !important;
+  background:rgba(0,0,0,.35) !important;
+  box-shadow:0 0 0 1px rgba(0,240,255,.15), 0 0 12px rgba(0,240,255,.25);
+  animation: searchGlow 2.8s ease-in-out infinite;
+}
+@keyframes searchGlow{
+  0%,100%{ box-shadow:0 0 0 1px rgba(0,240,255,.2), 0 0 8px rgba(0,240,255,.2); border-color:rgba(0,240,255,.35); }
+  50%{ box-shadow:0 0 0 1px rgba(245,197,66,.45), 0 0 18px rgba(0,240,255,.45); border-color:rgba(245,197,66,.6); }
+}
+.pc-mode-bar{
+  display:flex !important;
+  position:relative !important;
+  z-index:5 !important;
+  margin:8px 0 12px !important;
+  padding:12px !important;
+  border:2px solid rgba(245,197,66,.5) !important;
+  background:rgba(20,14,0,.55) !important;
+}
+#page-desktop .pc-mode-bar{ order:-1; }
+
 </style>
 </head>
 <body>
@@ -1022,6 +1065,7 @@ body.side-open .main-stage{
   <button type="button" class="nav-close" onclick="toggleSide(false)" aria-label="Close menu">&lt;</button>
   <div class="nav-title">PASIYA OS // MENU</div>
   <a class="nav-item" href="#home" onclick="return goHomeDash()"><span class="ic">⌂</span> Home Dashboard</a>
+  <a class="nav-item" href="#page-desktop" data-page="desktop" onclick="return goPage('desktop',this)"><span class="ic">💻</span> Virtual PC</a>
   <hr class="gold-line">
   <input class="side-search" id="sideSearch" placeholder="Filter menu..." oninput="filterMenu(this.value)">
   <div class="kbd-help">Tip: Menu opens internal pages • Mobile: ☰ button</div>
@@ -1733,6 +1777,12 @@ RULES:
 
 
 <section id="page-desktop" class="page-view" data-page="desktop">
+  <div class="pc-mode-bar" id="pcModeBarTop">
+    <button type="button" id="pcModeActive" class="on" onclick="setPcMode('active')">💻 ACTIVE PC</button>
+    <button type="button" id="pcModeClassic" onclick="setPcMode('classic')">📋 CLASSIC PC</button>
+    <button type="button" class="btn btn-c" onclick="toggleVKbd(true)">⌨️ OPEN KEYBOARD</button>
+  </div>
+
   <div class="vdesk" id="vdesk">
     <div class="vdesk-bar">
       <span class="vt">PASIYA OS // VIRTUAL PC</span>
@@ -4523,5 +4573,97 @@ try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hid
 </div>
 
 <button type="button" class="home-chip" id="homeChip" onclick="goHomeDash()" title="Main dashboard">HOME</button>
+
+<div class="vkbd-wrap" id="vkbdWrap" aria-label="On-screen keyboard">
+  <div class="vk-top" style="display:flex;justify-content:space-between;align-items:center;max-width:720px;margin:0 auto 6px">
+    <span style="font-size:10px;color:#f5c542;font-family:Orbitron,sans-serif">KEYBOARD</span>
+    <button type="button" onclick="toggleVKbd(false)" style="padding:6px 12px;border-radius:6px;border:1px solid rgba(0,240,255,.4);background:#102030;color:#0ff;cursor:pointer">&lt; CLOSE</button>
+  </div>
+  <div class="vk-preview" id="vkPreview" contenteditable="true" spellcheck="false"></div>
+  <div class="vkbd" id="vkbd"></div>
+</div>
+
+<script>
+/* KBD_FIX_V6 */
+
+window.VK_SHIFT=false; window.VK_SYM=false;
+function toggleVKbd(force){
+  var k=document.getElementById('vkbdWrap');
+  if(!k){ alert('Keyboard panel missing — re-upload index.html'); return; }
+  var open = force===false ? false : force===true ? true : !k.classList.contains('open');
+  k.classList.toggle('open', open);
+  if(open){
+    buildVKbdFull();
+    var p=document.getElementById('vkPreview');
+    if(p){ try{ p.focus(); }catch(e){} }
+  }
+}
+function buildVKbdFull(){
+  var box=document.getElementById('vkbd'); if(!box) return;
+  box.innerHTML='';
+  var rows;
+  if(window.VK_SYM){
+    rows=[['1','2','3','4','5','6','7','8','9','0'],['@','#','$','%','&','*','-','+','(',')'],['!','"',"'",':',';','/','?',',','.','_'],['{','}','[',']','<','>','\\','|','=','~'],['ABC','SPACE','BACK','ENTER']];
+  } else if(window.VK_SHIFT){
+    rows=[['1','2','3','4','5','6','7','8','9','0'],['Q','W','E','R','T','Y','U','I','O','P'],['A','S','D','F','G','H','J','K','L'],['SHIFT','Z','X','C','V','B','N','M','BACK'],['123','SPACE','.','ENTER']];
+  } else {
+    rows=[['1','2','3','4','5','6','7','8','9','0'],['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['SHIFT','z','x','c','v','b','n','m','BACK'],['123','SPACE','.',',','ENTER']];
+  }
+  rows.forEach(function(r){
+    var row=document.createElement('div'); row.className='row';
+    r.forEach(function(ch){
+      var b=document.createElement('button'); b.type='button';
+      if(ch==='SPACE'){ b.className='space'; b.textContent='space'; b.onclick=function(){vkInsert(' ');}; }
+      else if(ch==='BACK'){ b.className='wide'; b.textContent='⌫'; b.onclick=function(){vkBack();}; }
+      else if(ch==='ENTER'){ b.className='wide'; b.textContent='↵'; b.onclick=function(){vkEnter();}; }
+      else if(ch==='SHIFT'){ b.className='fn'; b.textContent='⇧'; b.onclick=function(){window.VK_SHIFT=!window.VK_SHIFT;buildVKbdFull();}; }
+      else if(ch==='123'||ch==='ABC'){ b.className='fn'; b.textContent=ch; b.onclick=function(){window.VK_SYM=(ch==='123');if(ch==='ABC')window.VK_SYM=false;buildVKbdFull();}; }
+      else { b.textContent=ch; b.onclick=function(){vkInsert(ch);if(window.VK_SHIFT){window.VK_SHIFT=false;buildVKbdFull();}}; }
+      row.appendChild(b);
+    });
+    box.appendChild(row);
+  });
+}
+function vkTarget(){
+  var a=document.activeElement;
+  if(a && (a.tagName==='TEXTAREA'||a.tagName==='INPUT'||a.id==='vkPreview'||a.isContentEditable)) return a;
+  var f=document.querySelector('.vwin.focused.open textarea, .vwin.open textarea, .vwin.open input');
+  if(f) return f;
+  return document.getElementById('vkPreview')||document.getElementById('veditor');
+}
+function vkInsert(ch){
+  var t=vkTarget(); if(!t) return;
+  if(t.id==='vkPreview'||t.isContentEditable){
+    t.focus();
+    try{ document.execCommand('insertText',false,ch); }catch(e){ t.textContent=(t.textContent||'')+ch; }
+    return;
+  }
+  var s=t.selectionStart!=null?t.selectionStart:(t.value||'').length;
+  var e=t.selectionEnd!=null?t.selectionEnd:s;
+  t.value=(t.value||'').slice(0,s)+ch+(t.value||'').slice(e);
+  try{ t.selectionStart=t.selectionEnd=s+ch.length; }catch(err){}
+  t.focus();
+  try{ t.dispatchEvent(new Event('input',{bubbles:true})); }catch(e2){}
+}
+function vkBack(){
+  var t=vkTarget(); if(!t) return;
+  if(t.id==='vkPreview'||t.isContentEditable){
+    t.focus(); try{ document.execCommand('delete'); }catch(e){ t.textContent=(t.textContent||'').slice(0,-1); }
+    return;
+  }
+  var s=t.selectionStart!=null?t.selectionStart:(t.value||'').length;
+  var e=t.selectionEnd!=null?t.selectionEnd:s;
+  if(s===e && s>0){ t.value=t.value.slice(0,s-1)+t.value.slice(e); try{t.selectionStart=t.selectionEnd=s-1;}catch(err){} }
+  else { t.value=t.value.slice(0,s)+t.value.slice(e); try{t.selectionStart=t.selectionEnd=s;}catch(err){} }
+  t.focus();
+}
+function vkEnter(){
+  var t=vkTarget();
+  if(t && t.id==='vtermIn' && typeof vtermExec==='function') return vtermExec();
+  if(t && t.id==='copilotIn' && typeof copilotSend==='function') return copilotSend();
+  vkInsert('\n');
+}
+
+</script>
 </body>
 </html>
