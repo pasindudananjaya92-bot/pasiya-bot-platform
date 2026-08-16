@@ -1481,6 +1481,34 @@ body.spa-mode .page-view.active {
   min-height: 56px !important;
 }
 
+
+/* ===== PC ADDRESS BAR v13 ===== */
+.pc-addr-bar{
+  display:flex; gap:6px; align-items:center;
+  padding:6px 8px; margin:0 0 6px;
+  background:rgba(0,20,40,.55);
+  border:1px solid rgba(0,240,255,.25);
+  border-radius:10px;
+}
+.pc-addr-bar input{
+  flex:1; min-width:0; padding:10px 12px !important;
+  border-radius:8px; border:1px solid rgba(0,240,255,.35);
+  background:#000 !important; color:#0f0 !important;
+  font-size:16px !important; font-family:monospace;
+}
+.pc-addr-bar button{
+  padding:10px 12px; border-radius:8px;
+  border:1px solid rgba(0,240,255,.4);
+  background:rgba(0,240,255,.12); color:#0ff;
+  font-size:11px; white-space:nowrap; touch-action:manipulation;
+}
+.pc-auth-banner{
+  display:none; padding:8px 10px; margin:0 0 6px;
+  border-radius:8px; border:1px solid rgba(245,197,66,.45);
+  background:rgba(40,30,0,.55); color:#f5c542; font-size:11px;
+}
+.pc-auth-banner.on{ display:block; }
+
 </style>
 </head>
 <body>
@@ -2275,6 +2303,13 @@ RULES:
       <span class="pc-tray"><span id="pcNetTray">📶</span><span id="pcVolTray">🔊</span><span id="pcClockTray">--:--</span></span>
     </div>
     <div class="pc-work" id="pcWork"><img class="pc-cursor" id="pcCursor" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18'%3E%3Cpath d='M2 2 L2 14 L6 11 L9 16 L11 15 L8 10 L14 10 Z' fill='%23fff' stroke='%23000' stroke-width='1'/%3E%3C/svg%3E">
+      <div class="pc-auth-banner" id="pcAuthBanner">Login/access opened outside. After you allow access, tap <b>BACK TO PC</b> below.</div>
+      <div class="pc-addr-bar" id="pcAddrBar">
+        <input type="text" id="pcAddr" placeholder="Search or type URL (google.com) then GO" autocomplete="off" autocorrect="off" spellcheck="false" inputmode="none">
+        <button type="button" id="pcAddrGo">GO</button>
+        <button type="button" id="pcAddrBackPc">BACK TO PC</button>
+      </div>
+
       <div class="pc-icons" id="pcIcons">
         
         <button type="button" data-app="sysmenu"><span class="ic">⊞</span>Start</button>
@@ -2486,10 +2521,10 @@ help | clear | note | agent
 
     <div class="pc-kbd-dock" id="pcKbdDock">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-        <span style="font-size:10px;color:#f5c542">KEYBOARD → active field</span>
+        <span style="font-size:10px;color:#f5c542">KEYBOARD → Address / focused app</span>
         <button type="button" id="btnKbdClose" style="padding:6px 12px;border-radius:6px;border:1px solid #0ff;background:#000;color:#0ff">CLOSE</button>
       </div>
-      <input type="text" class="pc-kbd-preview" id="pcKbdField" inputmode="none" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Tap Notepad/Terminal then type keys...">
+      <input type="text" class="pc-kbd-preview" id="pcKbdField" inputmode="none" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="Types into Address bar / focused field...">
       <div class="pc-kbd" id="pcKbd"></div>
       <div class="pc-track">
         <div class="pc-track-pad" id="pcTrackPad"></div>
@@ -5807,6 +5842,179 @@ document.addEventListener('DOMContentLoaded', function(){
   }
   document.addEventListener('DOMContentLoaded', enhance);
   if(document.readyState!=='loading') enhance();
+})();
+
+</script>
+<script>
+
+/* PC_NAV_V13 */
+(function(){
+  function $(id){ return document.getElementById(id); }
+
+  function normalizeUrl(q){
+    q=(q||'').trim();
+    if(!q) return '';
+    if(/^https?:\/\//i.test(q)) return q;
+    if(/^[a-z0-9.-]+\.[a-z]{2,}([\/?].*)?$/i.test(q)) return 'https://'+q;
+    return 'https://www.google.com/search?q='+encodeURIComponent(q);
+  }
+
+  function openAuthOutside(url){
+    var ban=$('pcAuthBanner');
+    if(ban) ban.classList.add('on');
+    // popup or tab for Google login / OAuth
+    var w=window.open(url, '_blank', 'noopener,noreferrer');
+    if(!w){
+      // popup blocked — top navigate as last resort is bad; use same tab with return hash
+      sessionStorage.setItem('pasiya_return_pc','1');
+      location.href=url;
+    }
+  }
+
+  function backToPc(){
+    var ban=$('pcAuthBanner');
+    if(ban) ban.classList.remove('on');
+    if(typeof goPage==='function') goPage('desktop');
+    document.body.classList.add('spa-mode');
+    var desk=$('page-desktop');
+    if(desk) desk.classList.add('active');
+    try{ window.scrollTo(0,0); }catch(e){}
+  }
+
+  function goAddress(){
+    var inp=$('pcAddr');
+    var q=inp ? inp.value : '';
+    var url=normalizeUrl(q);
+    if(!url) return;
+    // Google accounts / oauth → outside
+    if(/accounts\.google\.com|oauth|signin|login\.microsoft|github\.com\/login/i.test(url)){
+      openAuthOutside(url);
+      return;
+    }
+    if(window.pasiyaOpenInPcBrowser){
+      window.pasiyaOpenInPcBrowser(url);
+    } else {
+      // fallback inbrowser
+      var fr=$('pcIbFrame'); var box=$('pcInBrowser');
+      if(box&&fr){ box.classList.add('open'); fr.src=url; var u=$('pcIbUrl'); if(u) u.value=url; }
+      else window.open(url,'_blank');
+    }
+  }
+
+  function bind(){
+    var go=$('pcAddrGo'); if(go) go.onclick=goAddress;
+    var back=$('pcAddrBackPc'); if(back) back.onclick=backToPc;
+    var addr=$('pcAddr');
+    if(addr){
+      addr.addEventListener('keydown', function(e){
+        if(e.key==='Enter'){ e.preventDefault(); goAddress(); }
+      });
+      // focus addr when opening keyboard on desktop with no other field
+      addr.addEventListener('focus', function(){
+        window.__pasiyaAddrFocus=true;
+      });
+    }
+
+    // Hook keyboard insert target: prefer pcAddr when focused or when only desktop
+    var prevTarget = null;
+    // Patch: when typing on keyboard, if active is pcKbdField, mirror to pcAddr and treat addr as target
+    var kbdField=$('pcKbdField');
+    if(kbdField && !kbdField.dataset.v13){
+      kbdField.dataset.v13='1';
+      kbdField.addEventListener('input', function(){
+        var a=$('pcAddr');
+        if(a) a.value=kbdField.value;
+      });
+    }
+
+    // Override Enter on virtual keyboard path via capturing
+    document.addEventListener('click', function(e){
+      var t=e.target;
+      if(t && t.closest && t.closest('#pcKbd')){
+        // after key handlers, sync
+        setTimeout(function(){
+          var a=$('pcAddr'); var k=$('pcKbdField');
+          var act=document.activeElement;
+          if(act===a || act===k || (act && act.id==='pcAddr')){
+            if(k && a && act===k) a.value=k.value;
+          }
+        }, 0);
+      }
+    }, true);
+
+    // When returning from external auth
+    if(sessionStorage.getItem('pasiya_return_pc')==='1'){
+      sessionStorage.removeItem('pasiya_return_pc');
+      setTimeout(backToPc, 200);
+    }
+
+    // In-browser external button already; enhance open for login detection
+    if(window.pasiyaOpenInPcBrowser && !window.pasiyaOpenInPcBrowser.__v13){
+      var orig=window.pasiyaOpenInPcBrowser;
+      window.pasiyaOpenInPcBrowser=function(url){
+        if(/accounts\.google\.com|oauth2|signin/i.test(url||'')){
+          openAuthOutside(url);
+          return;
+        }
+        return orig(url);
+      };
+      window.pasiyaOpenInPcBrowser.__v13=true;
+    }
+
+    // GO from keyboard ENT when addr focused - hook pasiya by listening pcTerm style
+    // Make pcAddr the default active input when opening keyboard without app
+    var page=$('page-desktop');
+    if(page){
+      var tk=$('btnKbdToggle');
+      if(tk && !tk.dataset.v13){
+        tk.dataset.v13='1';
+        var old=tk.onclick;
+        tk.onclick=function(){
+          if(old) old();
+          setTimeout(function(){
+            var a=$('pcAddr');
+            if(a && document.activeElement && document.activeElement.id==='pcKbdField'){
+              /* keep */
+            } else if(a && !document.querySelector('#pcWork .pc-win.open textarea:focus, #pcWork .pc-win.open input:focus')){
+              try{ a.focus({preventScroll:true}); }catch(e){ try{a.focus();}catch(e2){} }
+            }
+          }, 100);
+        };
+      }
+    }
+  }
+
+  // Force keyboard target to pcAddr when it is the intended search field
+  // Monkey-patch after PC v10: wrap insert by observing focus
+  document.addEventListener('DOMContentLoaded', bind);
+  setTimeout(bind, 600);
+
+  // When ENT pressed on virtual keys and target is pcAddr or pcKbdField → goAddress
+  document.addEventListener('keydown', function(e){
+    if(e.key==='Enter' && (e.target&&(e.target.id==='pcAddr'||e.target.id==='pcKbdField'))){
+      e.preventDefault(); goAddress();
+    }
+  });
+
+  // Bridge: after PC builds keys, ENT already calls vkEnter/onKey — patch onKey ENT
+  setTimeout(function(){
+    var kbd=$('pcKbd');
+    if(!kbd) return;
+    // MutationObserver not needed; intercept touchend on ENT buttons
+    kbd.addEventListener('click', function(e){
+      var b=e.target.closest('button');
+      if(!b) return;
+      if((b.textContent||'').indexOf('↵')>=0 || b.textContent==='ENT'){
+        var act=document.activeElement;
+        if(act && (act.id==='pcAddr'||act.id==='pcKbdField')){
+          setTimeout(goAddress, 10);
+        }
+      }
+    }, true);
+  }, 1000);
+
+  window.pasiyaPcGoAddress=goAddress;
+  window.pasiyaPcBackToPc=backToPc;
 })();
 
 </script>
