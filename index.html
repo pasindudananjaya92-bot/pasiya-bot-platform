@@ -1529,6 +1529,63 @@ body.spa-mode .page-view.active {
   background:#000; padding:10px; border-radius:8px;
 }
 
+
+/* ===== CTX MENU FIX v15 ===== */
+#pcCtx, #pcDeskCtx {
+  display: none !important;
+  position: fixed !important;
+  z-index: 2147483000 !important;
+  left: 12px; top: 12px;
+  min-width: 180px;
+  max-width: 86vw;
+  max-height: 70vh;
+  overflow-y: auto;
+  margin: 0 !important;
+  padding: 6px !important;
+  background: #0e1624 !important;
+  border: 1px solid rgba(0,240,255,.5) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,.65) !important;
+  pointer-events: auto !important;
+  -webkit-overflow-scrolling: touch;
+  touch-action: manipulation !important;
+}
+#pcCtx.open, #pcDeskCtx.open {
+  display: block !important;
+}
+#pcCtx button, #pcDeskCtx button {
+  display: block !important;
+  width: 100% !important;
+  text-align: left !important;
+  padding: 12px 14px !important;
+  margin: 0 0 2px !important;
+  border: 0 !important;
+  border-radius: 6px !important;
+  background: transparent !important;
+  color: #e8f4ff !important;
+  font-size: 13px !important;
+  line-height: 1.3 !important;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: rgba(0,240,255,.25);
+  user-select: none;
+}
+#pcCtx button:active, #pcDeskCtx button:active {
+  background: rgba(0,240,255,.2) !important;
+  color: #fff !important;
+}
+#pcCtx .sep, #pcDeskCtx .sep {
+  height: 1px; margin: 4px 8px;
+  background: rgba(0,240,255,.2);
+}
+body:not(.spa-mode) #pcCtx,
+body:not(.spa-mode) #pcDeskCtx,
+body.spa-mode:not(:has(#page-desktop.active)) #pcCtx,
+body.spa-mode:not(:has(#page-desktop.active)) #pcDeskCtx {
+  /* still allow fixed; JS will close on leave */
+}
+
 </style>
 </head>
 <body>
@@ -5215,16 +5272,7 @@ try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hid
 
 
 
-<div class="pc-ctx" id="pcCtx">
-  <button type="button" data-act="open">Open</button>
-  <button type="button" data-act="resize" class="has-sub">Resize <span class="arrow">›</span>
-    <div class="sub">
-      <button type="button" data-act="resize-sm">Small</button>
-      <button type="button" data-act="resize-md">Medium</button>
-      <button type="button" data-act="resize-lg">Large</button>
-      <button type="button" data-act="resize-max">Maximize</button>
-    </div>
-  </button>
+</button>
   <button type="button" data-act="minimize">Minimize</button>
   <button type="button" data-act="closewin">Close</button>
   <button type="button" data-act="copy">Copy</button>
@@ -6235,6 +6283,251 @@ document.addEventListener('DOMContentLoaded', function(){
 
   document.addEventListener('DOMContentLoaded', bind);
   setTimeout(bind, 700);
+})();
+
+</script>
+
+<div id="pcCtx" class="pc-ctx" role="menu" aria-hidden="true">
+  <button type="button" data-act="open">Open</button>
+  <button type="button" data-act="cut">Cut</button>
+  <button type="button" data-act="copy">Copy</button>
+  <button type="button" data-act="paste">Paste</button>
+  <div class="sep"></div>
+  <button type="button" data-act="resize-sm">Resize · Small</button>
+  <button type="button" data-act="resize-md">Resize · Medium</button>
+  <button type="button" data-act="resize-lg">Resize · Large</button>
+  <button type="button" data-act="resize-max">Maximize</button>
+  <button type="button" data-act="minimize">Minimize</button>
+  <button type="button" data-act="closewin">Close window</button>
+  <div class="sep"></div>
+  <button type="button" data-act="props">Properties</button>
+  <button type="button" data-act="dismiss">Close menu</button>
+</div>
+<div id="pcDeskCtx" class="pc-ctx" role="menu" aria-hidden="true">
+  <button type="button" data-act="view-refresh">Refresh</button>
+  <button type="button" data-act="view-wall">Change wallpaper</button>
+  <div class="sep"></div>
+  <button type="button" data-act="new-note">New · Sticky note</button>
+  <button type="button" data-act="new-term">Open · Terminal</button>
+  <button type="button" data-act="new-explorer">Open · File Explorer</button>
+  <button type="button" data-act="new-projects">Open · Projects</button>
+  <div class="sep"></div>
+  <button type="button" data-act="desk-settings">Display settings</button>
+  <button type="button" data-act="desk-shortcuts">Keyboard shortcuts</button>
+  <button type="button" data-act="dismiss">Close menu</button>
+</div>
+
+<script>
+
+/* CTX_MENU_V15 */
+(function(){
+  var clip='';
+  var targetIcon=null;
+  var targetWin=null;
+
+  function $(id){ return document.getElementById(id); }
+
+  function closeAllMenus(){
+    ['pcCtx','pcDeskCtx'].forEach(function(id){
+      var el=$(id);
+      if(!el) return;
+      el.classList.remove('open');
+      el.setAttribute('aria-hidden','true');
+      el.style.display='none';
+    });
+  }
+
+  function placeMenu(el, x, y){
+    el.style.display='block';
+    el.classList.add('open');
+    el.setAttribute('aria-hidden','false');
+    // measure after display
+    var w=el.offsetWidth||200;
+    var h=el.offsetHeight||280;
+    var left=Math.max(8, Math.min(x, window.innerWidth - w - 8));
+    var top=Math.max(8, Math.min(y, window.innerHeight - h - 8));
+    el.style.left=left+'px';
+    el.style.top=top+'px';
+  }
+
+  function openIconMenu(x,y, icon, win){
+    closeAllMenus();
+    targetIcon=icon||null;
+    targetWin=win||null;
+    placeMenu($('pcCtx'), x, y);
+  }
+  function openDeskMenu(x,y){
+    closeAllMenus();
+    targetIcon=null; targetWin=null;
+    placeMenu($('pcDeskCtx'), x, y);
+  }
+
+  function resizeWin(mode){
+    var w=targetWin || document.querySelector('#pcWork .pc-win.open.focused') || document.querySelector('#pcWork .pc-win.open');
+    if(!w) return;
+    if(mode==='sm'){ w.style.width='200px'; w.style.height='150px'; }
+    if(mode==='md'){ w.style.width='300px'; w.style.height='40%'; }
+    if(mode==='lg'){ w.style.width='92%'; w.style.height='60%'; }
+    if(mode==='max'){ w.style.left='4px'; w.style.top='4px'; w.style.width='96%'; w.style.height='85%'; }
+  }
+
+  function runAct(act){
+    if(act==='dismiss'){ closeAllMenus(); return; }
+    if(act==='open'){
+      if(targetIcon && window.pasiyaPcOpenApp) window.pasiyaPcOpenApp(targetIcon.getAttribute('data-app'));
+      closeAllMenus(); return;
+    }
+    if(act==='cut'||act==='copy'){
+      var f=document.activeElement;
+      if(f && (f.tagName==='TEXTAREA'||f.tagName==='INPUT')){
+        var s=f.selectionStart, e=f.selectionEnd;
+        clip=(s!=null&&e!=null&&e>s)?f.value.slice(s,e):(f.value||'');
+        if(act==='cut'&&s!=null&&e!=null&&e>s){ f.value=f.value.slice(0,s)+f.value.slice(e); }
+        if(navigator.clipboard&&clip) navigator.clipboard.writeText(clip);
+      }
+      closeAllMenus(); return;
+    }
+    if(act==='paste'){
+      var f=document.activeElement;
+      if(f && (f.tagName==='TEXTAREA'||f.tagName==='INPUT')){
+        var doIns=function(tx){
+          var s=f.selectionStart!=null?f.selectionStart:(f.value||'').length;
+          var e=f.selectionEnd!=null?f.selectionEnd:s;
+          f.value=(f.value||'').slice(0,s)+tx+(f.value||'').slice(e);
+        };
+        if(navigator.clipboard&&navigator.clipboard.readText) navigator.clipboard.readText().then(doIns).catch(function(){ doIns(clip); });
+        else doIns(clip);
+      }
+      closeAllMenus(); return;
+    }
+    if(act.indexOf('resize-')===0){ resizeWin(act.replace('resize-','')); closeAllMenus(); return; }
+    if(act==='minimize' && targetWin){ targetWin.classList.add('minimized'); closeAllMenus(); return; }
+    if(act==='closewin' && targetWin){ targetWin.classList.remove('open','minimized'); closeAllMenus(); return; }
+    if(act==='props'){ alert('Pasiya PC\n'+(targetIcon?('Icon: '+targetIcon.getAttribute('data-app')):(targetWin?'Window':'Desktop'))); closeAllMenus(); return; }
+    if(act==='view-refresh'){ closeAllMenus(); return; }
+    if(act==='view-wall'){ var b=$('pcWallBtn'); if(b) b.click(); closeAllMenus(); return; }
+    if(act==='new-note' && window.pasiyaPcOpenApp){ window.pasiyaPcOpenApp('sticky'); closeAllMenus(); return; }
+    if(act==='new-term' && window.pasiyaPcOpenApp){ window.pasiyaPcOpenApp('term'); closeAllMenus(); return; }
+    if(act==='new-explorer' && window.pasiyaPcOpenApp){ window.pasiyaPcOpenApp('explorer'); closeAllMenus(); return; }
+    if(act==='new-projects' && window.pasiyaPcOpenApp){ window.pasiyaPcOpenApp('projects'); closeAllMenus(); return; }
+    if(act==='desk-settings' && window.pasiyaPcOpenApp){ window.pasiyaPcOpenApp('sysset'); closeAllMenus(); return; }
+    if(act==='desk-shortcuts' && window.pasiyaPcOpenApp){ window.pasiyaPcOpenApp('shortcuts'); closeAllMenus(); return; }
+    closeAllMenus();
+  }
+
+  function bindMenu(el){
+    if(!el || el.dataset.v15) return;
+    el.dataset.v15='1';
+    el.querySelectorAll('button[data-act]').forEach(function(btn){
+      function fire(ev){
+        if(ev){ ev.preventDefault(); ev.stopPropagation(); }
+        runAct(btn.getAttribute('data-act'));
+      }
+      btn.addEventListener('click', fire);
+      btn.addEventListener('touchend', fire, {passive:false});
+    });
+  }
+
+  function onDesktopContext(x, y, target){
+    var icon=target && target.closest ? target.closest('#pcIcons [data-app], [data-app]') : null;
+    var win=target && target.closest ? target.closest('#pcWork .pc-win') : null;
+    if(icon || win) openIconMenu(x,y, icon, win);
+    else openDeskMenu(x,y);
+  }
+
+  function bindWork(){
+    var work=$('pcWork');
+    if(!work || work.dataset.v15) return;
+    work.dataset.v15='1';
+    work.addEventListener('contextmenu', function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      onDesktopContext(e.clientX, e.clientY, e.target);
+    });
+  }
+
+  function bindTrackpadR(){
+    var r=$('pcTrackR');
+    if(r && !r.dataset.v15){
+      r.dataset.v15='1';
+      r.onclick=function(e){
+        if(e) e.preventDefault();
+        var work=$('pcWork');
+        var cur=$('pcCursor');
+        var rr=work?work.getBoundingClientRect():{left:40,top:80};
+        var x=rr.left + (cur && cur.style.left ? parseInt(cur.style.left,10) : 80);
+        var y=rr.top + (cur && cur.style.top ? parseInt(cur.style.top,10) : 80);
+        // hit-test under cursor
+        var el=document.elementFromPoint(x,y);
+        onDesktopContext(x, y, el||work);
+      };
+    }
+    var pad=$('pcTrackPad');
+    if(pad && !pad.dataset.v15menu){
+      pad.dataset.v15menu='1';
+      var last=0, side='l';
+      pad.addEventListener('touchend', function(e){
+        var t=e.changedTouches[0];
+        var rect=pad.getBoundingClientRect();
+        var s=(t.clientX-rect.left)<rect.width*0.55?'l':'r';
+        var now=Date.now();
+        if(now-last<350 && s==='r' && side==='r'){
+          var work=$('pcWork'); var cur=$('pcCursor');
+          var rr=work?work.getBoundingClientRect():{left:40,top:80};
+          var x=rr.left+(cur&&cur.style.left?parseInt(cur.style.left,10):80);
+          var y=rr.top+(cur&&cur.style.top?parseInt(cur.style.top,10):80);
+          onDesktopContext(x,y, document.elementFromPoint(x,y)||work);
+        }
+        last=now; side=s;
+      });
+    }
+  }
+
+  function bindGlobal(){
+    // outside click closes
+    document.addEventListener('click', function(e){
+      if(e.target.closest && (e.target.closest('#pcCtx')||e.target.closest('#pcDeskCtx'))) return;
+      if(e.target.closest && e.target.closest('#pcTrackR')) return;
+      closeAllMenus();
+    }, true);
+    document.addEventListener('touchstart', function(e){
+      if(e.target.closest && (e.target.closest('#pcCtx')||e.target.closest('#pcDeskCtx')||e.target.closest('#pcTrackPad')||e.target.closest('#pcTrackR'))) return;
+      // don't close immediately on every touch inside work - only outside menus after open
+    }, {passive:true});
+    document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeAllMenus(); });
+    // close when leaving desktop page
+    if(typeof goPage==='function' && !goPage.__ctx15){
+      var orig=goPage;
+      goPage=function(name){
+        closeAllMenus();
+        return orig.apply(this, arguments);
+      };
+      goPage.__ctx15=true;
+    }
+    if(typeof goDashHome==='function' && !goDashHome.__ctx15){
+      var od=goDashHome;
+      goDashHome=function(){ closeAllMenus(); return od.apply(this, arguments); };
+      goDashHome.__ctx15=true;
+    }
+    window.addEventListener('scroll', closeAllMenus, true);
+  }
+
+  function init(){
+    bindMenu($('pcCtx'));
+    bindMenu($('pcDeskCtx'));
+    bindWork();
+    bindTrackpadR();
+    bindGlobal();
+    closeAllMenus();
+  }
+  document.addEventListener('DOMContentLoaded', init);
+  setTimeout(init, 400);
+  setTimeout(init, 1200);
+  window.pasiyaClosePcMenus=closeAllMenus;
+  window.pasiyaShowPcMenu=function(x,y,kind){
+    if(kind==='desk') openDeskMenu(x,y);
+    else openIconMenu(x,y,null,null);
+  };
 })();
 
 </script>
