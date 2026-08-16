@@ -2265,6 +2265,7 @@ RULES:
     <div class="pc-topbar">
       <span style="font-family:Orbitron,sans-serif;font-size:10px;color:#f5c542;margin-right:auto">PASIYA PC</span>
       <button type="button" id="btnPcFull">⛶ FULL</button>
+      <button type="button" id="pcWallBtn">🖼 WALL</button>
       <button type="button" id="btnKbdToggle" class="on">⌨️ KEYBOARD</button>
       <button type="button" id="btnPcAgent">✦ AGENT</button>
       <button type="button" onclick="return goDashHome()">⌂ DASHBOARD</button>
@@ -2280,6 +2281,13 @@ RULES:
         <button type="button" data-app="explorer"><span class="ic">🗂</span>Explorer</button>
         <button type="button" data-app="sysset"><span class="ic">🎛</span>SysSettings</button>
         <button type="button" data-app="recycle"><span class="ic">🗑</span>Recycle</button>
+
+        
+        <button type="button" data-app="taskmgr"><span class="ic">📊</span>TaskMgr</button>
+        <button type="button" data-app="paint"><span class="ic">🎨</span>Paint</button>
+        <button type="button" data-app="clock"><span class="ic">🕐</span>Clock</button>
+        <button type="button" data-app="sticky"><span class="ic">📌</span>Sticky</button>
+        <button type="button" data-app="helpcenter"><span class="ic">❓</span>Help</button>
 
         <button type="button" data-app="notepad"><span class="ic">📝</span>Notepad</button>
         <button type="button" data-app="files"><span class="ic">📁</span>Files</button>
@@ -2414,6 +2422,11 @@ help | clear | note | agent
       </div>
       <div class="pc-start" id="pcStart">
         <h4>START // APPS</h4>
+        <button type="button" data-start="taskmgr">📊 Task Manager</button>
+        <button type="button" data-start="paint">🎨 Paint</button>
+        <button type="button" data-start="clock">🕐 Clock</button>
+        <button type="button" data-start="sticky">📌 Sticky</button>
+        <button type="button" data-start="helpcenter">❓ Help</button>
         <button type="button" data-start="notepad">📝 Notepad</button>
         <button type="button" data-start="explorer">🗂 File Explorer</button>
         <button type="button" data-start="calc">🔢 Calculator</button>
@@ -2433,6 +2446,43 @@ help | clear | note | agent
       </div>
 
     </div>
+
+    
+      <div class="pc-win" id="pcApp-taskmgr">
+        <div class="pc-win-h"><span>TASK MANAGER</span><button type="button" data-close="taskmgr">✕</button></div>
+        <div class="pc-win-b"><pre id="pcTaskMgr" style="font-size:11px;color:#9f9;background:#000;padding:8px;border-radius:8px;min-height:140px;overflow:auto"></pre>
+        <button type="button" class="btn btn-c" id="pcTaskRefresh">REFRESH</button></div>
+      </div>
+      <div class="pc-win" id="pcApp-paint">
+        <div class="pc-win-h"><span>PAINT</span><button type="button" data-close="paint">✕</button></div>
+        <div class="pc-win-b">
+          <canvas id="pcPaint" width="320" height="200" style="width:100%;max-width:360px;background:#fff;border-radius:8px;touch-action:none;border:1px solid #333"></canvas>
+          <div style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap">
+            <button type="button" class="btn btn-g" id="pcPaintClear">CLEAR</button>
+            <button type="button" class="btn btn-c" id="pcPaintSave">SAVE PNG</button>
+          </div>
+        </div>
+      </div>
+      <div class="pc-win" id="pcApp-clock">
+        <div class="pc-win-h"><span>CLOCK</span><button type="button" data-close="clock">✕</button></div>
+        <div class="pc-win-b"><div id="pcClockBig" style="font-size:28px;font-family:Orbitron,sans-serif;color:#0ff;text-align:center;padding:16px"></div>
+        <p id="pcClockDate" style="text-align:center;color:#8ab;font-size:12px"></p></div>
+      </div>
+      <div class="pc-win" id="pcApp-sticky">
+        <div class="pc-win-h"><span>STICKY NOTES</span><button type="button" data-close="sticky">✕</button></div>
+        <div class="pc-win-b"><textarea id="pcSticky" placeholder="Quick notes..." style="min-height:140px;background:#3d3410;color:#ffe"></textarea>
+        <button type="button" class="btn btn-c" id="pcStickySave" style="margin-top:6px">SAVE</button></div>
+      </div>
+      <div class="pc-win" id="pcApp-helpcenter">
+        <div class="pc-win-h"><span>HELP CENTER</span><button type="button" data-close="helpcenter">✕</button></div>
+        <div class="pc-win-b" style="font-size:12px;color:#cde;line-height:1.5">
+          <b>Trackpad:</b> drag move cursor · L double = click · R double = menu<br>
+          <b>Keyboard:</b> types into focused window<br>
+          <b>Start:</b> ⊞ menu · Taskbar shows open apps<br>
+          <b>Explorer:</b> virtual folders in this phone browser<br>
+          <b>Not a real OS:</b> no kernel/drivers — simulated shell + free cloud IDEs
+        </div>
+      </div>
 
     <div class="pc-kbd-dock" id="pcKbdDock">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
@@ -5659,6 +5709,104 @@ document.addEventListener('DOMContentLoaded', function(){
     return r;
   };
   goPage.__spaFix11=true;
+})();
+
+</script>
+<script>
+
+/* PC_EXTRA_V11 */
+(function(){
+  function $(id){ return document.getElementById(id); }
+  function enhance(){
+    if(typeof window.pasiyaPcOpenApp!=='function') return;
+    var orig=window.pasiyaPcOpenApp;
+    window.pasiyaPcOpenApp=function(name){
+      orig(name);
+      if(name==='taskmgr') refreshTasks();
+      if(name==='paint') initPaint();
+      if(name==='clock') tickBig();
+      if(name==='sticky'){ var t=$('pcSticky'); if(t) t.value=localStorage.getItem('pasiya_sticky')||''; }
+    };
+    // rebind data-app for new icons
+    document.querySelectorAll('#pcIcons button[data-app]').forEach(function(b){
+      b.onclick=function(){ window.pasiyaPcOpenApp(b.getAttribute('data-app')); };
+    });
+    document.querySelectorAll('#pcStart [data-start]').forEach(function(b){
+      b.onclick=function(){
+        window.pasiyaPcOpenApp(b.getAttribute('data-start'));
+        var s=$('pcStart'); if(s) s.classList.remove('open');
+      };
+    });
+    var tr=$('pcTaskRefresh'); if(tr) tr.onclick=refreshTasks;
+    var sc=$('pcStickySave'); if(sc) sc.onclick=function(){ var t=$('pcSticky'); localStorage.setItem('pasiya_sticky', t?t.value:''); alert('Sticky saved'); };
+    var wb=$('pcWallBtn');
+    if(wb) wb.onclick=function(){
+      var work=$('pcWork'); if(!work) return;
+      var walls=[
+        'radial-gradient(ellipse at 30% 20%,#0a3a4a,#050a12 60%)',
+        'radial-gradient(ellipse at 70% 80%,#3a2a0a,#050a12 55%)',
+        'linear-gradient(160deg,#0a1020,#1a0a28 50%,#050810)',
+        'radial-gradient(circle at 50% 0%,#102848,#050a12 70%)'
+      ];
+      var i=parseInt(localStorage.getItem('pasiya_wall')||'0',10)||0;
+      i=(i+1)%walls.length;
+      localStorage.setItem('pasiya_wall', String(i));
+      work.style.background=walls[i];
+    };
+    // apply wall
+    var work=$('pcWork');
+    if(work){
+      var walls=[
+        'radial-gradient(ellipse at 30% 20%,#0a3a4a,#050a12 60%)',
+        'radial-gradient(ellipse at 70% 80%,#3a2a0a,#050a12 55%)',
+        'linear-gradient(160deg,#0a1020,#1a0a28 50%,#050810)',
+        'radial-gradient(circle at 50% 0%,#102848,#050a12 70%)'
+      ];
+      var i=parseInt(localStorage.getItem('pasiya_wall')||'0',10)||0;
+      work.style.background=walls[i%walls.length];
+    }
+    setInterval(tickBig, 1000);
+  }
+  function refreshTasks(){
+    var pre=$('pcTaskMgr'); if(!pre) return;
+    var wins=document.querySelectorAll('#pcWork .pc-win.open');
+    var lines=['Pasiya PC Task Manager','----------------------'];
+    wins.forEach(function(w){
+      var id=(w.id||'').replace('pcApp-','');
+      lines.push((w.classList.contains('minimized')?'[min] ':'[run] ')+id);
+    });
+    lines.push('','Browser mem: ~n/a','Online: '+navigator.onLine);
+    pre.textContent=lines.join('\n');
+  }
+  function tickBig(){
+    var b=$('pcClockBig'); var d=$('pcClockDate');
+    if(!b) return;
+    var now=new Date();
+    b.textContent=now.toLocaleTimeString();
+    if(d) d.textContent=now.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  }
+  function initPaint(){
+    var c=$('pcPaint'); if(!c||c.dataset.ready) return;
+    c.dataset.ready='1';
+    var ctx=c.getContext('2d');
+    var drawing=false;
+    function pos(e){
+      var r=c.getBoundingClientRect();
+      var t=e.touches?e.touches[0]:e;
+      return {x:(t.clientX-r.left)*(c.width/r.width), y:(t.clientY-r.top)*(c.height/r.height)};
+    }
+    function start(e){ drawing=true; var p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault(); }
+    function move(e){ if(!drawing) return; var p=pos(e); ctx.lineTo(p.x,p.y); ctx.strokeStyle='#111'; ctx.lineWidth=2; ctx.stroke(); e.preventDefault(); }
+    function end(){ drawing=false; }
+    c.addEventListener('mousedown', start); c.addEventListener('mousemove', move); window.addEventListener('mouseup', end);
+    c.addEventListener('touchstart', start, {passive:false}); c.addEventListener('touchmove', move, {passive:false}); c.addEventListener('touchend', end);
+    var cl=$('pcPaintClear'); if(cl) cl.onclick=function(){ ctx.clearRect(0,0,c.width,c.height); };
+    var sv=$('pcPaintSave'); if(sv) sv.onclick=function(){
+      var a=document.createElement('a'); a.href=c.toDataURL('image/png'); a.download='paint.png'; a.click();
+    };
+  }
+  document.addEventListener('DOMContentLoaded', enhance);
+  if(document.readyState!=='loading') enhance();
 })();
 
 </script>
