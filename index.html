@@ -1404,6 +1404,83 @@ body.pc-fullscreen .dash-back{ left:12px; top:10px; }
 .pc-set-nav{ display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px; }
 .pc-set-nav button{ font-size:10px; padding:6px 8px; border-radius:6px; border:1px solid rgba(0,240,255,.3); background:#102030; color:#9ef; }
 
+
+/* ===== SPA + KBD FIX v11 ===== */
+body.spa-mode .legacy-block,
+body.spa-mode .hero,
+body.spa-mode section.tools,
+body.spa-mode .tools-grid,
+body.spa-mode #core,
+body.spa-mode #n8n,
+body.spa-mode #desk,
+body.spa-mode #stats-pro,
+body.spa-mode #social,
+body.spa-mode #web,
+body.spa-mode #auto,
+body.spa-mode #ai,
+body.spa-mode #llms,
+body.spa-mode #host,
+body.spa-mode #dev,
+body.spa-mode #github-auto,
+body.spa-mode .home-block,
+body.spa-mode .cmd-legacy {
+  display: none !important;
+}
+body.spa-mode .main-stage {
+  min-height: 100vh;
+  padding-top: 52px !important;
+}
+body.spa-mode .page-view.active {
+  display: block !important;
+  min-height: calc(100vh - 60px);
+  padding: 12px 10px 24px;
+  animation: pageIn .3s ease;
+}
+/* PC shell: work scrolls, keyboard always visible inside box */
+#page-desktop.page-view.active {
+  display: flex !important;
+  flex-direction: column !important;
+  height: calc(100vh - 56px) !important;
+  max-height: calc(100vh - 56px) !important;
+  overflow: hidden !important;
+  padding: 6px !important;
+  box-sizing: border-box;
+}
+#page-desktop .pc-shell {
+  flex: 1 !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+#page-desktop .pc-work {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch;
+}
+#page-desktop .pc-kbd-dock {
+  flex: 0 0 auto !important;
+  position: relative !important;
+  max-height: 38vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: max(6px, env(safe-area-inset-bottom)) !important;
+}
+#page-desktop.kbd-on .pc-kbd-dock {
+  display: block !important;
+}
+.pc-kbd button {
+  min-height: 34px !important;
+}
+.pc-track-pad {
+  min-height: 56px !important;
+}
+
 </style>
 </head>
 <body>
@@ -3631,8 +3708,8 @@ function handleImage(input, which){
 
 const PAGE_MAP = {
   freecloud: ['page-freecloud'],
-  desktop: ['page-desktop','page-freecloud'],
-  pc: ['page-desktop','page-freecloud'],
+  desktop: ['page-desktop'],
+  pc: ['page-desktop'],
   toolkit: ['page-toolkit'],
   apibridge: ['page-apibridge'],
   learn: ['page-learn'],
@@ -3645,7 +3722,7 @@ const PAGE_MAP = {
   auth: ['page-auth'],
   myspace: ['page-myspace'],
   help: ['page-help'],
-  app: ['page-desktop','page-freecloud'],
+  app: ['page-app'],
   nexus: ['page-app'],
   map: ['page-map'],
   support: ['page-support'],
@@ -5554,6 +5631,34 @@ document.addEventListener('DOMContentLoaded', function(){
   if(document.readyState!=='loading') bind();
   window.pasiyaPcOpenApp=openApp;
   window.pasiyaPcSetKbd=setKbd;
+})();
+
+</script>
+<script>
+
+/* SPA_NAV_FIX_V11 */
+(function(){
+  if(typeof goPage!=='function' || goPage.__spaFix11) return;
+  var orig=goPage;
+  goPage=function(name, el){
+    showPageLoader && showPageLoader(350);
+    var r=orig.apply(this, arguments);
+    // ensure SPA pages actually full-screen: hide side after navigate on narrow
+    try{
+      var legacy={home:1,bots:1,n8n:1,desk:1,tools:1,auto:1,social:1,stats:1};
+      if(!legacy[name]){
+        document.body.classList.add('spa-mode');
+        var id = (PAGE_MAP[name]&&PAGE_MAP[name][0]) || ('page-'+name);
+        document.querySelectorAll('.page-view').forEach(function(p){ p.classList.remove('active'); });
+        var node=document.getElementById(id);
+        if(node){ node.classList.add('active'); }
+        if(typeof toggleSide==='function') toggleSide(false);
+        window.scrollTo(0,0);
+      }
+    }catch(e){}
+    return r;
+  };
+  goPage.__spaFix11=true;
 })();
 
 </script>
