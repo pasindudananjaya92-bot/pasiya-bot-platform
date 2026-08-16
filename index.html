@@ -1217,6 +1217,90 @@ body.kbd-open .vkbd-wrap {
 body:has(#page-desktop.kbd-on) .vkbd-wrap{display:none !important}
 body.kbd-open .vkbd-wrap{display:none !important}
 
+
+/* ===== PC OS v9 ===== */
+body.pc-fullscreen #page-desktop.page-view.active{
+  position:fixed !important; inset:0 !important; z-index:9500 !important;
+  margin:0 !important; padding:0 !important; max-width:none !important;
+  background:#03060c !important; display:flex !important; flex-direction:column !important;
+}
+body.pc-fullscreen .side-nav,
+body.pc-fullscreen .menu-toggle,
+body.pc-fullscreen .home-chip,
+body.pc-fullscreen header.top,
+body.pc-fullscreen .side-overlay{ display:none !important; }
+#page-desktop .pc-shell{
+  display:flex !important;
+  flex-direction:column !important;
+  height:100% !important;
+  min-height:calc(100vh - 8px);
+  max-height:100vh;
+  border-radius:0;
+}
+body:not(.pc-fullscreen) #page-desktop .pc-shell{
+  min-height:calc(100vh - 56px);
+  max-height:calc(100vh - 48px);
+  border-radius:12px;
+}
+#page-desktop .pc-work{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  overflow:auto !important;
+  position:relative !important;
+  padding-bottom:8px;
+}
+#page-desktop .pc-kbd-dock{
+  flex:0 0 auto !important;
+  display:none;
+  width:100%;
+  background:#0a101c;
+  border-top:2px solid #f5c542;
+  padding:6px 4px max(8px, env(safe-area-inset-bottom));
+  z-index:5;
+}
+#page-desktop.kbd-on .pc-kbd-dock{ display:block !important; }
+#page-desktop.kbd-on .pc-work{ flex:1 1 0; max-height:none; }
+.pc-win{
+  display:none;
+  position:absolute !important;
+  left:8px; top:48px;
+  width:min(94%, 420px);
+  min-width:200px; min-height:140px;
+  height:55%;
+  margin:0 !important;
+  z-index:20;
+  resize:both;
+  overflow:hidden;
+  box-shadow:0 8px 28px rgba(0,0,0,.45);
+}
+.pc-win.open{ display:flex !important; flex-direction:column; }
+.pc-win.minimized{ display:none !important; }
+.pc-win.focused{ border-color:#f5c542 !important; z-index:40 !important; }
+.pc-win-h{ cursor:grab; touch-action:none; flex-shrink:0; }
+.pc-win-b{ flex:1; overflow:auto; min-height:0; }
+.pc-win-actions{ display:flex; gap:4px; }
+.pc-win-actions button{ min-width:28px; padding:4px 8px !important; }
+.pc-taskbar{
+  display:flex; flex-wrap:wrap; gap:4px; padding:4px 6px;
+  background:rgba(0,0,0,.4); border-bottom:1px solid rgba(0,240,255,.2);
+  min-height:28px;
+}
+.pc-taskbar button{
+  font-size:10px; padding:4px 8px; border-radius:4px;
+  border:1px solid rgba(0,240,255,.3); background:rgba(0,240,255,.1); color:#9ef;
+}
+.pc-ctx{
+  display:none; position:fixed; z-index:30000;
+  background:#0c1422; border:1px solid rgba(0,240,255,.4);
+  border-radius:8px; min-width:140px; padding:4px; box-shadow:0 8px 24px #000;
+}
+.pc-ctx.open{ display:block; }
+.pc-ctx button{
+  display:block; width:100%; text-align:left; padding:10px 12px;
+  border:0; background:transparent; color:#dff; font-size:13px; cursor:pointer;
+}
+.pc-ctx button:active{ background:rgba(0,240,255,.15); }
+
 </style>
 </head>
 <body>
@@ -1994,10 +2078,12 @@ RULES:
   <div class="pc-shell" id="pcShell">
     <div class="pc-topbar">
       <span style="font-family:Orbitron,sans-serif;font-size:10px;color:#f5c542;margin-right:auto">PASIYA PC</span>
+      <button type="button" id="btnPcFull">⛶ FULL</button>
       <button type="button" id="btnKbdToggle" class="on">⌨️ KEYBOARD</button>
       <button type="button" id="btnPcAgent">✦ AGENT</button>
       <button type="button" onclick="goPage('home')">⌂ HOME</button>
     </div>
+    <div class="pc-taskbar" id="pcTaskbar"></div>
     <div class="pc-work" id="pcWork">
       <div class="pc-icons" id="pcIcons">
         <button type="button" data-app="notepad"><span class="ic">📝</span>Notepad</button>
@@ -4719,30 +4805,58 @@ try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hid
 
 
 
+
+
+<div class="pc-ctx" id="pcCtx">
+  <button type="button" data-act="copy">Copy</button>
+  <button type="button" data-act="paste">Paste</button>
+  <button type="button" data-act="cut">Cut</button>
+  <button type="button" data-act="selectall">Select all</button>
+  <button type="button" data-act="download">Download text</button>
+  <button type="button" data-act="close">Close menu</button>
+</div>
 <script>
 
-/* PASIYA_PC_V8 */
+/* PASIYA_PC_V9 */
 (function(){
-  var shift=false, sym=false;
-  var activeInput=null;
+  var shift=false, sym=false, activeInput=null, zc=50, clipboard='';
 
   function $(id){ return document.getElementById(id); }
 
   function setKbd(on){
-    var page=$('page-desktop');
-    if(!page) return;
+    var page=$('page-desktop'); if(!page) return;
     page.classList.toggle('kbd-on', !!on);
     document.body.classList.remove('kbd-open');
-    var floatK=document.getElementById('vkbdWrap');
-    if(floatK) floatK.classList.remove('open');
+    var floatK=$('vkbdWrap'); if(floatK) floatK.classList.remove('open');
     if(on) buildKbd();
+  }
+
+  function setFull(on){
+    document.body.classList.toggle('pc-fullscreen', !!on);
+    if(typeof goPage==='function' && on) goPage('desktop');
+  }
+
+  function focusWin(win){
+    document.querySelectorAll('#pcWork .pc-win').forEach(function(w){ w.classList.remove('focused'); });
+    if(win){ win.classList.add('focused'); win.style.zIndex=String(++zc); }
   }
 
   function openApp(name){
     if(name==='settings'){ if(typeof goPage==='function') goPage('settings'); return; }
-    document.querySelectorAll('#pcWork .pc-win').forEach(function(w){ w.classList.remove('open'); });
     var w=$('pcApp-'+name);
-    if(w) w.classList.add('open');
+    if(!w) return;
+    w.classList.add('open');
+    w.classList.remove('minimized');
+    // multi-window: stagger position
+    var opens=document.querySelectorAll('#pcWork .pc-win.open:not(.minimized)').length;
+    if(!w.dataset.pos){
+      w.style.left=(8+(opens%4)*18)+'px';
+      w.style.top=(40+(opens%5)*22)+'px';
+      w.dataset.pos='1';
+    }
+    ensureChrome(w, name);
+    enableDrag(w);
+    focusWin(w);
     if(name==='notepad'){ activeInput=$('pcNotepad'); loadNote(); }
     if(name==='term'){ activeInput=$('pcTermIn'); }
     if(name==='tools'){ activeInput=$('pcToolBox'); }
@@ -4750,42 +4864,123 @@ try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hid
     if(name==='projects'){ renderProj(); activeInput=$('pcProjName'); }
     if(name==='files'){ renderFiles(); }
     if(name==='calc'){ buildCalc(); activeInput=$('pcCalcOut'); }
-    if(activeInput){ try{ activeInput.focus({preventScroll:true}); }catch(e){ try{activeInput.focus();}catch(e2){} } }
+    if(activeInput){ try{ activeInput.focus({preventScroll:true}); }catch(e){} }
+    updateTaskbar();
     setKbd(true);
   }
 
+  function ensureChrome(w, name){
+    var h=w.querySelector('.pc-win-h'); if(!h) return;
+    if(h.dataset.chrome) return;
+    h.dataset.chrome='1';
+    var actions=document.createElement('div'); actions.className='pc-win-actions';
+    var bMin=document.createElement('button'); bMin.type='button'; bMin.textContent='—'; bMin.title='Minimize';
+    bMin.onclick=function(e){ e.stopPropagation(); minimizeApp(name); };
+    var bMax=document.createElement('button'); bMax.type='button'; bMax.textContent='□';
+    bMax.onclick=function(e){
+      e.stopPropagation();
+      if(w.dataset.max==='1'){
+        w.style.left=w.dataset.ol||'8px'; w.style.top=w.dataset.ot||'40px';
+        w.style.width=w.dataset.ow||''; w.style.height=w.dataset.oh||'';
+        w.dataset.max='0';
+      } else {
+        w.dataset.ol=w.style.left; w.dataset.ot=w.style.top; w.dataset.ow=w.style.width; w.dataset.oh=w.style.height;
+        w.style.left='4px'; w.style.top='4px'; w.style.width='96%'; w.style.height='90%'; w.dataset.max='1';
+      }
+      focusWin(w);
+    };
+    var bClose=h.querySelector('[data-close]');
+    actions.appendChild(bMin); actions.appendChild(bMax);
+    if(bClose){ actions.appendChild(bClose); }
+    h.appendChild(actions);
+  }
+
+  function minimizeApp(name){
+    var w=$('pcApp-'+name); if(!w) return;
+    w.classList.add('minimized');
+    w.classList.remove('focused');
+    updateTaskbar();
+  }
+
+  function restoreApp(name){
+    var w=$('pcApp-'+name); if(!w) return;
+    w.classList.remove('minimized');
+    w.classList.add('open');
+    focusWin(w);
+    updateTaskbar();
+  }
+
   function closeApp(name){
-    var w=$('pcApp-'+name);
-    if(w) w.classList.remove('open');
+    var w=$('pcApp-'+name); if(!w) return;
+    w.classList.remove('open'); w.classList.remove('minimized'); w.classList.remove('focused');
+    updateTaskbar();
+  }
+
+  function updateTaskbar(){
+    var bar=$('pcTaskbar'); if(!bar) return;
+    bar.innerHTML='';
+    document.querySelectorAll('#pcWork .pc-win.open').forEach(function(w){
+      var id=(w.id||'').replace('pcApp-','');
+      var b=document.createElement('button'); b.type='button';
+      b.textContent=(w.classList.contains('minimized')?'[] ':'')+id;
+      b.onclick=function(){
+        if(w.classList.contains('minimized')) restoreApp(id);
+        else { focusWin(w); }
+      };
+      bar.appendChild(b);
+    });
+  }
+
+  function enableDrag(win){
+    if(win.dataset.drag) return;
+    win.dataset.drag='1';
+    var head=win.querySelector('.pc-win-h'); if(!head) return;
+    var dragging=false, sx=0, sy=0, ol=0, ot=0;
+    function down(e){
+      if(e.target.closest('button')) return;
+      dragging=true; focusWin(win);
+      var t=e.touches?e.touches[0]:e;
+      sx=t.clientX; sy=t.clientY;
+      ol=parseInt(win.style.left)||8; ot=parseInt(win.style.top)||40;
+      e.preventDefault();
+    }
+    function move(e){
+      if(!dragging) return;
+      var t=e.touches?e.touches[0]:e;
+      win.style.left=Math.max(0, ol+(t.clientX-sx))+'px';
+      win.style.top=Math.max(0, ot+(t.clientY-sy))+'px';
+      win.dataset.max='0';
+    }
+    function up(){ dragging=false; }
+    head.addEventListener('mousedown', down);
+    head.addEventListener('touchstart', down, {passive:false});
+    window.addEventListener('mousemove', move);
+    window.addEventListener('touchmove', move, {passive:false});
+    window.addEventListener('mouseup', up);
+    window.addEventListener('touchend', up);
+    win.addEventListener('mousedown', function(){ focusWin(win); });
   }
 
   function buildKbd(){
     var box=$('pcKbd'); if(!box) return;
     box.innerHTML='';
-    var rows;
-    if(sym){
-      rows=[['1','2','3','4','5','6','7','8','9','0'],['@','#','$','%','&','*','(',')','-','_'],['!','.',',','/','?',':',';','"',"'",'+'],['ABC','SPACE','DEL','ENT']];
-    } else if(shift){
-      rows=[['1','2','3','4','5','6','7','8','9','0'],['Q','W','E','R','T','Y','U','I','O','P'],['A','S','D','F','G','H','J','K','L'],['SH','Z','X','C','V','B','N','M','DEL'],['123','SPACE','ENT']];
-    } else {
-      rows=[['1','2','3','4','5','6','7','8','9','0'],['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['SH','z','x','c','v','b','n','m','DEL'],['123','SPACE','.','ENT']];
-    }
+    var rows=sym
+      ? [['1','2','3','4','5','6','7','8','9','0'],['@','#','$','%','&','*','(',')','-','_'],['!','.',',','/','?',"'",'"',':',';','+'],['ABC','SPACE','DEL','ENT']]
+      : shift
+      ? [['1','2','3','4','5','6','7','8','9','0'],['Q','W','E','R','T','Y','U','I','O','P'],['A','S','D','F','G','H','J','K','L'],['SH','Z','X','C','V','B','N','M','DEL'],['123','SPACE','ENT']]
+      : [['1','2','3','4','5','6','7','8','9','0'],['q','w','e','r','t','y','u','i','o','p'],['a','s','d','f','g','h','j','k','l'],['SH','z','x','c','v','b','n','m','DEL'],['123','SPACE','.','ENT']];
     rows.forEach(function(row){
       var r=document.createElement('div'); r.className='r';
       row.forEach(function(ch){
-        var b=document.createElement('button');
-        b.type='button';
+        var b=document.createElement('button'); b.type='button';
         if(ch==='SPACE'){ b.className='sp'; b.textContent='space'; }
         else if(ch==='DEL'){ b.className='wd'; b.textContent='⌫'; }
         else if(ch==='ENT'){ b.className='wd'; b.textContent='↵'; }
         else if(ch==='SH'||ch==='123'||ch==='ABC'){ b.className='fn'; b.textContent=ch==='SH'?'⇧':ch; }
         else b.textContent=ch;
-        function fire(ev){
-          if(ev){ ev.preventDefault(); ev.stopPropagation(); }
-          onKey(ch);
-        }
+        function fire(ev){ if(ev){ ev.preventDefault(); ev.stopPropagation(); } onKey(ch); }
         b.addEventListener('click', fire);
-        b.addEventListener('touchend', function(ev){ fire(ev); }, {passive:false});
+        b.addEventListener('touchend', fire, {passive:false});
         r.appendChild(b);
       });
       box.appendChild(r);
@@ -4805,62 +5000,42 @@ try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hid
     if(ch==='123'){ sym=true; buildKbd(); return; }
     if(ch==='ABC'){ sym=false; buildKbd(); return; }
     if(ch==='DEL'){
-      var v=t.value||'';
-      var s=t.selectionStart!=null?t.selectionStart:v.length;
-      var e=t.selectionEnd!=null?t.selectionEnd:s;
-      if(s===e && s>0){ t.value=v.slice(0,s-1)+v.slice(e); try{t.selectionStart=t.selectionEnd=s-1;}catch(err){} }
+      var v=t.value||''; var s=t.selectionStart!=null?t.selectionStart:v.length; var e=t.selectionEnd!=null?t.selectionEnd:s;
+      if(s===e&&s>0){ t.value=v.slice(0,s-1)+v.slice(e); try{t.selectionStart=t.selectionEnd=s-1;}catch(err){} }
       else { t.value=v.slice(0,s)+v.slice(e); try{t.selectionStart=t.selectionEnd=s;}catch(err){} }
     } else if(ch==='ENT'){
       if(t.id==='pcTermIn'){ runTerm(); return; }
       if(t.tagName==='TEXTAREA') insert(t,'\n');
-    } else if(ch==='SPACE'){
-      insert(t,' ');
-    } else {
-      insert(t, ch);
-      if(shift && ch.length===1){ shift=false; buildKbd(); }
-    }
-    syncPreview(t);
+    } else if(ch==='SPACE') insert(t,' ');
+    else { insert(t,ch); if(shift&&ch.length===1){ shift=false; buildKbd(); } }
+    var p=$('pcKbdField'); if(p&&t!==p) p.value=t.value||'';
   }
 
-  function insert(t, ch){
-    var v=t.value||'';
-    var s=t.selectionStart!=null?t.selectionStart:v.length;
-    var e=t.selectionEnd!=null?t.selectionEnd:s;
+  function insert(t,ch){
+    var v=t.value||''; var s=t.selectionStart!=null?t.selectionStart:v.length; var e=t.selectionEnd!=null?t.selectionEnd:s;
     t.value=v.slice(0,s)+ch+v.slice(e);
     try{ t.selectionStart=t.selectionEnd=s+ch.length; }catch(err){}
-    try{ t.dispatchEvent(new Event('input',{bubbles:true})); }catch(e){}
   }
 
-  function syncPreview(t){
-    var p=$('pcKbdField');
-    if(p && t && t!==p) p.value=t.value||'';
-  }
-
-  function loadNote(){
-    var t=$('pcNotepad'); if(t) t.value=localStorage.getItem('pasiya_pc_note')||'';
-  }
-  function saveNote(){
-    var t=$('pcNotepad'); if(t) localStorage.setItem('pasiya_pc_note', t.value||'');
-    alert('Saved');
+  function loadNote(){ var t=$('pcNotepad'); if(t) t.value=localStorage.getItem('pasiya_pc_note')||''; }
+  function saveNote(){ var t=$('pcNotepad'); if(t) localStorage.setItem('pasiya_pc_note', t.value||''); alert('Saved on phone'); }
+  function downloadText(name, text){
+    var blob=new Blob([text||''], {type:'text/plain'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name||'pasiya.txt'; a.click();
   }
   function renderFiles(){
-    var ul=$('pcFileList'); if(!ul) return;
-    ul.innerHTML='';
-    var items=[
-      {k:'pasiya_pc_note', n:'Notepad draft'},
-      {k:'pasiya_projects', n:'Projects JSON'},
-      {k:'pasiya_botlab_plan', n:'Bot plan'}
-    ];
-    items.forEach(function(it){
-      var v=localStorage.getItem(it.k);
+    var ul=$('pcFileList'); if(!ul) return; ul.innerHTML='';
+    [{k:'pasiya_pc_note',n:'Notepad'},{k:'pasiya_projects',n:'Projects'},{k:'pasiya_botlab_plan',n:'Bot plan'}].forEach(function(it){
+      var v=localStorage.getItem(it.k)||'';
       var li=document.createElement('li');
-      li.textContent=it.n+' — '+(v? (v.length+' chars'):'empty');
-      ul.appendChild(li);
+      li.innerHTML=it.n+' ('+v.length+' chars) ';
+      var b=document.createElement('button'); b.type='button'; b.textContent='Download';
+      b.onclick=function(){ downloadText(it.n+'.txt', v); };
+      li.appendChild(b); ul.appendChild(li);
     });
   }
   function buildCalc(){
-    var pad=$('pcCalcPad'); if(!pad||pad.dataset.ready) return;
-    pad.dataset.ready='1';
+    var pad=$('pcCalcPad'); if(!pad||pad.dataset.ready) return; pad.dataset.ready='1';
     ['7','8','9','/','4','5','6','*','1','2','3','-','0','.','=','+','C'].forEach(function(k){
       var b=document.createElement('button'); b.type='button'; b.textContent=k;
       b.style.cssText='padding:12px;border-radius:6px;border:1px solid rgba(0,240,255,.3);background:#111;color:#fff;font-size:16px';
@@ -4874,47 +5049,65 @@ try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hid
     });
   }
   function runTerm(){
-    var inp=$('pcTermIn'); var out=$('pcTermOut');
-    if(!inp||!out) return;
+    var inp=$('pcTermIn'); var out=$('pcTermOut'); if(!inp||!out) return;
     var cmd=(inp.value||'').trim(); inp.value='';
-    out.textContent += '\n> '+cmd;
+    out.textContent+='\n> '+cmd;
     var c=cmd.toLowerCase();
-    if(c==='help') out.textContent += '\nhelp clear note agent projects';
+    if(c==='help') out.textContent+='\nhelp clear note agent projects full';
     else if(c==='clear') out.textContent='Pasiya PC terminal\n';
     else if(c==='note') openApp('notepad');
     else if(c==='agent'){ if(typeof openAgentPanel==='function') openAgentPanel(); }
     else if(c==='projects') openApp('projects');
-    else out.textContent += '\nunknown';
-    out.scrollTop=out.scrollHeight;
+    else if(c==='full') setFull(true);
+    else out.textContent+='\nunknown';
   }
   function renderProj(){
     var ul=$('pcProjList'); if(!ul) return;
     var list=[]; try{ list=JSON.parse(localStorage.getItem('pasiya_projects')||'[]'); }catch(e){}
     ul.innerHTML='';
-    list.forEach(function(p,i){
-      var li=document.createElement('li');
-      li.textContent=(p.name||'')+' — '+(p.note||'');
+    list.forEach(function(p){
+      var li=document.createElement('li'); li.textContent=(p.name||'')+' — '+(p.note||'');
       ul.appendChild(li);
     });
   }
 
+  /* Context menu long-press */
+  var pressTimer=null, pressTarget=null;
+  function showCtx(x,y, el){
+    var ctx=$('pcCtx'); if(!ctx) return;
+    pressTarget=el;
+    ctx.classList.add('open');
+    ctx.style.left=Math.min(x, window.innerWidth-160)+'px';
+    ctx.style.top=Math.min(y, window.innerHeight-220)+'px';
+  }
+  function hideCtx(){ var ctx=$('pcCtx'); if(ctx) ctx.classList.remove('open'); }
+
   function bind(){
     var page=$('page-desktop'); if(!page) return;
     page.querySelectorAll('#pcIcons button[data-app]').forEach(function(b){
-      b.addEventListener('click', function(){ openApp(b.getAttribute('data-app')); });
+      b.onclick=function(){ openApp(b.getAttribute('data-app')); };
     });
     page.querySelectorAll('[data-close]').forEach(function(b){
-      b.addEventListener('click', function(){ closeApp(b.getAttribute('data-close')); });
+      b.onclick=function(){ closeApp(b.getAttribute('data-close')); };
     });
-    var tk=$('btnKbdToggle');
-    if(tk) tk.onclick=function(){ setKbd(!page.classList.contains('kbd-on')); };
-    var tc=$('btnKbdClose');
-    if(tc) tc.onclick=function(){ setKbd(false); };
-    var ag=$('btnPcAgent');
-    if(ag) ag.onclick=function(){ if(typeof openAgentPanel==='function') openAgentPanel(); };
+    var tk=$('btnKbdToggle'); if(tk) tk.onclick=function(){ setKbd(!page.classList.contains('kbd-on')); };
+    var tc=$('btnKbdClose'); if(tc) tc.onclick=function(){ setKbd(false); };
+    var ag=$('btnPcAgent'); if(ag) ag.onclick=function(){ if(typeof openAgentPanel==='function') openAgentPanel(); };
+    var ff=$('btnPcFull'); if(ff) ff.onclick=function(){ setFull(!document.body.classList.contains('pc-fullscreen')); };
     var ns=$('pcNoteSave'); if(ns) ns.onclick=saveNote;
     var nl=$('pcNoteLoad'); if(nl) nl.onclick=loadNote;
-    var nc=$('pcNoteCopy'); if(nc) nc.onclick=function(){ var t=$('pcNotepad'); if(t&&navigator.clipboard) navigator.clipboard.writeText(t.value||''); };
+    var nc=$('pcNoteCopy'); if(nc) nc.onclick=function(){
+      var t=$('pcNotepad'); if(!t) return;
+      clipboard=t.value||'';
+      if(navigator.clipboard) navigator.clipboard.writeText(clipboard);
+      alert('Copied');
+    };
+    // download button on notepad
+    if(ns && !document.getElementById('pcNoteDl')){
+      var dl=document.createElement('button'); dl.type='button'; dl.className='btn btn-g'; dl.id='pcNoteDl'; dl.textContent='DOWNLOAD';
+      dl.onclick=function(){ var t=$('pcNotepad'); downloadText('notepad.txt', t?t.value:''); };
+      ns.parentNode.appendChild(dl);
+    }
     var fr=$('pcFileRefresh'); if(fr) fr.onclick=renderFiles;
     var pj=$('pcProjAdd');
     if(pj) pj.onclick=function(){
@@ -4925,29 +5118,70 @@ try{var __p=document.getElementById('preloader'); if(__p){__p.classList.add('hid
       localStorage.setItem('pasiya_projects', JSON.stringify(list.slice(0,40)));
       n.value=''; if(note) note.value=''; renderProj();
     };
-    var bs=$('pcBotSave');
-    if(bs) bs.onclick=function(){ var t=$('pcBotPlan'); if(t) localStorage.setItem('pasiya_botlab_plan', t.value||''); alert('Plan saved'); };
-    var jf=$('pcJsonFmt');
-    if(jf) jf.onclick=function(){ var t=$('pcToolBox'); try{ t.value=JSON.stringify(JSON.parse(t.value),null,2);}catch(e){alert('Invalid JSON');} };
-    var be=$('pcB64e');
-    if(be) be.onclick=function(){ var t=$('pcToolBox'); try{ t.value=btoa(unescape(encodeURIComponent(t.value||''))); }catch(e){alert('fail');} };
-    var bd=$('pcB64d');
-    if(bd) bd.onclick=function(){ var t=$('pcToolBox'); try{ t.value=decodeURIComponent(escape(atob(t.value||''))); }catch(e){alert('fail');} };
-    // focus tracking
+    var bs=$('pcBotSave'); if(bs) bs.onclick=function(){ var t=$('pcBotPlan'); if(t) localStorage.setItem('pasiya_botlab_plan', t.value||''); alert('Saved'); };
+    var jf=$('pcJsonFmt'); if(jf) jf.onclick=function(){ var t=$('pcToolBox'); try{ t.value=JSON.stringify(JSON.parse(t.value),null,2);}catch(e){alert('Invalid JSON');} };
+    var be=$('pcB64e'); if(be) be.onclick=function(){ var t=$('pcToolBox'); try{ t.value=btoa(unescape(encodeURIComponent(t.value||''))); }catch(e){} };
+    var bd=$('pcB64d'); if(bd) bd.onclick=function(){ var t=$('pcToolBox'); try{ t.value=decodeURIComponent(escape(atob(t.value||''))); }catch(e){} };
+
     page.addEventListener('focusin', function(e){
       if(e.target && (e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')) activeInput=e.target;
     });
-    var kf=$('pcKbdField');
-    if(kf){
-      kf.addEventListener('focus', function(){ activeInput=kf; });
+
+    // long press context
+    page.addEventListener('touchstart', function(e){
+      var el=e.target.closest('textarea, input, .pc-win-b');
+      if(!el) return;
+      var t=e.touches[0];
+      pressTimer=setTimeout(function(){ showCtx(t.clientX, t.clientY, el); }, 550);
+    }, {passive:true});
+    page.addEventListener('touchend', function(){ clearTimeout(pressTimer); });
+    page.addEventListener('touchmove', function(){ clearTimeout(pressTimer); });
+    page.addEventListener('contextmenu', function(e){
+      if(e.target.closest('#pcWork')){ e.preventDefault(); showCtx(e.clientX, e.clientY, e.target); }
+    });
+
+    var ctx=$('pcCtx');
+    if(ctx){
+      ctx.querySelectorAll('[data-act]').forEach(function(btn){
+        btn.onclick=function(){
+          var act=btn.getAttribute('data-act');
+          var el=pressTarget;
+          var field=(el && (el.tagName==='TEXTAREA'||el.tagName==='INPUT')) ? el : (el && el.querySelector && el.querySelector('textarea,input')) || activeInput || $('pcNotepad');
+          if(act==='close'){ hideCtx(); return; }
+          if(!field){ hideCtx(); return; }
+          if(act==='copy'){
+            var s=field.selectionStart, e=field.selectionEnd;
+            clipboard=(s!=null&&e!=null&&e>s)? field.value.slice(s,e) : (field.value||'');
+            if(navigator.clipboard) navigator.clipboard.writeText(clipboard);
+          }
+          if(act==='cut'){
+            var s=field.selectionStart, e=field.selectionEnd;
+            if(s!=null&&e!=null&&e>s){ clipboard=field.value.slice(s,e); field.value=field.value.slice(0,s)+field.value.slice(e); }
+          }
+          if(act==='paste'){
+            var text=clipboard;
+            var doIns=function(tx){
+              var s=field.selectionStart!=null?field.selectionStart:(field.value||'').length;
+              var e=field.selectionEnd!=null?field.selectionEnd:s;
+              field.value=(field.value||'').slice(0,s)+tx+(field.value||'').slice(e);
+            };
+            if(navigator.clipboard&&navigator.clipboard.readText){
+              navigator.clipboard.readText().then(doIns).catch(function(){ doIns(text); });
+            } else doIns(text);
+          }
+          if(act==='selectall'){ try{ field.select(); }catch(err){} }
+          if(act==='download'){ downloadText('export.txt', field.value||''); }
+          hideCtx();
+        };
+      });
     }
-    // default keyboard on when entering desktop once
+    document.addEventListener('click', function(e){
+      if(!e.target.closest('#pcCtx')) hideCtx();
+    });
   }
 
   document.addEventListener('DOMContentLoaded', bind);
   if(document.readyState!=='loading') bind();
-
-  // expose for menu
   window.pasiyaPcOpenApp=openApp;
   window.pasiyaPcSetKbd=setKbd;
 })();
