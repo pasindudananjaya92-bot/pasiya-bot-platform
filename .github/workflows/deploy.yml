@@ -1,4 +1,4 @@
- name: Deploy to GitHub Pages
+name: Deploy to GitHub Pages
 on:
   push:
     branches: [ main ]
@@ -20,15 +20,10 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3
         with:
           path: '.'
       - id: deployment
-        uses: actions/deploy-pages@v4  
+        uses: actions/deploy-pages@v4 
