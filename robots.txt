@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://pasiya-bot-platform.vercel.app/sitemap.xml
+Sitemap: https://pasindudananjaya92-bot.github.io/pasiya-bot-platform/sitemap.xml
