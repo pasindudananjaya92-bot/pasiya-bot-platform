@@ -1586,6 +1586,99 @@ body.spa-mode:not(:has(#page-desktop.active)) #pcDeskCtx {
   /* still allow fixed; JS will close on leave */
 }
 
+
+/* ===== FORCE UI v17 ===== */
+aside#sideNav.side-nav {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  bottom: 0 !important;
+  width: min(280px, 85vw) !important;
+  z-index: 10050 !important;
+  transform: translateX(0) !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  display: block !important;
+  visibility: visible !important;
+  background: rgba(4,8,18,.98) !important;
+  overflow-y: auto !important;
+  padding: 48px 10px 24px !important;
+  box-sizing: border-box !important;
+}
+aside#sideNav.side-nav.user-closed {
+  transform: translateX(-110%) !important;
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+#sideOverlay.force-show {
+  display: block !important;
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(0,0,0,.35) !important;
+  z-index: 10045 !important;
+}
+.menu-toggle.cyber-orb {
+  display: flex !important;
+  z-index: 10060 !important;
+  width: 48px !important;
+  height: 48px !important;
+}
+/* Trackpad bigger for fingers */
+#pcTrackPad, .pc-track-pad {
+  min-height: 110px !important;
+  height: 110px !important;
+  max-height: 140px !important;
+  border: 2px solid rgba(0,240,255,.45) !important;
+  border-radius: 12px !important;
+}
+#pcTrackL, #pcTrackR, .pc-track-l, .pc-track-r {
+  min-height: 48px !important;
+  padding: 14px 10px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+/* Context menus - always on top, touchable */
+#pcCtx, #pcDeskCtx {
+  position: fixed !important;
+  z-index: 2147483646 !important;
+  display: none !important;
+  min-width: 200px !important;
+  max-width: 90vw !important;
+  max-height: 65vh !important;
+  overflow-y: auto !important;
+  background: #101820 !important;
+  border: 2px solid #00e5ff !important;
+  border-radius: 12px !important;
+  padding: 8px !important;
+  box-shadow: 0 16px 48px rgba(0,0,0,.75) !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+}
+#pcCtx.show, #pcDeskCtx.show {
+  display: block !important;
+}
+#pcCtx button, #pcDeskCtx button {
+  display: block !important;
+  width: 100% !important;
+  min-height: 48px !important;
+  padding: 14px 16px !important;
+  margin: 2px 0 !important;
+  text-align: left !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: #1a2433 !important;
+  color: #fff !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  pointer-events: auto !important;
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: rgba(0,229,255,.4) !important;
+}
+#pcCtx button:active, #pcDeskCtx button:active {
+  background: #00e5ff !important;
+  color: #000 !important;
+}
+
 </style>
 </head>
 <body>
@@ -6287,26 +6380,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
 </script>
 
-<div id="pcCtx" class="pc-ctx" role="menu" aria-hidden="true">
-  <button type="button" data-act="open">Open</button>
-  <button type="button" data-act="cut">Cut</button>
-  <button type="button" data-act="copy">Copy</button>
-  <button type="button" data-act="paste">Paste</button>
-  <div class="sep"></div>
-  <button type="button" data-act="resize-sm">Resize · Small</button>
-  <button type="button" data-act="resize-md">Resize · Medium</button>
-  <button type="button" data-act="resize-lg">Resize · Large</button>
-  <button type="button" data-act="resize-max">Maximize</button>
-  <button type="button" data-act="minimize">Minimize</button>
-  <button type="button" data-act="closewin">Close window</button>
-  <div class="sep"></div>
-  <button type="button" data-act="props">Properties</button>
-  <button type="button" data-act="dismiss">Close menu</button>
-</div>
-<div id="pcDeskCtx" class="pc-ctx" role="menu" aria-hidden="true">
-  <button type="button" data-act="view-refresh">Refresh</button>
-  <button type="button" data-act="view-wall">Change wallpaper</button>
-  <div class="sep"></div>
+
   <button type="button" data-act="new-note">New · Sticky note</button>
   <button type="button" data-act="new-term">Open · Terminal</button>
   <button type="button" data-act="new-explorer">Open · File Explorer</button>
@@ -6528,6 +6602,232 @@ document.addEventListener('DOMContentLoaded', function(){
     if(kind==='desk') openDeskMenu(x,y);
     else openIconMenu(x,y,null,null);
   };
+})();
+
+</script>
+
+<div id="pcCtx">
+  <button type="button" data-a="open">Open</button>
+  <button type="button" data-a="cut">Cut</button>
+  <button type="button" data-a="copy">Copy</button>
+  <button type="button" data-a="paste">Paste</button>
+  <button type="button" data-a="selectall">Select All</button>
+  <button type="button" data-a="delete">Delete</button>
+  <button type="button" data-a="rsm">Resize Small</button>
+  <button type="button" data-a="rmd">Resize Medium</button>
+  <button type="button" data-a="rlg">Resize Large</button>
+  <button type="button" data-a="rmax">Maximize</button>
+  <button type="button" data-a="min">Minimize</button>
+  <button type="button" data-a="cwin">Close Window</button>
+  <button type="button" data-a="props">Properties</button>
+  <button type="button" data-a="x">✕ Close Menu</button>
+</div>
+<div id="pcDeskCtx">
+  <button type="button" data-a="refresh">Refresh</button>
+  <button type="button" data-a="wall">Change Wallpaper</button>
+  <button type="button" data-a="paste">Paste</button>
+  <button type="button" data-a="note">New Sticky Note</button>
+  <button type="button" data-a="term">Open Terminal</button>
+  <button type="button" data-a="exp">Open Explorer</button>
+  <button type="button" data-a="proj">Open Projects</button>
+  <button type="button" data-a="set">Display Settings</button>
+  <button type="button" data-a="x">✕ Close Menu</button>
+</div>
+
+<script>
+
+/* UI_V17 */
+(function(){
+  var clip='';
+  var tIcon=null, tWin=null;
+
+  function $(id){ return document.getElementById(id); }
+
+  function openSide(){
+    var n=$('sideNav'), o=$('sideOverlay');
+    if(!n) return;
+    n.classList.add('open','force-open');
+    n.classList.remove('closed','closing','user-closed');
+    if(o){ o.classList.add('open','force-show'); }
+  }
+  function closeSide(){
+    var n=$('sideNav'), o=$('sideOverlay');
+    if(!n) return;
+    n.classList.remove('open','force-open');
+    n.classList.add('user-closed','closed');
+    if(o){ o.classList.remove('open','force-show'); }
+  }
+  window.toggleSide=function(force){
+    var n=$('sideNav');
+    if(!n) return;
+    var closed=n.classList.contains('user-closed')||n.classList.contains('closed');
+    if(force===true) openSide();
+    else if(force===false) closeSide();
+    else { if(closed) openSide(); else closeSide(); }
+  };
+
+  function hideMenus(){
+    ['pcCtx','pcDeskCtx'].forEach(function(id){
+      var e=$(id); if(!e) return;
+      e.classList.remove('show');
+      e.style.display='none';
+    });
+  }
+  function showMenu(id, x, y){
+    hideMenus();
+    var e=$(id); if(!e) return;
+    e.style.display='block';
+    e.classList.add('show');
+    var w=e.offsetWidth||220, h=Math.min(e.offsetHeight||300, window.innerHeight*0.65);
+    // Prefer ABOVE trackpad if near bottom
+    var left=Math.max(8, Math.min(x-40, window.innerWidth-w-8));
+    var top=Math.max(8, Math.min(y - h - 12, window.innerHeight-h-8));
+    if(top < 8) top = Math.max(8, Math.min(y+8, window.innerHeight-h-8));
+    e.style.left=left+'px';
+    e.style.top=top+'px';
+  }
+
+  function resize(mode){
+    var w=tWin||document.querySelector('#pcWork .pc-win.open');
+    if(!w) return;
+    if(mode==='sm'){ w.style.width='200px'; w.style.height='140px'; }
+    if(mode==='md'){ w.style.width='300px'; w.style.height='45%'; }
+    if(mode==='lg'){ w.style.width='92%'; w.style.height='62%'; }
+    if(mode==='max'){ w.style.left='2px'; w.style.top='2px'; w.style.width='97%'; w.style.height='88%'; }
+  }
+
+  function act(a){
+    if(a==='x'){ hideMenus(); return; }
+    if(a==='open'&&tIcon&&window.pasiyaPcOpenApp) window.pasiyaPcOpenApp(tIcon.getAttribute('data-app'));
+    var f=document.activeElement;
+    if((a==='copy'||a==='cut')&&f&&(f.tagName==='TEXTAREA'||f.tagName==='INPUT')){
+      try{
+        var s=f.selectionStart,e=f.selectionEnd;
+        clip=(e>s)?f.value.slice(s,e):(f.value||'');
+        if(a==='cut'&&e>s) f.value=f.value.slice(0,s)+f.value.slice(e);
+        if(navigator.clipboard) navigator.clipboard.writeText(clip);
+      }catch(err){}
+    }
+    if(a==='paste'&&f&&(f.tagName==='TEXTAREA'||f.tagName==='INPUT')){
+      var ins=function(tx){ var s=f.selectionStart||0,e=f.selectionEnd||s; f.value=f.value.slice(0,s)+tx+f.value.slice(e); };
+      if(navigator.clipboard&&navigator.clipboard.readText) navigator.clipboard.readText().then(ins).catch(function(){ins(clip);});
+      else ins(clip);
+    }
+    if(a==='selectall'&&f&&(f.tagName==='TEXTAREA'||f.tagName==='INPUT')) try{f.select();}catch(e){}
+    if(a==='delete'&&f&&(f.tagName==='TEXTAREA'||f.tagName==='INPUT')){
+      var s=f.selectionStart,e=f.selectionEnd;
+      if(e>s) f.value=f.value.slice(0,s)+f.value.slice(e); else f.value='';
+    }
+    if(a==='rsm') resize('sm'); if(a==='rmd') resize('md'); if(a==='rlg') resize('lg'); if(a==='rmax') resize('max');
+    if(a==='min'&&tWin) tWin.classList.add('minimized');
+    if(a==='cwin'&&tWin) tWin.classList.remove('open','minimized');
+    if(a==='props') alert('Pasiya PC item');
+    if(a==='refresh') hideMenus();
+    if(a==='wall'){ var b=$('pcWallBtn'); if(b) b.click(); }
+    if(a==='note'&&window.pasiyaPcOpenApp) window.pasiyaPcOpenApp('sticky');
+    if(a==='term'&&window.pasiyaPcOpenApp) window.pasiyaPcOpenApp('term');
+    if(a==='exp'&&window.pasiyaPcOpenApp) window.pasiyaPcOpenApp('explorer');
+    if(a==='proj'&&window.pasiyaPcOpenApp) window.pasiyaPcOpenApp('projects');
+    if(a==='set'&&window.pasiyaPcOpenApp) window.pasiyaPcOpenApp('sysset');
+    hideMenus();
+  }
+
+  function bindMenus(){
+    ['pcCtx','pcDeskCtx'].forEach(function(id){
+      var el=$(id); if(!el||el.dataset.v17) return;
+      el.dataset.v17='1';
+      el.querySelectorAll('button[data-a]').forEach(function(btn){
+        function fire(e){ e.preventDefault(); e.stopPropagation(); act(btn.getAttribute('data-a')); }
+        btn.addEventListener('click', fire);
+        btn.addEventListener('touchend', fire, {passive:false});
+      });
+    });
+  }
+
+  function ctxAt(x,y,target){
+    var icon=target&&target.closest&&target.closest('[data-app]');
+    var win=target&&target.closest&&target.closest('#pcWork .pc-win');
+    tIcon=icon; tWin=win;
+    if(icon||win) showMenu('pcCtx', x, y);
+    else showMenu('pcDeskCtx', x, y);
+  }
+
+  function bindPad(){
+    var r=$('pcTrackR');
+    if(r){
+      r.onclick=function(e){
+        e.preventDefault(); e.stopPropagation();
+        var work=$('pcWork'); var cur=$('pcCursor');
+        var rr=work?work.getBoundingClientRect():{left:20,top:100,width:300,height:200};
+        var x=rr.left+(cur&&parseInt(cur.style.left,10)||rr.width/2);
+        var y=rr.top+(cur&&parseInt(cur.style.top,10)||rr.height/2);
+        // Open menu near TRACKPAD (finger easy), not only cursor
+        var pad=$('pcTrackPad');
+        if(pad){
+          var pr=pad.getBoundingClientRect();
+          x=pr.left+pr.width/2;
+          y=pr.top; // menu appears above trackpad
+        }
+        ctxAt(x,y, document.elementFromPoint(
+          rr.left+(cur&&parseInt(cur.style.left,10)||50),
+          rr.top+(cur&&parseInt(cur.style.top,10)||50)
+        )||work);
+      };
+    }
+    var work=$('pcWork');
+    if(work&&!work.dataset.v17){
+      work.dataset.v17='1';
+      work.addEventListener('contextmenu', function(e){
+        e.preventDefault();
+        ctxAt(e.clientX, e.clientY, e.target);
+      });
+    }
+  }
+
+  // SPA pages full
+  if(typeof goPage==='function'&&!goPage.__v17){
+    var gp=goPage;
+    goPage=function(name, el){
+      hideMenus();
+      var r=gp.apply(this, arguments);
+      try{
+        var legacy={home:1,bots:1,n8n:1,desk:1,tools:1,auto:1,social:1,stats:1};
+        if(!legacy[name]){
+          document.body.classList.add('spa-mode');
+          document.querySelectorAll('.page-view').forEach(function(p){ p.classList.remove('active'); });
+          var map=window.PAGE_MAP||{};
+          var id=(map[name]&&map[name][0])||('page-'+name);
+          var node=$(id);
+          if(node) node.classList.add('active');
+          window.scrollTo(0,0);
+          if(window.innerWidth<900) closeSide();
+        }
+      }catch(e){}
+      return r;
+    };
+    goPage.__v17=true;
+  }
+
+  function init(){
+    openSide();
+    bindMenus();
+    bindPad();
+    document.addEventListener('click', function(e){
+      if(e.target.closest&&(e.target.closest('#pcCtx')||e.target.closest('#pcDeskCtx')||e.target.closest('#pcTrackR'))) return;
+      hideMenus();
+    }, true);
+    // overlay click closes side
+    var o=$('sideOverlay');
+    if(o) o.onclick=function(){ closeSide(); };
+    // menu toggle buttons
+    document.querySelectorAll('.menu-toggle, .cyber-orb, [data-toggle-side]').forEach(function(b){
+      b.addEventListener('click', function(e){ e.preventDefault(); window.toggleSide(); });
+    });
+  }
+  document.addEventListener('DOMContentLoaded', init);
+  setTimeout(init, 100);
+  setTimeout(openSide, 500);
+  setTimeout(openSide, 1500);
 })();
 
 </script>
