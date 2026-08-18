@@ -7277,5 +7277,179 @@ document.addEventListener('DOMContentLoaded', function(){
 })();
 
 </script>
+<script>
+
+/* SETTINGS_AUTH_V22 — definitive save/load (must be last) */
+(function(){
+  var SB_URL_DEFAULT = 'https://kqbvqwxangihdsetyjg.supabase.co';
+  function $(id){ return document.getElementById(id); }
+  function toast(msg, ok){
+    var s = $('setStatus');
+    if(s){
+      s.textContent = msg;
+      s.style.color = ok ? '#00ff9d' : '#ff6b8a';
+      s.style.fontWeight = '700';
+    }
+    try{
+      var t = document.createElement('div');
+      t.textContent = msg;
+      t.style.cssText = 'position:fixed;left:50%;bottom:80px;transform:translateX(-50%);z-index:99999;padding:12px 18px;border-radius:12px;background:#041018;border:1px solid '+(ok?'#00ff9d':'#ff6b8a')+';color:#fff;font-size:13px;font-weight:700;max-width:90%;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.5)';
+      document.body.appendChild(t);
+      setTimeout(function(){ try{ t.remove(); }catch(e){} }, 2500);
+    }catch(e){}
+  }
+
+  function getKey(){
+    var st={};
+    try{ st=JSON.parse(localStorage.getItem('pasiya_settings')||'{}')||{}; }catch(e){}
+    return (st.sbAnon || localStorage.getItem('pasiya_sb_anon') || '').trim();
+  }
+  function getUrl(){
+    var st={};
+    try{ st=JSON.parse(localStorage.getItem('pasiya_settings')||'{}')||{}; }catch(e){}
+    return (st.sbUrl || localStorage.getItem('pasiya_sb_url') || SB_URL_DEFAULT).trim();
+  }
+
+  window.saveSettings = function(){
+    try{
+      var st={};
+      try{ st=JSON.parse(localStorage.getItem('pasiya_settings')||'{}')||{}; }catch(e){ st={}; }
+      st.n8nChat = (($('setN8nChat')||{}).value||'').trim();
+      st.n8nIssue = (($('setN8nIssue')||{}).value||'').trim();
+      st.make = (($('setMakeHook')||{}).value||'').trim();
+      st.pipe = (($('setPipeHook')||{}).value||'').trim();
+      st.sbUrl = (($('setSbUrl')||{}).value||'').trim() || SB_URL_DEFAULT;
+      st.sbAnon = (($('setSbAnon')||{}).value||'').trim();
+
+      if(!st.sbAnon){
+        toast('>> Anon key empty — paste key then SAVE', false);
+        var k=$('setSbAnon'); if(k) k.focus();
+        return false;
+      }
+
+      localStorage.setItem('pasiya_settings', JSON.stringify(st));
+      localStorage.setItem('pasiya_sb_url', st.sbUrl);
+      localStorage.setItem('pasiya_sb_anon', st.sbAnon);
+      if(st.n8nChat) localStorage.setItem('pasiya_n8n_chat', st.n8nChat);
+      if(st.make) localStorage.setItem('pasiya_make_hook', st.make);
+      if(st.pipe) localStorage.setItem('pasiya_pipe_hook', st.pipe);
+
+      // verify write
+      var check = localStorage.getItem('pasiya_sb_anon')||'';
+      if(check !== st.sbAnon){
+        toast('>> Save failed (browser blocked localStorage)', false);
+        return false;
+      }
+      toast('>> SAVED OK — key length '+st.sbAnon.length+' (stays after refresh)', true);
+      return true;
+    }catch(err){
+      toast('>> Save error: '+(err.message||err), false);
+      return false;
+    }
+  };
+
+  window.loadSettingsUI = function(){
+    try{
+      var st={};
+      try{ st=JSON.parse(localStorage.getItem('pasiya_settings')||'{}')||{}; }catch(e){}
+      var url = (st.sbUrl || localStorage.getItem('pasiya_sb_url') || SB_URL_DEFAULT).trim();
+      var anon = (st.sbAnon || localStorage.getItem('pasiya_sb_anon') || '').trim();
+      var map = {
+        setN8nChat: st.n8nChat || localStorage.getItem('pasiya_n8n_chat') || 'https://pasiyamax.app.n8n.cloud/webhook/2c3ef6f3-d4cd-4ccd-a889-e7894ad490bb',
+        setN8nIssue: st.n8nIssue || '',
+        setMakeHook: st.make || localStorage.getItem('pasiya_make_hook') || 'https://hook.eu1.make.com/41k8qajbe6y1ctqgd1ewsutdko8hwt3h',
+        setPipeHook: st.pipe || localStorage.getItem('pasiya_pipe_hook') || 'https://eof67cbcwtmde2i.m.pipedream.net',
+        setSbUrl: url,
+        setSbAnon: anon
+      };
+      Object.keys(map).forEach(function(id){
+        var el=$(id);
+        if(el) el.value = map[id];
+      });
+      if(anon) toast('>> RELOAD OK — key restored (len '+anon.length+')', true);
+      else toast('>> RELOAD — no key saved yet. Paste anon key + SAVE', false);
+      return true;
+    }catch(err){
+      toast('>> Reload error: '+(err.message||err), false);
+      return false;
+    }
+  };
+
+  window.authGoogle = async function(){
+    var url = getUrl();
+    var key = getKey();
+    if(!key){
+      toast('>> First: Settings → paste anon key → SAVE', false);
+      if(typeof goPage==='function') goPage('settings');
+      alert('Supabase anon key missing.\n\n1) Open Settings\n2) Paste anon public key\n3) SAVE SETTINGS\n4) Then Sign in with Google');
+      return;
+    }
+    var tries=0;
+    while((!window.supabase||!window.supabase.createClient) && tries<50){
+      await new Promise(function(r){setTimeout(r,100)});
+      tries++;
+    }
+    if(!window.supabase||!window.supabase.createClient){
+      alert('Supabase library not loaded. Check internet and refresh.');
+      return;
+    }
+    var sb;
+    try{ sb = window.supabase.createClient(url, key); }
+    catch(e){ alert('Client error: '+(e.message||e)); return; }
+    toast('>> Opening Google…', true);
+    var redirectTo = location.origin + location.pathname.replace(/\/index\.html$/,'/') + '#page-myspace';
+    if(redirectTo.indexOf('github.io')>=0 && redirectTo.slice(-1)!=='/' && redirectTo.indexOf('#')<0){
+      redirectTo = location.origin + '/pasiya-bot-platform/#page-myspace';
+    }
+    // simpler:
+    redirectTo = 'https://pasindudananjaya92-bot.github.io/pasiya-bot-platform/#page-myspace';
+    if(location.hostname.indexOf('vercel.app')>=0){
+      redirectTo = location.origin + '/#page-myspace';
+    }
+    var res = await sb.auth.signInWithOAuth({
+      provider:'google',
+      options:{ redirectTo: redirectTo, queryParams:{ prompt:'select_account' } }
+    });
+    if(res && res.error){
+      toast('>> '+res.error.message, false);
+      alert('Google error: '+res.error.message+'\n\nCheck Supabase Google provider ON + Google Cloud callback:\nhttps://kqbvqwxangihdsetyjg.supabase.co/auth/v1/callback');
+    }
+  };
+
+  function wire(){
+    var page=$('page-settings');
+    if(!page) return;
+    page.querySelectorAll('button').forEach(function(btn){
+      var t=(btn.textContent||'').toUpperCase();
+      if(t.indexOf('SAVE')>=0){
+        btn.onclick=function(e){ e.preventDefault(); window.saveSettings(); return false; };
+      }
+      if(t.indexOf('RELOAD')>=0){
+        btn.onclick=function(e){ e.preventDefault(); window.loadSettingsUI(); return false; };
+      }
+    });
+  }
+
+  function boot(){
+    wire();
+    // load into form if on settings / always fill hidden storage into inputs when present
+    window.loadSettingsUI();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+  setTimeout(boot, 400);
+  setTimeout(boot, 1200);
+
+  var _g=window.goPage;
+  if(typeof _g==='function'){
+    window.goPage=function(name,el){
+      var r=_g.apply(this,arguments);
+      if(name==='settings'){ setTimeout(function(){ wire(); window.loadSettingsUI(); }, 60); }
+      return r;
+    };
+  }
+})();
+
+</script>
 </body>
 </html>

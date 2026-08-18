@@ -1,0 +1,12 @@
+DO NOT put anon key or Client Secret in GitHub/public code.
+
+1) Upload index.html
+2) Open site Settings
+3) URL: https://kqbvqwxangihdsetyjg.supabase.co
+4) Paste anon public key (from Supabase Project Settings > API)
+5) SAVE — green toast "SAVED OK — key length N"
+6) RELOAD — should restore key
+7) Sign in with Google
+
+If key empty after save: browser is blocking localStorage (private mode / blocked cookies).
+Use normal Chrome, not strict tracking prevention for this site.
