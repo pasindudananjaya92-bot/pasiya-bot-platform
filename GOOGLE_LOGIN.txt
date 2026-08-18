@@ -1,0 +1,14 @@
+PASIYA — Google Login (already built in site)
+
+1) Supabase Dashboard → Project Settings → API
+2) Copy "anon public" key (NOT service_role)
+3) Open site → Menu → Settings
+4) Supabase Project URL:
+   https://kqbvqwxangihdsetyjg.supabase.co
+5) Paste anon key → SAVE
+6) Menu → Account → Continue with Google
+
+Google Cloud redirect URI must be:
+https://kqbvqwxangihdsetyjg.supabase.co/auth/v1/callback
+
+Do NOT put Client Secret in index.html or GitHub.

@@ -3445,7 +3445,7 @@ https://pasiya-bot-platform.vercel.app</pre>
     <input id="setN8nIssue" placeholder="https://.../webhook/github-issue">
     
     <label>Supabase Project URL</label>
-    <input id="setSbUrl" placeholder="https://xxxx.supabase.co">
+    <input id="setSbUrl" placeholder="https://kqbvqwxangihdsetyjg.supabase.co">
     <label>Supabase anon public key</label>
     <input id="setSbAnon" placeholder="eyJhbGciOi...">
 
@@ -6828,6 +6828,37 @@ document.addEventListener('DOMContentLoaded', function(){
   setTimeout(init, 100);
   setTimeout(openSide, 500);
   setTimeout(openSide, 1500);
+})();
+
+</script>
+<script>
+
+/* GOOGLE_LOGIN_DEFAULTS_V18 */
+(function(){
+  try{
+    if(!localStorage.getItem('pasiya_sb_url')){
+      localStorage.setItem('pasiya_sb_url','https://kqbvqwxangihdsetyjg.supabase.co');
+    }
+  }catch(e){}
+  // top bar quick login if missing
+  function injectBtn(){
+    if(document.getElementById('pasiyaGoogleLoginBtn')) return;
+    var bar=document.querySelector('header.top')||document.querySelector('header');
+    if(!bar) return;
+    var b=document.createElement('button');
+    b.id='pasiyaGoogleLoginBtn';
+    b.type='button';
+    b.textContent='Sign in with Google';
+    b.style.cssText='margin-left:8px;padding:8px 12px;border-radius:10px;border:1px solid rgba(0,240,255,.45);background:rgba(0,240,255,.12);color:#0ff;font-weight:700;font-size:12px;cursor:pointer;touch-action:manipulation';
+    b.onclick=function(){
+      if(typeof googleSignIn==='function'){ googleSignIn(); return; }
+      if(typeof goPage==='function') goPage('auth');
+      else location.hash='#page-auth';
+    };
+    bar.appendChild(b);
+  }
+  document.addEventListener('DOMContentLoaded', injectBtn);
+  setTimeout(injectBtn, 800);
 })();
 
 </script>
