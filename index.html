@@ -7154,5 +7154,128 @@ document.addEventListener('DOMContentLoaded', function(){
 })();
 
 </script>
+<script>
+
+/* SYSTEM_BOOST_V21 */
+(function(){
+  function $(id){ return document.getElementById(id); }
+  function readSettings(){
+    var st={};
+    try{ st=JSON.parse(localStorage.getItem('pasiya_settings')||'{}')||{}; }catch(e){}
+    return {
+      n8n: st.n8nChat || localStorage.getItem('pasiya_n8n_chat') || 'https://pasiyamax.app.n8n.cloud/webhook/2c3ef6f3-d4cd-4ccd-a889-e7894ad490bb',
+      make: st.make || localStorage.getItem('pasiya_make_hook') || '',
+      pipe: st.pipe || localStorage.getItem('pasiya_pipe_hook') || '',
+      sbUrl: st.sbUrl || localStorage.getItem('pasiya_sb_url') || 'https://kqbvqwxangihdsetyjg.supabase.co',
+      sbAnon: st.sbAnon || localStorage.getItem('pasiya_sb_anon') || ''
+    };
+  }
+
+  // Floating Google login — always visible
+  function ensureFab(){
+    if($('pasiyaLoginFab')) return;
+    var fab=document.createElement('button');
+    fab.id='pasiyaLoginFab';
+    fab.type='button';
+    fab.setAttribute('aria-label','Sign in with Google');
+    fab.textContent='Sign in with Google';
+    fab.style.cssText='position:fixed;right:12px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:10080;padding:12px 16px;border-radius:999px;border:1px solid #00e5ff;background:linear-gradient(135deg,#003344,#001018);color:#0ff;font-weight:800;font-size:13px;box-shadow:0 0 20px rgba(0,229,255,.35);cursor:pointer;touch-action:manipulation';
+    fab.onclick=function(e){
+      e.preventDefault();
+      if(typeof authGoogle==='function') authGoogle();
+      else if(typeof goPage==='function') goPage('auth');
+    };
+    document.body.appendChild(fab);
+  }
+
+  // PC Start menu / desktop service shortcuts
+  function openService(url, title){
+    if(!url){ alert(title+': set URL in Settings first'); if(typeof goPage==='function') goPage('settings'); return; }
+    // Prefer in-PC browser if available
+    var ib=$('pcInBrowser'); var fr=$('pcIbFrame'); var inp=$('pcIbUrl');
+    if(ib && fr){
+      ib.style.display='flex';
+      if(inp) inp.value=url;
+      try{ fr.src=url; }catch(e){ window.open(url,'_blank','noopener'); }
+      return;
+    }
+    window.open(url,'_blank','noopener');
+  }
+
+  async function pingWebhook(url, name){
+    if(!url){ alert(name+' webhook empty — Settings'); return; }
+    try{
+      await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},mode:'no-cors',body:JSON.stringify({source:'pasiya-pc',ping:true,t:Date.now()})});
+      alert(name+': ping sent (check n8n/Make execution log)');
+    }catch(e){ alert(name+' error: '+(e.message||e)); }
+  }
+
+  function injectPcServices(){
+    var work=$('pcWork') || $('pcShell');
+    if(!work || $('pasiyaPcServices')) return;
+    var box=document.createElement('div');
+    box.id='pasiyaPcServices';
+    box.style.cssText='position:absolute;left:8px;top:48px;z-index:40;display:flex;flex-direction:column;gap:6px;max-width:46%';
+    var st=readSettings();
+    var items=[
+      {t:'🔐 Account', fn:function(){ if(typeof goPage==='function') goPage('auth'); }},
+      {t:'⚙ Settings', fn:function(){ if(typeof goPage==='function') goPage('settings'); }},
+      {t:'🤖 n8n', fn:function(){ openService('https://pasiyamax.app.n8n.cloud', 'n8n'); }},
+      {t:'📡 n8n Ping', fn:function(){ pingWebhook(st.n8n,'n8n'); }},
+      {t:'🧩 Make', fn:function(){ openService(st.make||'https://www.make.com', 'Make'); }},
+      {t:'⚡ Pipedream', fn:function(){ openService(st.pipe||'https://pipedream.com', 'Pipedream'); }},
+      {t:'🗄 Supabase', fn:function(){ openService(st.sbUrl, 'Supabase'); }},
+      {t:'🌐 Browser', fn:function(){ openService('https://pasindudananjaya92-bot.github.io/pasiya-bot-platform/', 'Site'); }}
+    ];
+    items.forEach(function(it){
+      var b=document.createElement('button');
+      b.type='button';
+      b.textContent=it.t;
+      b.style.cssText='text-align:left;padding:8px 10px;border-radius:8px;border:1px solid rgba(0,240,255,.35);background:rgba(0,12,24,.85);color:#9ef;font-size:12px;font-weight:700;cursor:pointer;touch-action:manipulation';
+      b.onclick=function(e){ e.preventDefault(); e.stopPropagation(); it.fn(); };
+      box.appendChild(b);
+    });
+    work.appendChild(box);
+  }
+
+  // Status line under settings
+  function statusLine(){
+    var st=readSettings();
+    var el=$('setStatus');
+    if(!el) return;
+    var bits=[];
+    bits.push(st.sbAnon?'SB:key✓':'SB:key✗');
+    bits.push(st.n8n?'n8n✓':'n8n?');
+    bits.push(st.make?'Make✓':'Make?');
+    bits.push(st.pipe?'Pipe✓':'Pipe?');
+    if(!el.dataset.boosted){
+      el.dataset.boosted='1';
+    }
+    // don't overwrite success messages aggressively
+  }
+
+  function boot(){
+    ensureFab();
+    injectPcServices();
+    statusLine();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+  setTimeout(boot, 700);
+  setTimeout(boot, 1800);
+
+  // Re-inject when opening desktop
+  var _g=window.goPage;
+  if(typeof _g==='function'){
+    window.goPage=function(name, el){
+      var r=_g.apply(this, arguments);
+      if(name==='desktop'||name==='pc') setTimeout(injectPcServices, 80);
+      if(name==='settings') setTimeout(statusLine, 80);
+      return r;
+    };
+  }
+})();
+
+</script>
 </body>
 </html>

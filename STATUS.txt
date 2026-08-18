@@ -1,0 +1,14 @@
+PASIYA BOT PLATFORM — V21 status
+
+LIVE OK:
+- GitHub + Pages in sync
+- Google login (Account + FAB button)
+- Settings SAVE/RELOAD persist (localStorage)
+- Virtual PC + service shortcuts (n8n, Make, Pipedream, Supabase)
+
+YOU MUST (once per browser):
+1) Settings → Supabase URL + anon key → SAVE
+2) Supabase Auth URL config: Site URL = GitHub Pages URL
+3) Google Cloud redirect = https://kqbvqwxangihdsetyjg.supabase.co/auth/v1/callback only
+
+Not 100% "real OS" — browser Virtual PC. Good enough for phone productivity + free tool hub.
