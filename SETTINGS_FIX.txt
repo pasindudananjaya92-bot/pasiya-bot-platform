@@ -1,0 +1,8 @@
+SETTINGS FIX V20
+- SAVE writes all webhooks + Supabase URL/key to localStorage
+- RELOAD reads them back into the form
+- Opening Settings page auto-loads saved values
+- Values persist after page refresh (same browser)
+- Google login / new session on same phone browser keeps localStorage
+
+Upload index.html overwrite on GitHub → Commit → hard refresh site

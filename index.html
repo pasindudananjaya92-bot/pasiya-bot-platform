@@ -1679,6 +1679,34 @@ aside#sideNav.side-nav.user-closed {
   color: #000 !important;
 }
 
+
+/* SETTINGS_PANEL_V20 */
+#page-settings input{
+  width:100%;
+  max-width:100%;
+  box-sizing:border-box;
+  margin:6px 0 12px;
+  padding:12px 14px;
+  border-radius:10px;
+  border:1px solid rgba(0,229,255,.35);
+  background:rgba(0,10,20,.75);
+  color:#e8ffff;
+  font-size:14px;
+}
+#page-settings .row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+  margin-top:12px;
+}
+#page-settings .btn{
+  min-height:44px;
+  padding:10px 16px;
+  font-weight:700;
+  touch-action:manipulation;
+}
+#setStatus{margin-top:10px;min-height:1.2em}
 </style>
 </head>
 <body>
@@ -6980,6 +7008,149 @@ document.addEventListener('DOMContentLoaded', function(){
   document.addEventListener('DOMContentLoaded', ensureLoginUI);
   setTimeout(ensureLoginUI, 500);
   setTimeout(ensureLoginUI, 1500);
+})();
+
+</script>
+<script>
+
+/* SETTINGS_PERSIST_V20 */
+(function(){
+  var DEFAULTS = {
+    n8nChat: 'https://pasiyamax.app.n8n.cloud/webhook/2c3ef6f3-d4cd-4ccd-a889-e7894ad490bb',
+    make: 'https://hook.eu1.make.com/41k8qajbe6y1ctqgd1ewsutdko8hwt3h',
+    pipe: 'https://eof67cbcwtmde2i.m.pipedream.net',
+    sbUrl: 'https://kqbvqwxangihdsetyjg.supabase.co',
+    n8nIssue: '',
+    sbAnon: ''
+  };
+
+  function $(id){ return document.getElementById(id); }
+
+  function readStore(){
+    var st = {};
+    try { st = JSON.parse(localStorage.getItem('pasiya_settings') || '{}') || {}; } catch(e){ st = {}; }
+    // merge legacy keys
+    st.n8nChat = st.n8nChat || localStorage.getItem('pasiya_n8n_chat') || '';
+    st.n8nIssue = st.n8nIssue || '';
+    st.make = st.make || localStorage.getItem('pasiya_make_hook') || '';
+    st.pipe = st.pipe || localStorage.getItem('pasiya_pipe_hook') || '';
+    st.sbUrl = st.sbUrl || localStorage.getItem('pasiya_sb_url') || DEFAULTS.sbUrl;
+    st.sbAnon = st.sbAnon || localStorage.getItem('pasiya_sb_anon') || '';
+    try {
+      var hooks = JSON.parse(localStorage.getItem('pasiya_gh_hooks') || '{}');
+      if(!st.n8nIssue && hooks.issue) st.n8nIssue = hooks.issue;
+    } catch(e){}
+    return st;
+  }
+
+  function writeStore(st){
+    localStorage.setItem('pasiya_settings', JSON.stringify(st));
+    if(st.n8nChat) localStorage.setItem('pasiya_n8n_chat', st.n8nChat);
+    if(st.make) localStorage.setItem('pasiya_make_hook', st.make);
+    if(st.pipe) localStorage.setItem('pasiya_pipe_hook', st.pipe);
+    if(st.sbUrl) localStorage.setItem('pasiya_sb_url', st.sbUrl);
+    if(st.sbAnon) localStorage.setItem('pasiya_sb_anon', st.sbAnon);
+    try {
+      var hooks = JSON.parse(localStorage.getItem('pasiya_gh_hooks') || '{}');
+      hooks.issue = st.n8nIssue || hooks.issue || '';
+      localStorage.setItem('pasiya_gh_hooks', JSON.stringify(hooks));
+    } catch(e){}
+  }
+
+  function collectFromForm(){
+    return {
+      n8nChat: (($('setN8nChat')||{}).value || '').trim(),
+      n8nIssue: (($('setN8nIssue')||{}).value || '').trim(),
+      make: (($('setMakeHook')||{}).value || '').trim(),
+      pipe: (($('setPipeHook')||{}).value || '').trim(),
+      sbUrl: (($('setSbUrl')||{}).value || '').trim() || DEFAULTS.sbUrl,
+      sbAnon: (($('setSbAnon')||{}).value || '').trim()
+    };
+  }
+
+  window.saveSettings = function(){
+    try{
+      var st = collectFromForm();
+      writeStore(st);
+      var s = $('setStatus');
+      if(s){
+        s.textContent = '>> Settings saved — links will stay after reload / re-login (this browser)';
+        s.style.color = '#00ff9d';
+      }
+      if(typeof showSuccess === 'function') showSuccess('Settings saved in this browser.');
+      if(typeof initAuth === 'function') try{ initAuth(); }catch(e){}
+      return true;
+    }catch(err){
+      console.error(err);
+      alert('Save failed: ' + (err.message||err));
+      return false;
+    }
+  };
+
+  window.loadSettingsUI = function(){
+    try{
+      var st = readStore();
+      var map = {
+        setN8nChat: st.n8nChat || DEFAULTS.n8nChat,
+        setN8nIssue: st.n8nIssue || '',
+        setMakeHook: st.make || DEFAULTS.make,
+        setPipeHook: st.pipe || DEFAULTS.pipe,
+        setSbUrl: st.sbUrl || DEFAULTS.sbUrl,
+        setSbAnon: st.sbAnon || ''
+      };
+      Object.keys(map).forEach(function(id){
+        var el = $(id);
+        if(el) el.value = map[id];
+      });
+      var s = $('setStatus');
+      if(s){
+        s.textContent = '>> Reloaded from saved settings';
+        s.style.color = '#00e5ff';
+      }
+      return true;
+    }catch(err){
+      console.error(err);
+      alert('Reload failed: ' + (err.message||err));
+      return false;
+    }
+  };
+
+  // Wire buttons reliably (not only inline onclick)
+  function wireButtons(){
+    var page = $('page-settings');
+    if(!page) return;
+    page.querySelectorAll('button').forEach(function(btn){
+      var t = (btn.textContent||'').toUpperCase();
+      var oc = btn.getAttribute('onclick')||'';
+      if(t.indexOf('SAVE')>=0 || oc.indexOf('saveSettings')>=0){
+        btn.onclick = function(e){ e.preventDefault(); window.saveSettings(); return false; };
+      }
+      if(t.indexOf('RELOAD')>=0 || oc.indexOf('loadSettingsUI')>=0){
+        btn.onclick = function(e){ e.preventDefault(); window.loadSettingsUI(); return false; };
+      }
+    });
+  }
+
+  // Hook goPage to refresh settings fields when opening Settings
+  var _go = window.goPage;
+  if(typeof _go === 'function'){
+    window.goPage = function(name, el){
+      var r = _go.apply(this, arguments);
+      if(name === 'settings' || name === 'page-settings'){
+        setTimeout(function(){ window.loadSettingsUI(); wireButtons(); }, 50);
+      }
+      return r;
+    };
+  }
+
+  function boot(){
+    wireButtons();
+    window.loadSettingsUI();
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+  setTimeout(boot, 600);
+  setTimeout(boot, 1500);
 })();
 
 </script>
