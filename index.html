@@ -4326,7 +4326,7 @@ async function authGoogle(){
   var sb=getSupabase();
   if(!sb){ showModal('SETUP NEEDED', 'Add Supabase URL + anon key in Settings first (free at supabase.com).', [{label:'Open Settings', primary:true, onClick:function(){goPage('settings')}}, {label:'OK'}]); return; }
   authStatus('>> Redirecting to Google...', true);
-  const { error } = await sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: location.origin + location.pathname + '#page-myspace' }});
+  const { error } = await sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: 'https://pasindudananjaya92-bot.github.io/pasiya-bot-platform/#page-myspace' }});
   if(error) authStatus('>> '+error.message, false);
 }
 async function authEmailMagic(){
@@ -7448,6 +7448,79 @@ document.addEventListener('DOMContentLoaded', function(){
       return r;
     };
   }
+})();
+
+</script>
+<script>
+
+/* OAUTH_REDIRECT_V23 */
+(function(){
+  var SITE = 'https://pasindudananjaya92-bot.github.io/pasiya-bot-platform/';
+  var REDIRECT = SITE + '#page-myspace';
+  var SB_URL = 'https://kqbvqwxangihdsetyjg.supabase.co';
+
+  function getKey(){
+    try{
+      var st=JSON.parse(localStorage.getItem('pasiya_settings')||'{}')||{};
+      return (st.sbAnon||localStorage.getItem('pasiya_sb_anon')||'').trim();
+    }catch(e){ return (localStorage.getItem('pasiya_sb_anon')||'').trim(); }
+  }
+  function getUrl(){
+    try{
+      var st=JSON.parse(localStorage.getItem('pasiya_settings')||'{}')||{};
+      return (st.sbUrl||localStorage.getItem('pasiya_sb_url')||SB_URL).trim();
+    }catch(e){ return SB_URL; }
+  }
+
+  window.authGoogle = async function(){
+    var key = getKey();
+    if(!key){
+      alert('Settings → paste Supabase anon key → SAVE first');
+      if(typeof goPage==='function') goPage('settings');
+      return;
+    }
+    var tries=0;
+    while((!window.supabase||!window.supabase.createClient) && tries<50){
+      await new Promise(function(r){setTimeout(r,100)});
+      tries++;
+    }
+    if(!window.supabase||!window.supabase.createClient){
+      alert('Supabase JS not loaded. Refresh page.');
+      return;
+    }
+    var sb = window.supabase.createClient(getUrl(), key);
+    // CRITICAL: back to YOUR website, not supabase host
+    var { data, error } = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: REDIRECT,
+        queryParams: { prompt: 'select_account' }
+      }
+    });
+    if(error){
+      alert('Google login error: '+error.message+'\n\nSupabase → Authentication → URL Configuration:\nSite URL = '+SITE+'\nRedirect URLs must include:\n'+SITE+'**\n'+REDIRECT);
+      return;
+    }
+    // OAuth will navigate away; if not, data.url may exist
+    if(data && data.url){
+      window.location.href = data.url;
+    }
+  };
+
+  // Also bind common buttons
+  function bind(){
+    document.querySelectorAll('button').forEach(function(b){
+      var t=(b.textContent||'').toLowerCase();
+      if(t.indexOf('google')>=0 && (t.indexOf('sign')>=0||t.indexOf('continue')>=0||t.indexOf('login')>=0)){
+        b.onclick=function(e){ e.preventDefault(); window.authGoogle(); return false; };
+      }
+    });
+    var fab=document.getElementById('pasiyaLoginFab');
+    if(fab) fab.onclick=function(e){ e.preventDefault(); window.authGoogle(); };
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', bind);
+  else bind();
+  setTimeout(bind, 800);
 })();
 
 </script>
