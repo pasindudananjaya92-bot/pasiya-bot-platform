@@ -1,14 +1,15 @@
-PASIYA — Google Login (already built in site)
+FIX V19 — Google login
 
-1) Supabase Dashboard → Project Settings → API
-2) Copy "anon public" key (NOT service_role)
-3) Open site → Menu → Settings
-4) Supabase Project URL:
-   https://kqbvqwxangihdsetyjg.supabase.co
-5) Paste anon key → SAVE
-6) Menu → Account → Continue with Google
+1) Upload index.html to GitHub (overwrite) + Commit
+2) Incognito open site
+3) Settings → URL + anon key → SAVE SETTINGS
+4) Header "Sign in with Google" OR Menu → Account → Continue with Google
+5) Must go to accounts.google.com — NOT chat.openai.com
 
-Google Cloud redirect URI must be:
+ChatGPT cards on tools page are separate links — do not use those for login.
+
+Redirect URI in Google Cloud:
 https://kqbvqwxangihdsetyjg.supabase.co/auth/v1/callback
 
-Do NOT put Client Secret in index.html or GitHub.
+anon key = Project Settings → API → anon public
+(NOT service_role, NOT Client Secret)

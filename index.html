@@ -6862,5 +6862,126 @@ document.addEventListener('DOMContentLoaded', function(){
 })();
 
 </script>
+<script>
+
+/* AUTH_FIX_V19 */
+(function(){
+  function $(id){ return document.getElementById(id); }
+
+  function readSb(){
+    var st={};
+    try{ st=JSON.parse(localStorage.getItem('pasiya_settings')||'{}'); }catch(e){}
+    var url=(st.sbUrl||localStorage.getItem('pasiya_sb_url')||'https://kqbvqwxangihdsetyjg.supabase.co').trim();
+    var anon=(st.sbAnon||localStorage.getItem('pasiya_sb_anon')||'').trim();
+    return {url:url, anon:anon};
+  }
+
+  window.getSbConfig=function(){ return readSb(); };
+
+  window.getSupabase=function(){
+    var c=readSb();
+    if(!c.url||!c.anon) return null;
+    if(!window.supabase||!window.supabase.createClient){
+      console.warn('Supabase JS not loaded yet');
+      return null;
+    }
+    try{
+      return window.supabase.createClient(c.url, c.anon);
+    }catch(e){
+      console.error(e);
+      return null;
+    }
+  };
+
+  window.authGoogle=async function(){
+    var c=readSb();
+    if(!c.anon){
+      if(typeof showModal==='function'){
+        showModal('SETUP NEEDED','Settings → paste Supabase anon public key → SAVE.',[{label:'Settings',primary:true,onClick:function(){goPage('settings')}},{label:'OK'}]);
+      } else alert('Add anon key in Settings first');
+      if(typeof goPage==='function') goPage('settings');
+      return;
+    }
+    // wait for lib
+    var tries=0;
+    while((!window.supabase||!window.supabase.createClient) && tries<40){
+      await new Promise(function(r){ setTimeout(r,100); });
+      tries++;
+    }
+    var sb=window.getSupabase();
+    if(!sb){
+      alert('Supabase client failed. Check URL + anon key. Use anon public key from Project Settings → API.');
+      return;
+    }
+    if(typeof authStatus==='function') authStatus('>> Opening Google...', true);
+    var redirectTo = location.origin + location.pathname + (location.pathname.endsWith('/')?'':'/') + '#page-myspace';
+    var res = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: redirectTo, queryParams: { access_type: 'offline', prompt: 'select_account' } }
+    });
+    if(res && res.error){
+      if(typeof authStatus==='function') authStatus('>> '+res.error.message, false);
+      alert('Google login error: '+res.error.message);
+    }
+  };
+
+  // Patch saveSettings to always persist sb keys
+  var prevSave = window.saveSettings;
+  window.saveSettings=function(){
+    if(typeof prevSave==='function') try{ prevSave(); }catch(e){}
+    var st={};
+    try{ st=JSON.parse(localStorage.getItem('pasiya_settings')||'{}'); }catch(e){}
+    var urlEl=$('setSbUrl'); var anonEl=$('setSbAnon');
+    if(urlEl) st.sbUrl=(urlEl.value||'').trim();
+    if(anonEl) st.sbAnon=(anonEl.value||'').trim();
+    if(!st.sbUrl) st.sbUrl='https://kqbvqwxangihdsetyjg.supabase.co';
+    localStorage.setItem('pasiya_settings', JSON.stringify(st));
+    if(st.sbUrl) localStorage.setItem('pasiya_sb_url', st.sbUrl);
+    if(st.sbAnon) localStorage.setItem('pasiya_sb_anon', st.sbAnon);
+    var s=$('setStatus');
+    if(s){ s.textContent='>> Settings saved (Supabase URL + key included)'; s.style.color='#00ff9d'; }
+  };
+
+  function ensureLoginUI(){
+    // Account page button already has onclick=authGoogle
+    var page=$('page-auth');
+    if(page){
+      var btn=page.querySelector('button[onclick*="authGoogle"]');
+      if(btn){
+        btn.onclick=function(e){ e.preventDefault(); window.authGoogle(); };
+        btn.textContent='Continue with Google';
+      }
+    }
+    // Header button — NOT ChatGPT
+    var old=$('pasiyaGoogleLoginBtn');
+    if(old) old.remove();
+    var bar=document.querySelector('header.top')||document.querySelector('header');
+    if(bar && !$('pasiyaGoogleLoginBtn')){
+      var b=document.createElement('button');
+      b.id='pasiyaGoogleLoginBtn';
+      b.type='button';
+      b.textContent='Sign in with Google';
+      b.style.cssText='margin-left:6px;padding:8px 12px;border-radius:10px;border:1px solid #00e5ff;background:rgba(0,229,255,.15);color:#0ff;font-weight:700;font-size:12px;cursor:pointer;z-index:10070;touch-action:manipulation';
+      b.onclick=function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        window.authGoogle();
+      };
+      bar.appendChild(b);
+    }
+    // Side nav link highlight
+    var nav=document.querySelector('a[data-page="auth"]');
+    if(nav && !nav.dataset.v19){
+      nav.dataset.v19='1';
+      nav.addEventListener('click', function(){ setTimeout(ensureLoginUI, 300); });
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', ensureLoginUI);
+  setTimeout(ensureLoginUI, 500);
+  setTimeout(ensureLoginUI, 1500);
+})();
+
+</script>
 </body>
 </html>
