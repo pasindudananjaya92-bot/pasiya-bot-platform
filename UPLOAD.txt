@@ -1,13 +1,9 @@
-PASIYA PC V3
+Overwrite root index.html → Commit → Incognito
 
-Overwrite root index.html → Commit → Incognito refresh
+Nested OS menus:
+- Taskbar Start OR desktop Start icon
+- Categories → submenus → actions that RUN
+- Network opens real free services (GitHub, n8n, Mongo, etc.)
+- System / Control Panel / Display nested
 
-Improvements:
-- Desktop icons in clean GRID (no overlap / wrong stack)
-- Windows always above icons; active window on top
-- Close (×) easier to hit
-- Keyboard dock stays at bottom in fullscreen
-- Extra service icons: Search, Feedback, Replit, GitHub, n8n, Vercel, MongoDB, Supabase
-  (external tools open in new tab — required for real login)
-
-Note: Browser Virtual PC ≠ real OS kernel. This is the strongest practical phone workstation layer on static hosting + free cloud links.
+Honest limit: not 10,000 empty items — nested WORKING menu tree like real UX.

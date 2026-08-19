@@ -2180,6 +2180,46 @@ body.kbd-open{
   margin-top:12px !important;
 }
 
+
+/* PC_NESTED_OS_MENUS */
+#pcNestedStart, #pcNestedPanel, #pcNestedCtx{
+  position:fixed; z-index:2147482500; display:none;
+  background:#0a1525; border:1px solid rgba(0,240,255,.4);
+  border-radius:12px; box-shadow:0 16px 48px rgba(0,0,0,.55);
+  max-height:min(75vh, 520px); overflow:auto; -webkit-overflow-scrolling:touch;
+  min-width:min(92vw, 300px); padding:6px;
+}
+#pcNestedStart.open, #pcNestedPanel.open, #pcNestedCtx.open{ display:block !important; }
+#pcNestedStart button, #pcNestedPanel button, #pcNestedCtx button,
+.pc-nitem{
+  display:flex; width:100%; align-items:center; justify-content:space-between;
+  gap:8px; text-align:left; padding:12px 12px; margin:2px 0;
+  border:0; border-radius:8px; background:transparent; color:#e8ffff;
+  font-size:14px; font-weight:600; cursor:pointer; touch-action:manipulation;
+  min-height:44px;
+}
+#pcNestedStart button:active, #pcNestedPanel button:active, .pc-nitem:active,
+#pcNestedStart button:hover, #pcNestedPanel button:hover{
+  background:rgba(0,229,255,.18); color:#00e5ff;
+}
+.pc-nitem .arrow{ opacity:.6; font-size:12px; }
+#pcNestedPanel .pc-nhead{
+  padding:10px 12px; color:#f5c542; font-size:12px; font-weight:800;
+  border-bottom:1px solid rgba(0,240,255,.2); margin-bottom:4px;
+  display:flex; align-items:center; gap:8px;
+}
+#pcNestedPanel .pc-nback{
+  border:1px solid rgba(0,240,255,.3); background:#071018; color:#00e5ff;
+  border-radius:8px; padding:6px 10px; min-height:36px; font-size:12px;
+}
+#pcNestedToast{
+  position:fixed; bottom:18px; left:50%; transform:translateX(-50%);
+  z-index:2147483001; display:none; padding:10px 16px; border-radius:10px;
+  background:#062018; border:1px solid #00e5ff; color:#cffffa; font-size:13px;
+  max-width:90vw;
+}
+#pcNestedToast.show{ display:block; }
+
 </style>
 </head>
 <body>
@@ -8734,6 +8774,299 @@ document.addEventListener('DOMContentLoaded', function(){
       setTimeout(normalizeIcons, 100);
     }
   }, true);
+})();
+
+</script>
+
+<div id="pcNestedStart" role="menu" aria-label="Start menu"></div>
+<div id="pcNestedPanel" role="dialog" aria-label="System panel"></div>
+<div id="pcNestedCtx" role="menu" aria-label="Context menu"></div>
+<div id="pcNestedToast" role="status"></div>
+
+<script>
+
+/* PC_NESTED_OS_MENUS_JS */
+(function(){
+  function $(id){ return document.getElementById(id); }
+  function toast(msg){
+    var t=$('pcNestedToast');
+    if(!t) return;
+    t.textContent=msg;
+    t.classList.add('show');
+    clearTimeout(toast._tm);
+    toast._tm=setTimeout(function(){ t.classList.remove('show'); }, 2200);
+  }
+  function hideAll(){
+    ['pcNestedStart','pcNestedPanel','pcNestedCtx'].forEach(function(id){
+      var el=$(id); if(el){ el.classList.remove('open'); el.style.display='none'; }
+    });
+  }
+  function showEl(el, x, y){
+    if(!el) return;
+    el.style.display='block';
+    el.classList.add('open');
+    var w=el.offsetWidth||280, h=el.offsetHeight||320;
+    var left=Math.max(8, Math.min((x!=null?x:16), window.innerWidth-w-8));
+    var top=Math.max(8, Math.min((y!=null?y:60), window.innerHeight-h-8));
+    el.style.left=left+'px';
+    el.style.top=top+'px';
+  }
+
+  /* Tree: categories → submenus → actions (working) */
+  var TREE = {
+    start: [
+      { label:'📁 Programs', sub:'programs' },
+      { label:'⚙ System', sub:'system' },
+      { label:'🌐 Network & Cloud', sub:'network' },
+      { label:'🛠 Tools', sub:'tools' },
+      { label:'🎨 Appearance', sub:'appearance' },
+      { label:'🔒 Privacy & Data', sub:'privacy' },
+      { label:'⌨️ Input', sub:'input' },
+      { label:'📊 Status', sub:'status' },
+      { label:'💬 Feedback', act:'feedback' },
+      { label:'🔍 User Search', act:'search' },
+      { label:'⌂ Dashboard', act:'dashboard' },
+      { label:'✕ Close', act:'close' }
+    ],
+    programs: [
+      { label:'← Back', act:'back-start' },
+      { label:'🗂 File Explorer', act:'app-explorer' },
+      { label:'📝 Notepad', act:'app-notes' },
+      { label:'🧮 Calculator', act:'app-calc' },
+      { label:'🖥 Terminal', act:'app-terminal' },
+      { label:'📁 Projects', act:'app-projects' },
+      { label:'🗑 Recycle', act:'app-recycle' },
+      { label:'🌐 In-PC Browser', act:'app-browser' },
+      { label:'📋 Task Manager', act:'app-tasks' }
+    ],
+    system: [
+      { label:'← Back', act:'back-start' },
+      { label:'🎛 Control Panel', sub:'control' },
+      { label:'ℹ About PC', act:'about' },
+      { label:'🔄 Refresh Desktop', act:'refresh' },
+      { label:'⛶ Toggle Fullscreen', act:'full' },
+      { label:'🧹 Clear local cache keys', act:'clear-cache' },
+      { label:'⏱ Show clock', act:'clock' }
+    ],
+    control: [
+      { label:'← Back', sub:'system' },
+      { label:'Display', sub:'display' },
+      { label:'Sound', act:'sound' },
+      { label:'Power (UI)', act:'power' },
+      { label:'Date & Time', act:'clock' },
+      { label:'Region: Sri Lanka / EN', act:'region' },
+      { label:'Accessibility large tap', act:'a11y' }
+    ],
+    display: [
+      { label:'← Back', sub:'control' },
+      { label:'Wallpaper cycle', act:'wall' },
+      { label:'Reduce motion', act:'motion' },
+      { label:'High contrast text', act:'contrast' }
+    ],
+    network: [
+      { label:'← Back', act:'back-start' },
+      { label:'Online status', act:'net' },
+      { label:'Open GitHub repo', act:'link-github' },
+      { label:'Open Vercel', act:'link-vercel' },
+      { label:'Open n8n', act:'link-n8n' },
+      { label:'Open MongoDB Atlas', act:'link-mongo' },
+      { label:'Open Supabase', act:'link-supabase' },
+      { label:'Open Replit', act:'link-replit' },
+      { label:'API search health', act:'api-search' },
+      { label:'API feedback health', act:'api-feedback' }
+    ],
+    tools: [
+      { label:'← Back', act:'back-start' },
+      { label:'Copy page URL', act:'copy-url' },
+      { label:'Copy site title', act:'copy-title' },
+      { label:'Open search.html', act:'link-searchpage' },
+      { label:'Open feedback.html', act:'link-fbpage' },
+      { label:'Agent panel', act:'agent' },
+      { label:'Side menu', act:'sidemenu' }
+    ],
+    appearance: [
+      { label:'← Back', act:'back-start' },
+      { label:'Cycle wallpaper', act:'wall' },
+      { label:'Toast test', act:'toast-test' },
+      { label:'Compact icons note', act:'icons-note' }
+    ],
+    privacy: [
+      { label:'← Back', act:'back-start' },
+      { label:'localStorage size', act:'ls-size' },
+      { label:'Export local keys list', act:'ls-keys' },
+      { label:'Clear PC draft keys', act:'clear-cache' }
+    ],
+    input: [
+      { label:'← Back', act:'back-start' },
+      { label:'Toggle on-screen keyboard', act:'kbd' },
+      { label:'Focus address / search tip', act:'kbd-tip' }
+    ],
+    status: [
+      { label:'← Back', act:'back-start' },
+      { label:'UA / viewport', act:'ua' },
+      { label:'Online?', act:'net' },
+      { label:'Time now', act:'clock' }
+    ]
+  };
+
+  function openExternal(url){
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
+  function runAct(act){
+    hideAll();
+    try{
+      if(act==='close') return;
+      if(act==='back-start'){ openStart(); return; }
+      if(act==='dashboard'){ if(typeof goDashHome==='function') goDashHome(); else if(typeof goHomeDash==='function') goHomeDash(); else location.hash='#home'; return; }
+      if(act==='search'){ if(typeof openUserSearch==='function') openUserSearch(); else location.href='search.html'; return; }
+      if(act==='feedback'){ location.href='feedback.html'; return; }
+      if(act==='refresh'){
+        if(typeof renderDesktopIcons==='function') renderDesktopIcons();
+        toast('Desktop refreshed');
+        return;
+      }
+      if(act==='full'){ var b=$('btnPcFull'); if(b) b.click(); else document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen(); return; }
+      if(act==='wall'){ var w=$('pcWallBtn'); if(w) w.click(); toast('Wallpaper'); return; }
+      if(act==='kbd'){ var k=$('btnKbdToggle'); if(k) k.click(); return; }
+      if(act==='agent'){ if(typeof openAgentPanel==='function') openAgentPanel(); else { var a=$('btnPcAgent'); if(a) a.click(); } return; }
+      if(act==='sidemenu'){ if(typeof toggleSide==='function') toggleSide(true); return; }
+      if(act==='about'){ toast('Pasiya Nested PC · browser workstation'); return; }
+      if(act==='clock'){ toast(new Date().toLocaleString()); return; }
+      if(act==='net'){ toast(navigator.onLine?'Online ✅':'Offline ❌'); return; }
+      if(act==='sound'){ toast('Sound: browser default'); return; }
+      if(act==='power'){ toast('Power UI only — device power is system-level'); return; }
+      if(act==='region'){ toast('Region UI: LK / English'); return; }
+      if(act==='a11y'){ document.body.style.fontSize='17px'; toast('Larger UI text'); return; }
+      if(act==='motion'){ document.body.classList.toggle('reduce-motion'); toast('Motion toggled'); return; }
+      if(act==='contrast'){ document.body.classList.toggle('hi-contrast'); toast('Contrast toggled'); return; }
+      if(act==='toast-test'){ toast('Menu system OK'); return; }
+      if(act==='icons-note'){ toast('Icons use grid layout (PC V3)'); return; }
+      if(act==='kbd-tip'){ toast('Use KEYBOARD button · type into focused field'); return; }
+      if(act==='copy-url'){ try{ navigator.clipboard.writeText(location.href); }catch(e){} toast('URL copied'); return; }
+      if(act==='copy-title'){ try{ navigator.clipboard.writeText(document.title); }catch(e){} toast('Title copied'); return; }
+      if(act==='ls-size'){
+        var n=0; try{ for(var i=0;i<localStorage.length;i++){ n+=(localStorage.key(i)||'').length+(localStorage.getItem(localStorage.key(i))||'').length; } }catch(e){}
+        toast('localStorage ~'+Math.round(n/1024)+' KB');
+        return;
+      }
+      if(act==='ls-keys'){
+        var keys=[]; try{ for(var i=0;i<localStorage.length;i++) keys.push(localStorage.key(i)); }catch(e){}
+        toast((keys.slice(0,6).join(', ')||'empty')+(keys.length>6?'…':''));
+        return;
+      }
+      if(act==='clear-cache'){
+        try{
+          Object.keys(localStorage).forEach(function(k){
+            if(/^pc|pasiya|draft|vdesk/i.test(k)) localStorage.removeItem(k);
+          });
+        }catch(e){}
+        toast('PC draft keys cleared');
+        return;
+      }
+      if(act==='ua'){ toast((navigator.userAgent||'').slice(0,80)+'…'); return; }
+      if(act==='link-github'){ openExternal('https://github.com/pasindudananjaya92-bot/pasiya-bot-platform'); return; }
+      if(act==='link-vercel'){ openExternal('https://vercel.com'); return; }
+      if(act==='link-n8n'){ openExternal('https://pasiyamax.app.n8n.cloud'); return; }
+      if(act==='link-mongo'){ openExternal('https://cloud.mongodb.com'); return; }
+      if(act==='link-supabase'){ openExternal('https://supabase.com/dashboard'); return; }
+      if(act==='link-replit'){ openExternal('https://replit.com'); return; }
+      if(act==='link-searchpage'){ location.href='search.html'; return; }
+      if(act==='link-fbpage'){ location.href='feedback.html'; return; }
+      if(act==='api-search'){
+        var base=/github\.io/i.test(location.hostname)?'https://pasiya-bot-platform.vercel.app':'';
+        fetch(base+'/api/search-users?q=pasindu').then(function(r){return r.json()}).then(function(d){ toast('Search API: '+(d.success?'OK count '+d.count:'ERR')); }).catch(function(){ toast('Search API fail'); });
+        return;
+      }
+      if(act==='api-feedback'){
+        var base2=/github\.io/i.test(location.hostname)?'https://pasiya-bot-platform.vercel.app':'';
+        fetch(base2+'/api/feedback').then(function(r){return r.json()}).then(function(d){ toast('Feedback API: '+(d.success?'OK count '+d.count:'ERR')); }).catch(function(){ toast('Feedback API fail'); });
+        return;
+      }
+      if(act && act.indexOf('app-')===0){
+        var name=act.slice(4);
+        if(typeof openApp==='function') openApp(name);
+        else if(typeof openPcApp==='function') openPcApp(name);
+        else toast('App: '+name);
+        return;
+      }
+      toast(act);
+    }catch(err){ toast('Error: '+(err.message||err)); }
+  }
+
+  function renderList(container, items){
+    container.innerHTML='';
+    items.forEach(function(it){
+      var b=document.createElement('button');
+      b.type='button';
+      b.className='pc-nitem';
+      b.innerHTML='<span>'+it.label+'</span>'+(it.sub?'<span class="arrow">›</span>':'');
+      b.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if(it.sub) openPanel(it.sub);
+        else if(it.act) runAct(it.act);
+      });
+      container.appendChild(b);
+    });
+  }
+
+  function openPanel(key, x, y){
+    var panel=$('pcNestedPanel');
+    var items=TREE[key];
+    if(!panel||!items) return;
+    hideAll();
+    var head=document.createElement('div');
+    head.className='pc-nhead';
+    head.innerHTML='<button type="button" class="pc-nback" id="pcNBack">←</button><span>'+key.toUpperCase()+'</span>';
+    panel.innerHTML='';
+    panel.appendChild(head);
+    var body=document.createElement('div');
+    renderList(body, items.filter(function(it){ return it.act!=='back-start'||true; }));
+    panel.appendChild(body);
+    showEl(panel, x!=null?x:12, y!=null?y:56);
+    var back=$('pcNBack');
+    if(back) back.onclick=function(e){ e.stopPropagation(); openStart(); };
+  }
+
+  function openStart(x, y){
+    var el=$('pcNestedStart');
+    if(!el) return;
+    hideAll();
+    renderList(el, TREE.start);
+    showEl(el, x!=null?x:12, y!=null?y:56);
+  }
+
+  window.openNestedStartMenu = openStart;
+
+  function boot(){
+    var startBtn=$('pcStartBtn');
+    if(startBtn && !startBtn.dataset.nested){
+      startBtn.dataset.nested='1';
+      startBtn.addEventListener('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        var r=startBtn.getBoundingClientRect();
+        openStart(r.left, r.bottom+4);
+      }, true);
+    }
+    // also desktop Start icon
+    document.addEventListener('click', function(e){
+      var t=e.target.closest && e.target.closest('#pcIcons button[data-app="sysmenu"]');
+      if(!t) return;
+      e.preventDefault();
+      e.stopPropagation();
+      openStart(16, 80);
+    }, true);
+    document.addEventListener('click', function(e){
+      if(e.target.closest && (e.target.closest('#pcNestedStart')||e.target.closest('#pcNestedPanel')||e.target.closest('#pcStartBtn'))) return;
+      hideAll();
+    }, true);
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+  setTimeout(boot, 500);
 })();
 
 </script>
