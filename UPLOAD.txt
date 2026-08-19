@@ -1,15 +1,7 @@
-HOME SEARCH BAR — upload
-
-1) Upload ONLY index.html to GitHub repo ROOT (overwrite existing index.html)
+1) Overwrite GitHub root index.html with this file
 2) Commit
-3) Wait 1–2 minutes for GitHub Pages
-4) Open: https://pasindudananjaya92-bot.github.io/pasiya-bot-platform/
-5) Scroll to "User Search · Atlas Fuzzy" OR menu → User Search
+3) Wait 1-2 min
+4) Phone: open menu → User Search
+5) Modal opens + keyboard should appear → type pasindu → Search
 
-Still works:
-- /search.html full page
-- /api/search-users on Vercel
-
-YOUR side after upload:
-- Atlas pasiya_db.users → insert sample documents if count is 0
-- Test search with a name from those documents
+Also works: /search.html

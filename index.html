@@ -1741,6 +1741,45 @@ aside#sideNav.side-nav.user-closed {
 }
 #homeAtlasOut .has-card b{color:#00e5ff}
 
+
+/* USER_SEARCH_MODAL */
+#userSearchModal{
+  display:none;position:fixed;inset:0;z-index:10050;
+  background:rgba(2,6,14,.92);backdrop-filter:blur(8px);
+  padding:max(12px, env(safe-area-inset-top)) 14px 20px;
+  overflow:auto;-webkit-overflow-scrolling:touch;
+}
+#userSearchModal.open{display:block}
+#userSearchModal .usm-box{
+  max-width:520px;margin:10px auto 0;padding:16px;
+  border-radius:16px;border:1px solid rgba(0,240,255,.4);
+  background:linear-gradient(160deg,#071422,#0a1a2e);
+  box-shadow:0 12px 40px rgba(0,0,0,.45);
+}
+#userSearchModal h3{margin:0 0 8px;color:#00f0ff;font-size:1.05rem}
+#userSearchModal .usm-hint{font-size:12px;opacity:.75;margin-bottom:12px;line-height:1.4}
+#userSearchModal .usm-row{display:flex;gap:8px;flex-wrap:wrap}
+#userSearchModal input#usmQ{
+  flex:1;min-width:140px;padding:14px 12px;border-radius:12px;font-size:16px;
+  border:1px solid rgba(0,229,255,.4);background:#041018;color:#fff;
+  -webkit-user-select:text;user-select:text;
+}
+#userSearchModal button.usm-go{
+  padding:14px 16px;border:0;border-radius:12px;background:#00e5ff;color:#001018;
+  font-weight:800;cursor:pointer;min-width:88px;
+}
+#userSearchModal button.usm-x{
+  position:absolute;top:10px;right:12px;width:40px;height:40px;border-radius:10px;
+  border:1px solid rgba(0,240,255,.3);background:#0a1520;color:#00e5ff;font-size:20px;cursor:pointer;
+}
+#userSearchModal .usm-status{min-height:1.3em;margin-top:10px;font-size:13px;color:#9ef}
+#userSearchModal .usm-card{
+  margin-top:8px;padding:12px;border-radius:10px;border:1px solid rgba(0,229,255,.25);
+  background:rgba(0,20,40,.8);font-size:14px;color:#e8ffff;
+}
+#userSearchModal .usm-card b{color:#00e5ff}
+#userSearchModal .usm-wrap{position:relative}
+
 </style>
 </head>
 <body>
@@ -1805,7 +1844,7 @@ aside#sideNav.side-nav.user-closed {
   <button type="button" class="nav-close" onclick="toggleSide(false)" aria-label="Close menu">&lt;</button>
   <div class="nav-title">PASIYA OS // MENU</div>
   <a class="nav-item" href="#home" onclick="return goHomeDash()"><span class="ic">⌂</span> Home Dashboard</a>
-  <a class="nav-item" href="#homeAtlasSearch" onclick="try{document.getElementById('homeAtlasSearch').scrollIntoView({behavior:'smooth'})}catch(e){} return false;"><span class="ic">🔍</span> User Search</a>
+  <a class="nav-item" href="#user-search" data-page="usersearch" onclick="return openUserSearch(this)"><span class="ic">🔍</span> User Search</a>
   <a class="nav-item" href="#page-desktop" data-page="desktop" onclick="return goPage('desktop',this)"><span class="ic">💻</span> Virtual PC</a>
   <hr class="gold-line">
   <input class="side-search" id="sideSearch" placeholder="Filter menu..." oninput="filterMenu(this.value)">
@@ -7734,6 +7773,145 @@ document.addEventListener('DOMContentLoaded', function(){
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', bind);
   else bind();
+})();
+
+</script>
+
+<div id="userSearchModal" role="dialog" aria-modal="true" aria-label="User Search">
+  <div class="usm-wrap">
+    <button type="button" class="usm-x" id="usmClose" aria-label="Close">×</button>
+    <div class="usm-box">
+      <h3>🔍 User Search</h3>
+      <p class="usm-hint">Type a name · MongoDB Atlas Fuzzy Search<br>Example: pasindu</p>
+      <div class="usm-row">
+        <input id="usmQ" type="search" enterkeyhint="search" autocomplete="off" autocorrect="off" placeholder="Type name, email…">
+        <button type="button" class="usm-go" id="usmGo">Search</button>
+      </div>
+      <div class="usm-status" id="usmStatus">Ready — tap the box and type</div>
+      <div id="usmOut"></div>
+      <p class="usm-hint" style="margin-top:12px"><a href="search.html" style="color:#00e5ff">Full search page →</a></p>
+    </div>
+  </div>
+</div>
+
+<script>
+
+/* USER_SEARCH_MODAL_JS */
+(function(){
+  var API = /github\.io/i.test(location.hostname)
+    ? 'https://pasiya-bot-platform.vercel.app'
+    : '';
+
+  function $(id){ return document.getElementById(id); }
+
+  function closeSide(){
+    try{
+      if(typeof toggleSide==='function') toggleSide(false);
+      var nav=$('sideNav'); if(nav){ nav.classList.remove('open'); nav.classList.remove('force-open'); }
+      var ov=$('sideOverlay'); if(ov) ov.classList.remove('show');
+    }catch(e){}
+  }
+
+  function doSearch(){
+    var q = (($('usmQ')||{}).value||'').trim();
+    var st = $('usmStatus');
+    var out = $('usmOut');
+    if(!st||!out) return;
+    if(!q){
+      st.textContent = 'Please type something (e.g. pasindu)';
+      out.innerHTML = '';
+      try{ $('usmQ').focus(); }catch(e){}
+      return;
+    }
+    st.textContent = 'Searching…';
+    out.innerHTML = '';
+    fetch(API + '/api/search-users?q=' + encodeURIComponent(q) + '&limit=20')
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(!d.success){
+          st.textContent = 'Error: ' + (d.error || 'failed');
+          return;
+        }
+        st.textContent = d.count + ' result(s)' + (d.mode ? ' · ' + d.mode : '');
+        if(!d.results || !d.results.length){
+          out.innerHTML = '<div class="usm-card">No matches. Add users in Atlas → pasiya_db.users</div>';
+          return;
+        }
+        out.innerHTML = d.results.map(function(r){
+          var title = r.name || r.username || r.email || r._id;
+          var bits = [r.username, r.email, r.bio].filter(Boolean).join(' · ');
+          function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+          return '<div class="usm-card"><b>'+esc(title)+'</b><br><small>'+esc(bits)+'</small></div>';
+        }).join('');
+      })
+      .catch(function(e){
+        st.textContent = 'Network error: ' + (e.message || e);
+      });
+  }
+
+  window.openUserSearch = function(el){
+    try{
+      closeSide();
+      var m = $('userSearchModal');
+      if(!m){ window.location.href = 'search.html'; return false; }
+      m.classList.add('open');
+      m.style.display = 'block';
+      var q = $('usmQ');
+      setTimeout(function(){
+        if(q){
+          q.focus();
+          try{ q.click(); }catch(e){}
+        }
+      }, 120);
+      setTimeout(function(){ if(q) q.focus(); }, 350);
+      if(el && el.classList){
+        document.querySelectorAll('.nav-item').forEach(function(a){ a.classList.remove('active'); });
+        el.classList.add('active');
+      }
+    }catch(err){
+      window.location.href = 'search.html';
+    }
+    return false;
+  };
+
+  window.closeUserSearch = function(){
+    var m = $('userSearchModal');
+    if(m){ m.classList.remove('open'); m.style.display = 'none'; }
+  };
+
+  function bind(){
+    var go = $('usmGo');
+    var q = $('usmQ');
+    var x = $('usmClose');
+    if(go) go.onclick = function(e){ e.preventDefault(); doSearch(); };
+    if(x) x.onclick = function(e){ e.preventDefault(); closeUserSearch(); };
+    if(q){
+      q.addEventListener('keydown', function(e){
+        if(e.key === 'Enter'){ e.preventDefault(); doSearch(); }
+      });
+    }
+    var m = $('userSearchModal');
+    if(m){
+      m.addEventListener('click', function(e){
+        if(e.target === m) closeUserSearch();
+      });
+    }
+    // also wire home bar if present
+    var hb = $('homeAtlasBtn');
+    var hi = $('homeAtlasQ');
+    if(hb) hb.onclick = function(){
+      var v = (hi && hi.value) || '';
+      openUserSearch();
+      setTimeout(function(){
+        var u = $('usmQ');
+        if(u){ u.value = v; if(v) doSearch(); else u.focus(); }
+      }, 200);
+    };
+  }
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
+  else bind();
+  setTimeout(bind, 500);
 })();
 
 </script>
