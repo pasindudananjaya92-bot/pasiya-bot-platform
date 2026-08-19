@@ -1,7 +1,7 @@
-1) Overwrite GitHub root index.html with this file
-2) Commit
-3) Wait 1-2 min
-4) Phone: open menu → User Search
-5) Modal opens + keyboard should appear → type pasindu → Search
+Overwrite root index.html → Commit → hard refresh
 
-Also works: /search.html
+Fixes:
+- Keyboard bottom visible (safe-area + scroll)
+- Taller keys (54–56px) so one finger = one key
+- More gap between keys
+- Taller trackpad (~150–160px)
