@@ -7524,5 +7524,136 @@ document.addEventListener('DOMContentLoaded', function(){
 })();
 
 </script>
+<script>
+
+/* SESSION_KEY_V24 — fix "No API key found in request" after Google redirect */
+(function(){
+  var SB_URL_DEFAULT = 'https://kqbvqwxangihdsetyjg.supabase.co';
+  var SITE = 'https://pasindudananjaya92-bot.github.io/pasiya-bot-platform/';
+
+  function readUrl(){
+    try{
+      var st=JSON.parse(localStorage.getItem('pasiya_settings')||'{}')||{};
+      return (st.sbUrl||localStorage.getItem('pasiya_sb_url')||SB_URL_DEFAULT).trim();
+    }catch(e){ return SB_URL_DEFAULT; }
+  }
+  function readKey(){
+    try{
+      var st=JSON.parse(localStorage.getItem('pasiya_settings')||'{}')||{};
+      return (st.sbAnon||localStorage.getItem('pasiya_sb_anon')||'').trim();
+    }catch(e){ return (localStorage.getItem('pasiya_sb_anon')||'').trim(); }
+  }
+
+  window.getSbConfig = function(){ return { url: readUrl(), anon: readKey() }; };
+
+  window.getSupabase = function(){
+    var url = readUrl();
+    var key = readKey();
+    if(!key){
+      console.warn('[pasiya] No Supabase anon/publishable key in localStorage');
+      return null;
+    }
+    if(!window.supabase || !window.supabase.createClient){
+      console.warn('[pasiya] supabase-js not loaded');
+      return null;
+    }
+    // ALWAYS pass both URL and KEY — missing key causes "No API key found in request"
+    return window.supabase.createClient(url, key, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+      }
+    });
+  };
+
+  async function recoverSessionAfterRedirect(){
+    var key = readKey();
+    if(!key){
+      // returned from Google but key never saved in this browser
+      if(/access_token|refresh_token|type=recovery|code=/i.test(location.hash+location.search)){
+        alert('Google OK, but Supabase key missing in this browser.\n\nOpen Settings → paste anon/publishable key → SAVE → try Sign in again.');
+        if(typeof goPage==='function') goPage('settings');
+      }
+      return;
+    }
+    var tries=0;
+    while((!window.supabase||!window.supabase.createClient) && tries<60){
+      await new Promise(function(r){setTimeout(r,100)});
+      tries++;
+    }
+    var sb = window.getSupabase();
+    if(!sb) return;
+    try{
+      // Exchange tokens in URL if present
+      if(typeof sb.auth.getSessionFromUrl==='function'){
+        try{ await sb.auth.getSessionFromUrl({ storeSession: true }); }catch(e){}
+      }
+      var res = await sb.auth.getSession();
+      var session = res && res.data && res.data.session;
+      if(session && session.user){
+        if(typeof updateAuthUI==='function') updateAuthUI(session.user);
+        if(typeof showSuccess==='function') showSuccess('Signed in: '+(session.user.email||'user'));
+        // clean hash noise but keep page
+        if(location.hash && location.hash.indexOf('access_token')>=0){
+          try{ history.replaceState(null,'', SITE + '#page-myspace'); }catch(e){}
+        }
+        if(typeof goPage==='function'){
+          try{ goPage('myspace'); }catch(e){}
+        }
+      }
+    }catch(err){
+      console.error('[pasiya] session recover', err);
+      var msg = (err && err.message) || String(err);
+      if(/api key/i.test(msg)){
+        alert('No API key in request.\n\nFix:\n1) Settings → paste Publishable/anon key\n2) SAVE\n3) Sign in with Google again\n\nDo NOT leave key empty.');
+        if(typeof goPage==='function') goPage('settings');
+      }
+    }
+  }
+
+  window.authGoogle = async function(){
+    var key = readKey();
+    if(!key){
+      alert('First save key:\nSettings → Supabase anon/publishable key → SAVE');
+      if(typeof goPage==='function') goPage('settings');
+      return;
+    }
+    var tries=0;
+    while((!window.supabase||!window.supabase.createClient) && tries<50){
+      await new Promise(function(r){setTimeout(r,100)});
+      tries++;
+    }
+    var sb = window.getSupabase();
+    if(!sb){
+      alert('Cannot create Supabase client. Check key + internet.');
+      return;
+    }
+    var redirectTo = SITE + '#page-myspace';
+    var { data, error } = await sb.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: redirectTo,
+        queryParams: { prompt: 'select_account' }
+      }
+    });
+    if(error){
+      alert('Google error: '+error.message);
+      return;
+    }
+    if(data && data.url) window.location.href = data.url;
+  };
+
+  // boot
+  function boot(){
+    recoverSessionAfterRedirect();
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+  setTimeout(boot, 500);
+  setTimeout(boot, 1500);
+})();
+
+</script>
 </body>
 </html>
