@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pasiya · User Fuzzy Search</title>
+<style>
+  :root { --bg:#070b14; --c:#00e5ff; --t:#e8f7ff; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, sans-serif;
+    background: radial-gradient(circle at top, #10254f, var(--bg));
+    color: var(--t);
+    min-height: 100vh;
+    padding: 24px 16px 48px;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  h1 { color: var(--c); font-size: 1.4rem; margin-bottom: 8px; }
+  p.hint { opacity: .75; font-size: .9rem; margin-bottom: 16px; }
+  .bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+  input {
+    flex: 1; min-width: 180px;
+    padding: 12px 14px; border-radius: 12px;
+    border: 1px solid rgba(0,229,255,.35);
+    background: rgba(0,10,20,.8); color: #fff; font-size: 16px;
+  }
+  button {
+    padding: 12px 18px; border-radius: 12px; border: 0;
+    background: var(--c); color: #001018; font-weight: 700; cursor: pointer;
+  }
+  .status { min-height: 1.4em; font-size: .85rem; margin-bottom: 12px; color: #9ef; }
+  .card {
+    background: rgba(0,20,40,.65);
+    border: 1px solid rgba(0,229,255,.25);
+    border-radius: 14px; padding: 14px; margin-bottom: 10px;
+  }
+  .card h3 { font-size: 1rem; color: var(--c); }
+  .card p { font-size: .85rem; opacity: .9; margin-top: 4px; }
+  .score { font-size: .75rem; opacity: .6; }
+  a.home { color: var(--c); font-size: .85rem; }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="home" href="./">← Back to site</a>
+    <h1>🔍 User Fuzzy Search</h1>
+    <p class="hint">MongoDB Atlas Search · collection <b>pasiya_db.users</b> · index <b>default</b></p>
+    <div class="bar">
+      <input id="q" type="search" placeholder="Type name, email, username…" autocomplete="off">
+      <button type="button" id="btn">Search</button>
+    </div>
+    <div class="status" id="status">Ready</div>
+    <div id="out"></div>
+  </div>
+<script>
+(function () {
+  // On Vercel: same origin /api/search-users
+  // On GitHub Pages only: set API base to your Vercel URL
+  var API_BASE = window.PASIYA_API_BASE || '';
+  // If opened on github.io, point to Vercel:
+  if (!API_BASE && /github\.io/i.test(location.hostname)) {
+    API_BASE = 'https://pasiya-bot-platform.vercel.app';
+  }
+
+  var qEl = document.getElementById('q');
+  var out = document.getElementById('out');
+  var status = document.getElementById('status');
+  var timer = null;
+
+  async function run() {
+    var q = (qEl.value || '').trim();
+    if (!q) {
+      status.textContent = 'Type something to search';
+      out.innerHTML = '';
+      return;
+    }
+    status.textContent = 'Searching…';
+    out.innerHTML = '';
+    try {
+      var url = API_BASE + '/api/search-users?q=' + encodeURIComponent(q) + '&limit=20';
+      var res = await fetch(url);
+      var data = await res.json();
+      if (!data.success) {
+        status.textContent = 'Error: ' + (data.error || res.status);
+        return;
+      }
+      status.textContent = data.count + ' result(s) for “' + data.query + '”';
+      if (!data.results.length) {
+        out.innerHTML = '<div class="card"><p>No matches. Add documents in Atlas → pasiya_db.users</p></div>';
+        return;
+      }
+      out.innerHTML = data.results.map(function (r) {
+        var title = r.name || r.username || r.email || r._id;
+        var bits = [r.username, r.email, r.bio, r.role].filter(Boolean).join(' · ');
+        var score = r.score != null ? '<div class="score">score: ' + Number(r.score).toFixed(3) + '</div>' : '';
+        return '<div class="card"><h3>' + escapeHtml(String(title)) + '</h3><p>' + escapeHtml(bits) + '</p>' + score + '</div>';
+      }).join('');
+    } catch (e) {
+      status.textContent = 'Network error: ' + (e.message || e);
+    }
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/[&<>"']/g, function (c) {
+      return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c];
+    });
+  }
+
+  document.getElementById('btn').onclick = run;
+  qEl.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') run();
+  });
+  qEl.addEventListener('input', function () {
+    clearTimeout(timer);
+    timer = setTimeout(run, 400);
+  });
+})();
+</script>
+</body>
+</html>
