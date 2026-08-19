@@ -1,0 +1,7 @@
+{
+  "name": "pasiya-bot-platform",
+  "private": true,
+  "dependencies": {
+    "mongodb": "^6.8.0"
+  }
+}
