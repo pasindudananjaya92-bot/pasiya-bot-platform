@@ -1,7 +1,14 @@
-Overwrite root index.html → Commit → hard refresh
+Overwrite GitHub root index.html → Commit → hard refresh / Incognito
 
 Fixes:
-- Keyboard bottom visible (safe-area + scroll)
-- Taller keys (54–56px) so one finger = one key
-- More gap between keys
-- Taller trackpad (~150–160px)
+1) Keyboard docks at BOTTOM (desktop work area above)
+2) Fullscreen layout uses flex column + 100dvh
+3) R MENU opens context menu reliably (Refresh, Paste, etc.)
+4) L CLICK hits buttons/× under cursor
+5) Refresh actually refreshes desktop
+6) Copy/Paste wired
+
+Test:
+- Virtual PC → FULL → KEYBOARD on → keys at bottom
+- Move cursor → R MENU → Refresh / options
+- Open a window → L CLICK on × to close
