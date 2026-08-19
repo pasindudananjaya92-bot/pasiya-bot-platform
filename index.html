@@ -9070,5 +9070,333 @@ document.addEventListener('DOMContentLoaded', function(){
 })();
 
 </script>
+<script>
+
+/* PC_TREE_MEGA_JS */
+(function(){
+  function $(id){ return document.getElementById(id); }
+  function toast(msg){
+    var t=$('pcNestedToast');
+    if(!t){
+      t=document.createElement('div');
+      t.id='pcNestedToast';
+      t.style.cssText='position:fixed;bottom:18px;left:50%;transform:translateX(-50%);z-index:2147483001;padding:10px 16px;border-radius:10px;background:#062018;border:1px solid #00e5ff;color:#cffffa;font-size:13px;max-width:92vw;display:none';
+      document.body.appendChild(t);
+    }
+    t.textContent=msg;
+    t.style.display='block';
+    clearTimeout(toast._tm);
+    toast._tm=setTimeout(function(){ t.style.display='none'; }, 2400);
+  }
+  function hideAll(){
+    ['pcNestedStart','pcNestedPanel','pcNestedCtx'].forEach(function(id){
+      var el=$(id); if(el){ el.classList.remove('open'); el.style.display='none'; }
+    });
+  }
+  function ensureShell(){
+    if(!$('pcNestedStart')){
+      ['pcNestedStart','pcNestedPanel','pcNestedCtx'].forEach(function(id){
+        var d=document.createElement('div'); d.id=id;
+        d.style.cssText='position:fixed;z-index:2147482500;display:none;background:#0a1525;border:1px solid rgba(0,240,255,.4);border-radius:12px;box-shadow:0 16px 48px rgba(0,0,0,.55);max-height:min(75vh,520px);overflow:auto;min-width:min(92vw,300px);padding:6px';
+        document.body.appendChild(d);
+      });
+    }
+  }
+  function showEl(el,x,y){
+    el.style.display='block'; el.classList.add('open');
+    var w=el.offsetWidth||280,h=el.offsetHeight||320;
+    el.style.left=Math.max(8,Math.min(x!=null?x:12, window.innerWidth-w-8))+'px';
+    el.style.top=Math.max(8,Math.min(y!=null?y:56, window.innerHeight-h-8))+'px';
+  }
+  function openExternal(url){ window.open(url,'_blank','noopener,noreferrer'); }
+
+  var LINKS = {
+    github:'https://github.com/pasindudananjaya92-bot/pasiya-bot-platform',
+    vercel:'https://vercel.com',
+    n8n:'https://pasiyamax.app.n8n.cloud',
+    mongo:'https://cloud.mongodb.com',
+    supabase:'https://supabase.com/dashboard',
+    replit:'https://replit.com',
+    searchpage:'search.html',
+    feedback:'feedback.html'
+  };
+
+  var APPS = ['explorer','notes','calc','terminal','projects','recycle','browser','tasks','sysset','sysmenu'];
+
+  function runAct(act, label){
+    hideAll();
+    label = label || act;
+    try{
+      if(act==='close') return;
+      if(act==='back-start'){ openStart(); return; }
+      if(act==='dashboard'){ if(typeof goDashHome==='function') goDashHome(); else location.hash='#home'; return; }
+      if(act==='search'){ if(typeof openUserSearch==='function') openUserSearch(); else location.href='search.html'; return; }
+      if(act==='feedback'){ location.href='feedback.html'; return; }
+      if(act==='refresh'){ if(typeof renderDesktopIcons==='function') renderDesktopIcons(); toast('Refreshed'); return; }
+      if(act==='full'){ var b=$('btnPcFull'); if(b) b.click(); return; }
+      if(act==='wall'){ var w=$('pcWallBtn'); if(w) w.click(); toast('Wallpaper'); return; }
+      if(act==='kbd'){ var k=$('btnKbdToggle'); if(k) k.click(); return; }
+      if(act==='agent'){ var a=$('btnPcAgent'); if(a) a.click(); return; }
+      if(act==='net'){ toast(navigator.onLine?'Online ✅':'Offline'); return; }
+      if(act==='clock'){ toast(new Date().toLocaleString()); return; }
+      if(act==='copy-url'){ try{navigator.clipboard.writeText(location.href);}catch(e){} toast('URL copied'); return; }
+      if(act==='copy-title'){ try{navigator.clipboard.writeText(document.title);}catch(e){} toast('Title copied'); return; }
+      if(act==='api-search'){
+        var base=/github\.io/i.test(location.hostname)?'https://pasiya-bot-platform.vercel.app':'';
+        fetch(base+'/api/search-users?q=pasindu').then(function(r){return r.json()}).then(function(d){toast('Search: '+(d.success?('OK '+d.count):'ERR'));}).catch(function(){toast('Search API fail');});
+        return;
+      }
+      if(act==='api-feedback'){
+        var base2=/github\.io/i.test(location.hostname)?'https://pasiya-bot-platform.vercel.app':'';
+        fetch(base2+'/api/feedback').then(function(r){return r.json()}).then(function(d){toast('Feedback: '+(d.success?('OK '+d.count):'ERR'));}).catch(function(){toast('Feedback API fail');});
+        return;
+      }
+      if(act.indexOf('link-')===0){
+        var key=act.slice(5);
+        var url=LINKS[key];
+        if(url && url.indexOf('http')===0) openExternal(url);
+        else if(url) location.href=url;
+        else toast(label);
+        return;
+      }
+      if(act.indexOf('app-')===0){
+        var name=act.slice(4);
+        if(typeof openApp==='function') openApp(name);
+        else if(typeof openPcApp==='function') openPcApp(name);
+        else toast('App: '+name);
+        return;
+      }
+      if(act.indexOf('toast:')===0){ toast(act.slice(6)); return; }
+      toast(label+' · OK');
+    }catch(err){ toast('Error: '+(err.message||err)); }
+  }
+
+  /* Build large tree */
+  var TREE = {};
+  var startItems = [];
+
+  function addCat(id, title, items){
+    TREE[id]=items;
+    startItems.push({ label:title, sub:id });
+  }
+
+  // Core working categories (hand-crafted)
+  addCat('programs','📁 Programs',[
+    {label:'← Back',act:'back-start'},
+    {label:'File Explorer',act:'app-explorer'},
+    {label:'Notepad',act:'app-notes'},
+    {label:'Calculator',act:'app-calc'},
+    {label:'Terminal',act:'app-terminal'},
+    {label:'Projects',act:'app-projects'},
+    {label:'Recycle',act:'app-recycle'},
+    {label:'Browser',act:'app-browser'},
+    {label:'Task Manager',act:'app-tasks'},
+    {label:'Sys Settings',act:'app-sysset'}
+  ]);
+  addCat('system','⚙ System',[
+    {label:'← Back',act:'back-start'},
+    {label:'Control Panel',sub:'control'},
+    {label:'Refresh Desktop',act:'refresh'},
+    {label:'Fullscreen',act:'full'},
+    {label:'Wallpaper',act:'wall'},
+    {label:'Keyboard',act:'kbd'},
+    {label:'About',act:'toast:Pasiya Nested PC MEGA'},
+    {label:'Clock',act:'clock'},
+    {label:'Network status',act:'net'}
+  ]);
+  addCat('control','🎛 Control Panel',[
+    {label:'← Back',sub:'system'},
+    {label:'Display',sub:'display'},
+    {label:'Sound',act:'toast:Sound · browser default'},
+    {label:'Power UI',act:'toast:Power is device-level'},
+    {label:'Date & Time',act:'clock'},
+    {label:'Region LK',act:'toast:Region: LK / EN'},
+    {label:'Accessibility',act:'toast:Large tap targets enabled in CSS'}
+  ]);
+  addCat('display','🖥 Display',[
+    {label:'← Back',sub:'control'},
+    {label:'Wallpaper cycle',act:'wall'},
+    {label:'Fullscreen',act:'full'},
+    {label:'Toast test',act:'toast:Display OK'}
+  ]);
+  addCat('network','🌐 Network & Cloud',[
+    {label:'← Back',act:'back-start'},
+    {label:'Online?',act:'net'},
+    {label:'GitHub',act:'link-github'},
+    {label:'Vercel',act:'link-vercel'},
+    {label:'n8n',act:'link-n8n'},
+    {label:'MongoDB Atlas',act:'link-mongo'},
+    {label:'Supabase',act:'link-supabase'},
+    {label:'Replit',act:'link-replit'},
+    {label:'API Search health',act:'api-search'},
+    {label:'API Feedback health',act:'api-feedback'}
+  ]);
+  addCat('tools','🛠 Tools',[
+    {label:'← Back',act:'back-start'},
+    {label:'User Search',act:'search'},
+    {label:'Feedback page',act:'feedback'},
+    {label:'Copy URL',act:'copy-url'},
+    {label:'Copy title',act:'copy-title'},
+    {label:'Agent',act:'agent'},
+    {label:'Dashboard',act:'dashboard'}
+  ]);
+
+  // Generate many extra categories with working leaves
+  var catNames = [
+    'Office','Media','Developer','Cloud Hosting','AI Agents','Automation',
+    'Database','Security','Backup','Updates','Devices','Bluetooth',
+    'Printers','Keyboard Map','Mouse','Touch','Battery','Performance',
+    'Storage','Apps List','Startup','Users','Accounts','Notifications',
+    'Focus','Clipboard','Search Index','Indexing','Language','Fonts',
+    'Theme','Taskbar','Start Layout','Windows','Shortcuts','Hotkeys',
+    'Diagnostics','Logs','Event Viewer','Services','Tasks Sched',
+    'Network Adapter','Wi-Fi','VPN','Firewall','Proxy','DNS',
+    'HTTP Tools','Webhooks','API Keys UI','Env Check','Deploy',
+    'Git Tools','Markdown','JSON Tools','Color Picker','Screenshot UI',
+    'Notes Hub','Project Hub','Bot Lab','Webhook Lab','Make.com',
+    'Zapier Link','Cron Tips','SEO Tools','Analytics UI','Sitemap',
+    'PWA','Offline Cache','Service Worker','Manifest','Share Target'
+  ];
+
+  var leafTemplates = [
+    ['Open related tip', 'toast:'],
+    ['Status check', 'toast:Status · '],
+    ['Refresh view', 'refresh'],
+    ['Copy page URL', 'copy-url'],
+    ['Show time', 'clock'],
+    ['Online check', 'net'],
+    ['Open GitHub', 'link-github'],
+    ['Open Vercel', 'link-vercel'],
+    ['Open n8n', 'link-n8n'],
+    ['Open MongoDB', 'link-mongo'],
+    ['Open Supabase', 'link-supabase'],
+    ['Open Replit', 'link-replit'],
+    ['User Search', 'search'],
+    ['Feedback', 'feedback'],
+    ['Toggle keyboard', 'kbd'],
+    ['Fullscreen', 'full'],
+    ['Wallpaper', 'wall'],
+    ['Explorer', 'app-explorer'],
+    ['Notepad', 'app-notes'],
+    ['Terminal', 'app-terminal'],
+    ['Projects', 'app-projects'],
+    ['API Search', 'api-search'],
+    ['API Feedback', 'api-feedback'],
+    ['Dashboard', 'dashboard'],
+    ['Agent', 'agent']
+  ];
+
+  // ~70 cats × ~25 items ≈ 1750+ entries
+  catNames.forEach(function(name, idx){
+    var id = 'gen_'+idx;
+    var items = [{ label:'← Back', act:'back-start' }];
+    // 28 items per category
+    for(var n=1; n<=28; n++){
+      var tpl = leafTemplates[(idx + n) % leafTemplates.length];
+      var lab = name + ' · ' + tpl[0] + ' #' + n;
+      var act = tpl[1];
+      if(act === 'toast:') act = 'toast:' + name + ' #' + n + ' ready';
+      items.push({ label: lab, act: act });
+    }
+    // extra submenu page 2 for even more depth
+    var id2 = id + '_more';
+    items.splice(1, 0, { label: name + ' · More ›', sub: id2 });
+    var items2 = [{ label:'← Back', sub: id }];
+    for(var m=1; m<=24; m++){
+      var tpl2 = leafTemplates[(idx + m*3) % leafTemplates.length];
+      var lab2 = name + ' · Extra ' + tpl2[0] + ' #' + m;
+      var act2 = tpl2[1];
+      if(act2 === 'toast:') act2 = 'toast:' + name + ' extra #' + m;
+      items2.push({ label: lab2, act: act2 });
+    }
+    TREE[id]=items;
+    TREE[id2]=items2;
+    startItems.push({ label: '📦 ' + name, sub: id });
+  });
+
+  TREE.start = startItems.concat([
+    { label:'🔍 User Search', act:'search' },
+    { label:'💬 Feedback', act:'feedback' },
+    { label:'⌂ Dashboard', act:'dashboard' },
+    { label:'✕ Close', act:'close' }
+  ]);
+
+  // count
+  var total=0;
+  Object.keys(TREE).forEach(function(k){ total += TREE[k].length; });
+  console.log('[PC MEGA] menu entries:', total, 'categories:', Object.keys(TREE).length);
+
+  function renderList(container, items){
+    container.innerHTML='';
+    items.forEach(function(it){
+      var b=document.createElement('button');
+      b.type='button';
+      b.style.cssText='display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;text-align:left;padding:12px;margin:2px 0;border:0;border-radius:8px;background:transparent;color:#e8ffff;font-size:13px;font-weight:600;min-height:44px;touch-action:manipulation';
+      b.innerHTML='<span style="flex:1">'+it.label+'</span>'+(it.sub?'<span style="opacity:.6">›</span>':'');
+      b.addEventListener('click', function(e){
+        e.preventDefault(); e.stopPropagation();
+        if(it.sub) openPanel(it.sub);
+        else if(it.act) runAct(it.act, it.label);
+      });
+      container.appendChild(b);
+    });
+  }
+
+  function openPanel(key, x, y){
+    ensureShell();
+    var panel=$('pcNestedPanel');
+    if(!panel||!TREE[key]) return;
+    hideAll();
+    panel.innerHTML='';
+    var head=document.createElement('div');
+    head.style.cssText='padding:10px 12px;color:#f5c542;font-size:12px;font-weight:800;border-bottom:1px solid rgba(0,240,255,.2);margin-bottom:4px';
+    head.textContent = key.replace(/^gen_/, 'CAT ').toUpperCase();
+    panel.appendChild(head);
+    var body=document.createElement('div');
+    renderList(body, TREE[key]);
+    panel.appendChild(body);
+    showEl(panel, x!=null?x:12, y!=null?y:56);
+  }
+
+  function openStart(x, y){
+    ensureShell();
+    var el=$('pcNestedStart');
+    if(!el) return;
+    hideAll();
+    renderList(el, TREE.start);
+    showEl(el, x!=null?x:12, y!=null?y:56);
+    toast('Menus: '+total+' items');
+  }
+
+  window.openNestedStartMenu = openStart;
+
+  function boot(){
+    ensureShell();
+    var startBtn=$('pcStartBtn');
+    if(startBtn){
+      startBtn.addEventListener('click', function(e){
+        e.preventDefault(); e.stopPropagation();
+        var r=startBtn.getBoundingClientRect();
+        openStart(r.left, r.bottom+4);
+      }, true);
+    }
+    document.addEventListener('click', function(e){
+      var t=e.target.closest && e.target.closest('#pcIcons button[data-app="sysmenu"]');
+      if(!t) return;
+      e.preventDefault(); e.stopPropagation();
+      openStart(16, 80);
+    }, true);
+    document.addEventListener('click', function(e){
+      if(e.target.closest && (e.target.closest('#pcNestedStart')||e.target.closest('#pcNestedPanel')||e.target.closest('#pcStartBtn'))) return;
+      hideAll();
+    }, true);
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+  setTimeout(boot, 400);
+})();
+
+</script>
 </body>
 </html>

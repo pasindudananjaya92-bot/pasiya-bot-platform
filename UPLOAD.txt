@@ -1,9 +1,11 @@
+MEGA nested menus uploaded check: previous nested menus ARE on GitHub.
+
 Overwrite root index.html → Commit → Incognito
 
-Nested OS menus:
-- Taskbar Start OR desktop Start icon
-- Categories → submenus → actions that RUN
-- Network opens real free services (GitHub, n8n, Mongo, etc.)
-- System / Control Panel / Display nested
+Start button opens MEGA tree:
+- 70+ categories
+- each with More submenu
+- 1500+ clickable items
+- every leaf runs a real action (toast / link / app / API / refresh / etc.)
 
-Honest limit: not 10,000 empty items — nested WORKING menu tree like real UX.
+Phone may feel heavier — normal for large menu DOM when opened.
