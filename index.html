@@ -1707,6 +1707,40 @@ aside#sideNav.side-nav.user-closed {
   touch-action:manipulation;
 }
 #setStatus{margin-top:10px;min-height:1.2em}
+
+/* HOME_ATLAS_SEARCH */
+#homeAtlasSearch{
+  margin:18px 12px 22px;
+  padding:16px 16px 14px;
+  border-radius:16px;
+  border:1px solid rgba(0,240,255,.35);
+  background:linear-gradient(145deg,rgba(0,20,40,.9),rgba(5,10,25,.95));
+  box-shadow:0 0 24px rgba(0,240,255,.12);
+  max-width:920px;
+}
+#homeAtlasSearch h3{
+  margin:0 0 6px;
+  color:#00f0ff;
+  font-family:Orbitron,sans-serif;
+  font-size:1rem;
+  letter-spacing:.04em;
+}
+#homeAtlasSearch .has-hint{opacity:.75;font-size:12px;margin-bottom:10px}
+#homeAtlasSearch .has-row{display:flex;gap:8px;flex-wrap:wrap}
+#homeAtlasSearch input{
+  flex:1;min-width:160px;padding:12px 14px;border-radius:12px;
+  border:1px solid rgba(0,229,255,.35);background:rgba(0,8,18,.85);color:#e8ffff;font-size:15px;
+}
+#homeAtlasSearch button{
+  padding:12px 16px;border-radius:12px;border:0;background:#00e5ff;color:#001018;font-weight:800;cursor:pointer;
+}
+#homeAtlasStatus{min-height:1.2em;font-size:13px;color:#9ef;margin-top:8px}
+#homeAtlasOut .has-card{
+  margin-top:8px;padding:10px 12px;border-radius:10px;
+  border:1px solid rgba(0,229,255,.25);background:rgba(0,15,30,.7);font-size:13px;
+}
+#homeAtlasOut .has-card b{color:#00e5ff}
+
 </style>
 </head>
 <body>
@@ -1771,6 +1805,7 @@ aside#sideNav.side-nav.user-closed {
   <button type="button" class="nav-close" onclick="toggleSide(false)" aria-label="Close menu">&lt;</button>
   <div class="nav-title">PASIYA OS // MENU</div>
   <a class="nav-item" href="#home" onclick="return goHomeDash()"><span class="ic">⌂</span> Home Dashboard</a>
+  <a class="nav-item" href="#homeAtlasSearch" onclick="try{document.getElementById('homeAtlasSearch').scrollIntoView({behavior:'smooth'})}catch(e){} return false;"><span class="ic">🔍</span> User Search</a>
   <a class="nav-item" href="#page-desktop" data-page="desktop" onclick="return goPage('desktop',this)"><span class="ic">💻</span> Virtual PC</a>
   <hr class="gold-line">
   <input class="side-search" id="sideSearch" placeholder="Filter menu..." oninput="filterMenu(this.value)">
@@ -7652,6 +7687,53 @@ document.addEventListener('DOMContentLoaded', function(){
   else boot();
   setTimeout(boot, 500);
   setTimeout(boot, 1500);
+})();
+
+</script>
+<script>
+
+/* HOME_ATLAS_SEARCH_JS */
+(function(){
+  var API = /github\.io/i.test(location.hostname)
+    ? 'https://pasiya-bot-platform.vercel.app'
+    : '';
+  function $(id){ return document.getElementById(id); }
+  function run(){
+    var q = (($('homeAtlasQ')||{}).value||'').trim();
+    var st = $('homeAtlasStatus');
+    var out = $('homeAtlasOut');
+    if(!st||!out) return;
+    if(!q){ st.textContent = 'Type something to search'; out.innerHTML=''; return; }
+    st.textContent = 'Searching…';
+    out.innerHTML = '';
+    fetch(API + '/api/search-users?q=' + encodeURIComponent(q) + '&limit=15')
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(!d.success){ st.textContent = 'Error: ' + (d.error||'failed'); return; }
+        st.textContent = d.count + ' result(s)' + (d.mode ? ' · ' + d.mode : '');
+        if(!d.results || !d.results.length){
+          out.innerHTML = '<div class="has-card">No matches yet. Add users in Atlas → pasiya_db.users</div>';
+          return;
+        }
+        out.innerHTML = d.results.map(function(r){
+          var title = r.name || r.username || r.email || r._id;
+          var bits = [r.username, r.email, r.bio].filter(Boolean).join(' · ');
+          return '<div class="has-card"><b>' + String(title).replace(/</g,'&lt;') + '</b><br><small>' +
+            String(bits).replace(/</g,'&lt;') + '</small></div>';
+        }).join('');
+      })
+      .catch(function(e){ st.textContent = 'Network: ' + (e.message||e); });
+  }
+  function bind(){
+    var b = $('homeAtlasBtn');
+    var i = $('homeAtlasQ');
+    if(b) b.onclick = run;
+    if(i){
+      i.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); run(); } });
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', bind);
+  else bind();
 })();
 
 </script>
