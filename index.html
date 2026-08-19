@@ -2018,6 +2018,168 @@ body.kbd-open{
   touch-action:manipulation !important;
 }
 
+
+/* PC_V3_DESKTOP_OS — clear grid, windows stack, no overlap chaos */
+#page-desktop.page-view.active{
+  display:flex !important;
+  flex-direction:column !important;
+}
+#page-desktop .pc-shell{
+  display:flex !important;
+  flex-direction:column !important;
+  flex:1 !important;
+  min-height:0 !important;
+  overflow:hidden !important;
+  position:relative !important;
+}
+#page-desktop .pc-work{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  overflow:auto !important;
+  position:relative !important;
+  z-index:1 !important;
+  padding:8px 8px 12px !important;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(0,80,120,.25), transparent 50%),
+    linear-gradient(180deg, #061018 0%, #0a1520 100%) !important;
+}
+/* Desktop icon grid — no stacking on top of each other */
+#pcIcons.pc-icons,
+#page-desktop .pc-icons{
+  display:grid !important;
+  grid-template-columns:repeat(auto-fill, minmax(76px, 1fr)) !important;
+  gap:10px 8px !important;
+  align-content:start !important;
+  position:relative !important;
+  z-index:2 !important;
+  width:100% !important;
+  max-width:100% !important;
+  padding:8px 4px 20px !important;
+  margin:0 !important;
+}
+#page-desktop .pc-icons button,
+#pcIcons button{
+  position:relative !important;
+  left:auto !important;
+  top:auto !important;
+  right:auto !important;
+  bottom:auto !important;
+  transform:none !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:6px !important;
+  min-height:78px !important;
+  padding:10px 4px !important;
+  margin:0 !important;
+  border:1px solid transparent !important;
+  border-radius:12px !important;
+  background:rgba(0,20,40,.35) !important;
+  color:#d8f6ff !important;
+  font-size:11px !important;
+  line-height:1.2 !important;
+  z-index:2 !important;
+  touch-action:manipulation !important;
+  -webkit-tap-highlight-color:transparent !important;
+}
+#page-desktop .pc-icons button .ic{
+  font-size:22px !important;
+  line-height:1 !important;
+}
+#page-desktop .pc-icons button:active,
+#page-desktop .pc-icons button:focus{
+  border-color:rgba(0,240,255,.5) !important;
+  background:rgba(0,240,255,.15) !important;
+  z-index:3 !important;
+}
+/* Windows always above icons */
+#page-desktop .vwin,
+#page-desktop [data-win],
+#page-desktop .pc-win{
+  position:absolute !important;
+  z-index:100 !important;
+  max-width:96% !important;
+  max-height:85% !important;
+  overflow:auto !important;
+  border:1px solid rgba(0,240,255,.4) !important;
+  border-radius:12px !important;
+  background:#0b1522 !important;
+  box-shadow:0 12px 40px rgba(0,0,0,.5) !important;
+  touch-action:manipulation !important;
+}
+#page-desktop .vwin.active,
+#page-desktop .vwin:focus-within{
+  z-index:200 !important;
+  border-color:#00e5ff !important;
+}
+#page-desktop .vwin-x,
+#page-desktop .win-close,
+#page-desktop [data-close]{
+  min-width:36px !important;
+  min-height:36px !important;
+  font-size:18px !important;
+  touch-action:manipulation !important;
+  z-index:5 !important;
+  position:relative !important;
+}
+/* Start menu above desktop */
+#pcStartMenu, .pc-start-menu{
+  z-index:300 !important;
+  max-height:70vh !important;
+  overflow:auto !important;
+}
+/* Keyboard dock always bottom of shell */
+#page-desktop .pc-kbd-dock{
+  flex:0 0 auto !important;
+  order:999 !important;
+  z-index:80 !important;
+  position:relative !important;
+  max-height:min(45vh, 360px) !important;
+  overflow-y:auto !important;
+}
+#page-desktop.kbd-on .pc-work{
+  max-height:none !important;
+}
+#page-desktop.kbd-on,
+#page-desktop.pc-full{
+  height:100dvh !important;
+  max-height:100dvh !important;
+  overflow:hidden !important;
+}
+#page-desktop.kbd-on .page-hero,
+#page-desktop.pc-full .page-hero{ display:none !important; }
+/* Taskbar clear */
+#page-desktop .pc-taskbar{
+  flex:0 0 auto !important;
+  z-index:60 !important;
+  position:relative !important;
+  display:flex !important;
+  align-items:center !important;
+  gap:8px !important;
+  padding:6px 8px !important;
+  background:rgba(0,15,30,.95) !important;
+  border-top:1px solid rgba(0,240,255,.2) !important;
+  border-bottom:1px solid rgba(0,240,255,.15) !important;
+}
+#page-desktop .pc-topbar{
+  flex:0 0 auto !important;
+  z-index:60 !important;
+  position:relative !important;
+}
+/* Context menus on top of everything in PC */
+#pcCtx, #pcDeskCtx{
+  z-index:2147483000 !important;
+}
+/* Help / long text blocks shouldn't cover icons */
+#page-desktop .pc-work > .pc-help,
+#page-desktop .pc-work > div[style*="font-size:10px"]{
+  position:relative !important;
+  z-index:1 !important;
+  clear:both !important;
+  margin-top:12px !important;
+}
+
 </style>
 </head>
 <body>
@@ -8420,6 +8582,158 @@ document.addEventListener('DOMContentLoaded', function(){
   else boot();
   setTimeout(boot, 400);
   setTimeout(boot, 1200);
+})();
+
+</script>
+<script>
+
+/* PC_V3_DESKTOP_OS_JS */
+(function(){
+  function $(id){ return document.getElementById(id); }
+
+  function normalizeIcons(){
+    var box = $('pcIcons');
+    if(!box) return;
+    box.classList.add('pc-icons');
+    box.style.display = 'grid';
+    // remove absolute positioning from icon buttons
+    Array.prototype.forEach.call(box.querySelectorAll('button'), function(btn){
+      btn.style.position = 'relative';
+      btn.style.left = '';
+      btn.style.top = '';
+      btn.style.right = '';
+      btn.style.bottom = '';
+      btn.style.transform = '';
+      btn.style.zIndex = '2';
+    });
+  }
+
+  var zTop = 200;
+  function focusWin(win){
+    if(!win) return;
+    zTop += 1;
+    win.style.zIndex = String(zTop);
+    win.classList.add('active');
+    document.querySelectorAll('#page-desktop .vwin').forEach(function(w){
+      if(w !== win) w.classList.remove('active');
+    });
+  }
+
+  function bindWindows(){
+    var work = $('pcWork');
+    if(!work) return;
+    // focus on pointer down
+    work.addEventListener('pointerdown', function(e){
+      var win = e.target.closest && e.target.closest('.vwin, [data-win], .pc-win');
+      if(win) focusWin(win);
+    }, true);
+    // close buttons
+    work.addEventListener('click', function(e){
+      var x = e.target.closest && e.target.closest('.vwin-x, .win-close, [data-close]');
+      if(!x) return;
+      var win = x.closest('.vwin, [data-win], .pc-win');
+      if(win){
+        e.preventDefault();
+        e.stopPropagation();
+        win.style.display = 'none';
+        win.classList.remove('active');
+      }
+    }, true);
+  }
+
+  function ensureServiceIcons(){
+    var box = $('pcIcons');
+    if(!box || box.dataset.v3svc) return;
+    box.dataset.v3svc = '1';
+    var services = [
+      { id:'svc-search', label:'User Search', ic:'🔍', href:null, act:'search' },
+      { id:'svc-feedback', label:'Feedback', ic:'💬', href:'feedback.html' },
+      { id:'svc-replit', label:'Replit', ic:'💻', href:'https://replit.com' },
+      { id:'svc-github', label:'GitHub', ic:'🐙', href:'https://github.com/pasindudananjaya92-bot/pasiya-bot-platform' },
+      { id:'svc-n8n', label:'n8n', ic:'🔗', href:'https://pasiyamax.app.n8n.cloud' },
+      { id:'svc-vercel', label:'Vercel', ic:'▲', href:'https://vercel.com' },
+      { id:'svc-mongo', label:'MongoDB', ic:'🍃', href:'https://cloud.mongodb.com' },
+      { id:'svc-supabase', label:'Supabase', ic:'⚡', href:'https://supabase.com/dashboard' }
+    ];
+    services.forEach(function(s){
+      if(box.querySelector('[data-v3="'+s.id+'"]')) return;
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.setAttribute('data-v3', s.id);
+      b.innerHTML = '<span class="ic">'+s.ic+'</span>'+s.label;
+      b.addEventListener('click', function(e){
+        e.preventDefault();
+        if(s.act === 'search'){
+          if(typeof openUserSearch === 'function') openUserSearch();
+          else location.href = 'search.html';
+          return;
+        }
+        if(s.href){
+          // open external in new tab (OAuth / real tools need real browser)
+          window.open(s.href, '_blank', 'noopener,noreferrer');
+        }
+      });
+      box.appendChild(b);
+    });
+    normalizeIcons();
+  }
+
+  function tidyHelpBlocks(){
+    var work = $('pcWork');
+    if(!work) return;
+    // move long help text after icons so it doesn't cover
+    var icons = $('pcIcons');
+    if(!icons) return;
+    Array.prototype.slice.call(work.children).forEach(function(ch){
+      if(ch === icons) return;
+      if(ch.classList && ch.classList.contains('pc-kbd-dock')) return;
+      if(ch.id === 'pcInBrowser') return;
+      // leave windows
+      if(ch.classList && (ch.classList.contains('vwin') || ch.hasAttribute('data-win'))) return;
+      // push static help-like divs after icons visually via order
+      if(ch.tagName === 'DIV' && !ch.querySelector('.vwin')){
+        ch.style.position = 'relative';
+        ch.style.zIndex = '1';
+        ch.style.clear = 'both';
+      }
+    });
+  }
+
+  function layoutShell(){
+    var desk = $('page-desktop');
+    var shell = document.querySelector('#page-desktop .pc-shell');
+    var dock = $('pcKbdDock');
+    if(shell && dock && dock.parentElement === shell){
+      shell.appendChild(dock);
+    }
+    if(desk && (desk.classList.contains('kbd-on') || desk.classList.contains('pc-full'))){
+      desk.style.height = '100dvh';
+      desk.style.overflow = 'hidden';
+    }
+    normalizeIcons();
+  }
+
+  function boot(){
+    normalizeIcons();
+    ensureServiceIcons();
+    bindWindows();
+    tidyHelpBlocks();
+    layoutShell();
+  }
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+  setTimeout(boot, 300);
+  setTimeout(boot, 1000);
+  setTimeout(boot, 2000);
+
+  // re-normalize when apps open
+  document.addEventListener('click', function(e){
+    if(e.target.closest && e.target.closest('#pcIcons button, #btnKbdToggle, #btnPcFull')){
+      setTimeout(layoutShell, 80);
+      setTimeout(normalizeIcons, 100);
+    }
+  }, true);
 })();
 
 </script>

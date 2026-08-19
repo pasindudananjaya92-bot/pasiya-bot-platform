@@ -1,14 +1,13 @@
-Overwrite GitHub root index.html → Commit → hard refresh / Incognito
+PASIYA PC V3
 
-Fixes:
-1) Keyboard docks at BOTTOM (desktop work area above)
-2) Fullscreen layout uses flex column + 100dvh
-3) R MENU opens context menu reliably (Refresh, Paste, etc.)
-4) L CLICK hits buttons/× under cursor
-5) Refresh actually refreshes desktop
-6) Copy/Paste wired
+Overwrite root index.html → Commit → Incognito refresh
 
-Test:
-- Virtual PC → FULL → KEYBOARD on → keys at bottom
-- Move cursor → R MENU → Refresh / options
-- Open a window → L CLICK on × to close
+Improvements:
+- Desktop icons in clean GRID (no overlap / wrong stack)
+- Windows always above icons; active window on top
+- Close (×) easier to hit
+- Keyboard dock stays at bottom in fullscreen
+- Extra service icons: Search, Feedback, Replit, GitHub, n8n, Vercel, MongoDB, Supabase
+  (external tools open in new tab — required for real login)
+
+Note: Browser Virtual PC ≠ real OS kernel. This is the strongest practical phone workstation layer on static hosting + free cloud links.
