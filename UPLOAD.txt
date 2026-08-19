@@ -1,11 +1,19 @@
-MEGA nested menus uploaded check: previous nested menus ARE on GitHub.
+FEEDBACK → MongoDB
 
-Overwrite root index.html → Commit → Incognito
+FILES:
+1) api/feedback.js     ← upload into GitHub folder "api/"
+2) feedback.html       ← repo ROOT
+3) package.json        ← root (mongodb dep — ok if already exists)
+4) FEEDBACK_SNIPPET.html ← optional paste into index.html
 
-Start button opens MEGA tree:
-- 70+ categories
-- each with More submenu
-- 1500+ clickable items
-- every leaf runs a real action (toast / link / app / API / refresh / etc.)
+ATLAS:
+- Database: pasiya_db
+- Collection: feedback  (create empty collection if missing)
+- Same MONGODB_URI on Vercel (already working for search)
 
-Phone may feel heavier — normal for large menu DOM when opened.
+AFTER COMMIT:
+Test GET:  https://pasiya-bot-platform.vercel.app/api/feedback
+Test page: https://pasiya-bot-platform.vercel.app/feedback.html
+           https://pasindudananjaya92-bot.github.io/pasiya-bot-platform/feedback.html
+
+Then Atlas → pasiya_db → feedback → see new documents.
