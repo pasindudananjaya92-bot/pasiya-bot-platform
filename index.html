@@ -2220,6 +2220,75 @@ body.kbd-open{
 }
 #pcNestedToast.show{ display:block; }
 
+
+/* PC_KBD_FULLVIEW_FIX */
+#page-desktop.kbd-on,
+#page-desktop.pc-full.kbd-on{
+  display:flex !important;
+  flex-direction:column !important;
+  height:100dvh !important;
+  max-height:100dvh !important;
+  overflow:hidden !important;
+}
+#page-desktop.kbd-on .pc-shell{
+  display:flex !important;
+  flex-direction:column !important;
+  flex:1 !important;
+  min-height:0 !important;
+  overflow:hidden !important;
+}
+#page-desktop.kbd-on .pc-work{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  max-height:none !important;
+  overflow:auto !important;
+}
+#page-desktop.kbd-on .pc-kbd-dock{
+  display:flex !important;
+  flex-direction:column !important;
+  flex:0 0 auto !important;
+  max-height:min(52dvh, 420px) !important;
+  overflow-x:hidden !important;
+  overflow-y:auto !important;
+  -webkit-overflow-scrolling:touch !important;
+  padding:4px 2px calc(6px + env(safe-area-inset-bottom, 0px)) !important;
+  z-index:90 !important;
+  order:999 !important;
+}
+/* compact keys so more rows fit without scrolling */
+#page-desktop.kbd-on .pc-kbd-dock button,
+#page-desktop.kbd-on .pc-kbd button,
+#page-desktop .pc-kbd-dock button{
+  min-height:42px !important;
+  height:auto !important;
+  padding:6px 4px !important;
+  font-size:13px !important;
+  margin:2px !important;
+  touch-action:manipulation !important;
+}
+#page-desktop.kbd-on .pc-kbd-dock .pc-kbd,
+#page-desktop.kbd-on .pc-kbd{
+  display:flex !important;
+  flex-direction:column !important;
+  gap:3px !important;
+  width:100% !important;
+}
+#page-desktop.kbd-on .pc-kbd-dock .row,
+#page-desktop.kbd-on .pc-kbd .row,
+#page-desktop.kbd-on .pc-kbd > div{
+  display:flex !important;
+  flex-wrap:nowrap !important;
+  justify-content:center !important;
+  gap:2px !important;
+  width:100% !important;
+}
+/* trackpad strip shorter so keyboard keys get space */
+#page-desktop.kbd-on #pcTrack,
+#page-desktop.kbd-on .pc-track{
+  max-height:56px !important;
+  min-height:48px !important;
+}
+
 </style>
 </head>
 <body>
@@ -9395,6 +9464,39 @@ document.addEventListener('DOMContentLoaded', function(){
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
   setTimeout(boot, 400);
+})();
+
+</script>
+<script>
+
+/* PC_KBD_FULLVIEW_JS */
+(function(){
+  function layout(){
+    var desk=document.getElementById('page-desktop');
+    var dock=document.getElementById('pcKbdDock');
+    var shell=document.querySelector('#page-desktop .pc-shell');
+    if(!desk||!dock) return;
+    if(desk.classList.contains('kbd-on')){
+      if(shell && dock.parentElement!==shell) shell.appendChild(dock);
+      // try fit: if keyboard taller than half screen, slightly shrink via class
+      var h=window.innerHeight||600;
+      if(dock.scrollHeight > h*0.55){
+        dock.style.maxHeight = Math.floor(h*0.52)+'px';
+      } else {
+        dock.style.maxHeight = '';
+      }
+    }
+  }
+  document.addEventListener('click', function(e){
+    if(e.target.closest && e.target.closest('#btnKbdToggle, #btnPcFull')){
+      setTimeout(layout, 50);
+      setTimeout(layout, 200);
+    }
+  }, true);
+  window.addEventListener('resize', layout);
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', layout);
+  else layout();
+  setTimeout(layout, 500);
 })();
 
 </script>
