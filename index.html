@@ -2289,6 +2289,64 @@ body.kbd-open{
   min-height:48px !important;
 }
 
+
+/* PC_OS_V4_UX */
+#page-desktop.kbd-on .pc-kbd-dock{
+  max-height:min(58dvh, 460px) !important;
+  padding-bottom:calc(8px + env(safe-area-inset-bottom,0px)) !important;
+}
+#page-desktop.kbd-on .pc-kbd-dock button,
+#page-desktop .pc-kbd-dock button{
+  min-height:48px !important;
+  padding:8px 5px !important;
+  font-size:14px !important;
+  margin:2px !important;
+}
+#page-desktop.kbd-on .pc-work{ flex:1 1 auto !important; min-height:0 !important; overflow:auto !important; }
+#page-desktop .pc-topbar, #page-desktop .pc-taskbar{
+  position:relative !important;
+  z-index:120 !important;
+  pointer-events:auto !important;
+}
+#page-desktop .vwin, #page-desktop [data-win], #page-desktop .pc-win{
+  position:absolute !important;
+  z-index:200 !important;
+  pointer-events:auto !important;
+  min-width:200px !important;
+  background:#0b1522 !important;
+  border:1px solid rgba(0,229,255,.45) !important;
+  border-radius:12px !important;
+  box-shadow:0 12px 40px rgba(0,0,0,.55) !important;
+}
+#page-desktop .vwin.active{ z-index:260 !important; border-color:#00e5ff !important; }
+#page-desktop .vwin-titlebar, #page-desktop .win-bar{
+  display:flex !important; align-items:center !important; gap:6px !important;
+  padding:6px 8px !important; background:rgba(0,30,50,.9) !important;
+  border-bottom:1px solid rgba(0,229,255,.25) !important;
+  touch-action:manipulation !important;
+}
+#page-desktop .vwin-x, #page-desktop .win-close, #page-desktop [data-close],
+#page-desktop .vwin-min, #page-desktop .vwin-max{
+  min-width:36px !important; min-height:36px !important;
+  border-radius:8px !important; border:1px solid rgba(0,229,255,.3) !important;
+  background:#071018 !important; color:#e8ffff !important;
+  font-size:16px !important; pointer-events:auto !important; z-index:5 !important;
+}
+#pcCursor, .pc-cursor{
+  z-index:2147482000 !important;
+  pointer-events:none !important;
+}
+#pcCtx, #pcDeskCtx, #pcNestedStart, #pcNestedPanel{
+  z-index:2147483000 !important;
+  pointer-events:auto !important;
+}
+#pcTrack, .pc-track{
+  z-index:100 !important;
+  touch-action:none !important;
+  min-height:64px !important;
+}
+#page-desktop.kbd-on #pcTrack{ min-height:58px !important; max-height:70px !important; }
+
 </style>
 </head>
 <body>
@@ -9497,6 +9555,258 @@ document.addEventListener('DOMContentLoaded', function(){
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', layout);
   else layout();
   setTimeout(layout, 500);
+})();
+
+</script>
+<script>
+
+/* PC_OS_V4_UX_JS */
+(function(){
+  function $(id){ return document.getElementById(id); }
+  function q(s, r){ return (r||document).querySelector(s); }
+  function qa(s, r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
+
+  var zTop = 260;
+  function focusWin(win){
+    if(!win) return;
+    zTop += 1;
+    win.style.zIndex = String(zTop);
+    win.classList.add('active');
+    qa('#page-desktop .vwin, #page-desktop .pc-win').forEach(function(w){
+      if(w!==win) w.classList.remove('active');
+    });
+  }
+
+  function ensureTitlebar(win){
+    if(!win || win.dataset.v4bar) return;
+    win.dataset.v4bar = '1';
+    if(q('.vwin-titlebar, .win-bar', win)) return;
+    var bar = document.createElement('div');
+    bar.className = 'vwin-titlebar';
+    bar.innerHTML = '<span style="flex:1;font-size:12px;color:#9ef">Window</span>'+
+      '<button type="button" class="vwin-min" title="Minimize">_</button>'+
+      '<button type="button" class="vwin-max" title="Maximize">□</button>'+
+      '<button type="button" class="vwin-x" title="Close">×</button>';
+    win.insertBefore(bar, win.firstChild);
+  }
+
+  function bindWins(){
+    var root = $('page-desktop') || document;
+    root.addEventListener('pointerdown', function(e){
+      var win = e.target.closest && e.target.closest('.vwin, [data-win], .pc-win');
+      if(win){ ensureTitlebar(win); focusWin(win); }
+    }, true);
+    root.addEventListener('click', function(e){
+      var t = e.target;
+      if(t.closest && t.closest('.vwin-x, .win-close, [data-close]')){
+        var win = t.closest('.vwin, [data-win], .pc-win');
+        if(win){ e.preventDefault(); e.stopPropagation(); win.style.display='none'; win.classList.remove('active'); }
+        return;
+      }
+      if(t.closest && t.closest('.vwin-min')){
+        var w = t.closest('.vwin, [data-win], .pc-win');
+        if(w){ e.preventDefault(); w.style.display='none'; toast('Minimized — open again from icon'); }
+        return;
+      }
+      if(t.closest && t.closest('.vwin-max')){
+        var w2 = t.closest('.vwin, [data-win], .pc-win');
+        if(w2){
+          e.preventDefault();
+          if(w2.dataset.max==='1'){
+            w2.style.left=w2.dataset.l||'8%'; w2.style.top=w2.dataset.t||'8%';
+            w2.style.width=w2.dataset.w||'80%'; w2.style.height=w2.dataset.h||'70%';
+            w2.dataset.max='0';
+          } else {
+            w2.dataset.l=w2.style.left; w2.dataset.t=w2.style.top; w2.dataset.w=w2.style.width; w2.dataset.h=w2.style.height;
+            w2.style.left='2%'; w2.style.top='2%'; w2.style.width='96%'; w2.style.height='85%';
+            w2.dataset.max='1';
+          }
+          focusWin(w2);
+        }
+      }
+    }, true);
+    qa('#page-desktop .vwin, #page-desktop .pc-win').forEach(ensureTitlebar);
+  }
+
+  function toast(msg){
+    var t=$('pcNestedToast');
+    if(!t){ t=document.createElement('div'); t.id='pcNestedToast';
+      t.style.cssText='position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:2147483646;padding:10px 14px;border-radius:10px;background:#062018;border:1px solid #00e5ff;color:#cff;font-size:13px;display:none;max-width:90vw';
+      document.body.appendChild(t);
+    }
+    t.textContent=msg; t.style.display='block';
+    clearTimeout(toast._tm); toast._tm=setTimeout(function(){ t.style.display='none'; }, 2000);
+  }
+
+  function hideCtx(){
+    ['pcCtx','pcDeskCtx'].forEach(function(id){
+      var el=$(id); if(el){ el.style.display='none'; el.classList.remove('open','show'); }
+    });
+    var m=$('pcV4Ctx'); if(m) m.style.display='none';
+  }
+
+  function ensureCtx(){
+    var m=$('pcV4Ctx');
+    if(m) return m;
+    m=document.createElement('div');
+    m.id='pcV4Ctx';
+    m.style.cssText='display:none;position:fixed;z-index:2147483640;min-width:180px;background:#0a1525;border:1px solid rgba(0,229,255,.5);border-radius:12px;box-shadow:0 12px 36px rgba(0,0,0,.5);padding:6px;';
+    var items=[
+      ['Refresh','refresh'],['Copy','copy'],['Paste','paste'],['Select all','select'],['Close menus','close']
+    ];
+    items.forEach(function(it){
+      var b=document.createElement('button');
+      b.type='button';
+      b.textContent=it[0];
+      b.style.cssText='display:block;width:100%;text-align:left;padding:12px 14px;margin:2px 0;border:0;border-radius:8px;background:transparent;color:#e8ffff;font-size:14px;font-weight:700;min-height:44px';
+      b.addEventListener('click', function(e){
+        e.preventDefault(); e.stopPropagation();
+        hideCtx();
+        var a=it[1];
+        if(a==='refresh'){ if(typeof renderDesktopIcons==='function') renderDesktopIcons(); location.reload(); }
+        else if(a==='copy'){
+          var t=window.getSelection&&String(window.getSelection());
+          if(!t) t=document.title;
+          try{ navigator.clipboard.writeText(t); }catch(err){}
+          toast('Copied');
+        }
+        else if(a==='paste'){
+          if(navigator.clipboard&&navigator.clipboard.readText){
+            navigator.clipboard.readText().then(function(tx){
+              var el=document.activeElement;
+              if(el && (el.tagName==='INPUT'||el.tagName==='TEXTAREA'||el.isContentEditable)){
+                var s=el.selectionStart||0, v=el.value||'';
+                if(typeof el.value==='string'){ el.value=v.slice(0,s)+tx+v.slice(el.selectionEnd||s); }
+                else document.execCommand('insertText', false, tx);
+              } else toast('Paste: '+tx.slice(0,40));
+            }).catch(function(){ toast('Paste not allowed'); });
+          } else toast('Paste unavailable');
+        }
+        else if(a==='select'){ try{ document.execCommand('selectAll'); }catch(err){} }
+      });
+      m.appendChild(b);
+    });
+    document.body.appendChild(m);
+    return m;
+  }
+
+  function showCtx(x,y){
+    var m=ensureCtx();
+    m.style.display='block';
+    var w=m.offsetWidth||180, h=m.offsetHeight||200;
+    m.style.left=Math.max(8, Math.min(x, window.innerWidth-w-8))+'px';
+    m.style.top=Math.max(8, Math.min(y, window.innerHeight-h-8))+'px';
+  }
+
+  /* Trackpad: map to full desktop shell including topbar */
+  function bindTrack(){
+    var track=$('pcTrack') || q('.pc-track');
+    var desk=$('page-desktop');
+    var cursor=$('pcCursor') || q('.pc-cursor');
+    if(!track || !desk) return;
+    if(track.dataset.v4) return;
+    track.dataset.v4='1';
+
+    var cx=0.5, cy=0.35;
+    function placeCursor(){
+      if(!cursor) return;
+      var shell = q('#page-desktop .pc-shell') || desk;
+      var r = shell.getBoundingClientRect();
+      var x = r.left + cx * r.width;
+      var y = r.top + cy * Math.max(r.height * 0.72, 120); // include top area
+      cursor.style.position='fixed';
+      cursor.style.left=x+'px';
+      cursor.style.top=y+'px';
+      cursor.style.zIndex='2147482000';
+      cursor.style.pointerEvents='none';
+      cursor.style.display='block';
+    }
+    function hitClick(double){
+      var shell = q('#page-desktop .pc-shell') || desk;
+      var r = shell.getBoundingClientRect();
+      var x = r.left + cx * r.width;
+      var y = r.top + cy * Math.max(r.height * 0.72, 120);
+      var el = document.elementFromPoint(x, y);
+      if(!el) return;
+      // if cursor over window, focus it
+      var win = el.closest && el.closest('.vwin, .pc-win, [data-win]');
+      if(win) focusWin(win);
+      var ev = new MouseEvent(double?'dblclick':'click', { bubbles:true, cancelable:true, clientX:x, clientY:y, view:window });
+      el.dispatchEvent(ev);
+    }
+    track.addEventListener('pointermove', function(e){
+      if(e.buttons===0 && e.pointerType==='mouse') return;
+      var r=track.getBoundingClientRect();
+      cx = Math.max(0, Math.min(1, (e.clientX-r.left)/Math.max(1,r.width)));
+      cy = Math.max(0, Math.min(1, (e.clientY-r.top)/Math.max(1,r.height)));
+      placeCursor();
+      e.preventDefault();
+    }, { passive:false });
+    track.addEventListener('pointerdown', function(e){
+      var r=track.getBoundingClientRect();
+      cx = Math.max(0, Math.min(1, (e.clientX-r.left)/Math.max(1,r.width)));
+      cy = Math.max(0, Math.min(1, (e.clientY-r.top)/Math.max(1,r.height)));
+      placeCursor();
+      // right half of trackpad = right click context
+      if(cx > 0.62){
+        var shell = q('#page-desktop .pc-shell') || desk;
+        var sr = shell.getBoundingClientRect();
+        showCtx(sr.left + cx*sr.width, sr.top + cy*Math.max(sr.height*0.72,120));
+        e.preventDefault(); e.stopPropagation();
+        return;
+      }
+      hitClick(false);
+      e.preventDefault();
+    }, { passive:false });
+    placeCursor();
+  }
+
+  /* Extra keyboard keys if missing */
+  function enrichKeyboard(){
+    var dock=$('pcKbdDock') || q('.pc-kbd-dock');
+    if(!dock || dock.dataset.v4keys) return;
+    dock.dataset.v4keys='1';
+    var row=document.createElement('div');
+    row.style.cssText='display:flex;flex-wrap:wrap;justify-content:center;gap:3px;margin-top:4px;';
+    var keys=['Esc','Tab','Ctrl','Alt','Win','Del','Home','End','PgUp','PgDn','↑','↓','←','→','F1','F2','F3','F4','F5'];
+    keys.forEach(function(k){
+      var b=document.createElement('button');
+      b.type='button';
+      b.textContent=k;
+      b.style.cssText='min-height:44px;padding:6px 8px;border-radius:8px;border:1px solid rgba(0,229,255,.3);background:#071018;color:#e8ffff;font-size:12px;font-weight:700';
+      b.addEventListener('click', function(e){
+        e.preventDefault();
+        var el=document.activeElement;
+        if(k==='Del' && el && typeof el.value==='string'){
+          var s=el.selectionStart||0, en=el.selectionEnd||s;
+          if(en>s) el.value=el.value.slice(0,s)+el.value.slice(en);
+          else el.value=el.value.slice(0,s)+el.value.slice(s+1);
+          return;
+        }
+        if((k==='Tab') && el && typeof el.value==='string'){
+          var s2=el.selectionStart||0; el.value=el.value.slice(0,s2)+'\t'+el.value.slice(el.selectionEnd||s2); return;
+        }
+        toast(k);
+      });
+      row.appendChild(b);
+    });
+    dock.appendChild(row);
+  }
+
+  function boot(){
+    bindWins();
+    bindTrack();
+    enrichKeyboard();
+    ensureCtx();
+    document.addEventListener('click', function(e){
+      if(e.target.closest && e.target.closest('#pcV4Ctx, #pcTrack, .pc-track')) return;
+      hideCtx();
+    }, true);
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+  setTimeout(boot, 400);
+  setTimeout(boot, 1200);
 })();
 
 </script>

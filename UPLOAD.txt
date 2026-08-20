@@ -1,2 +1,11 @@
 Overwrite root index.html → Commit → Incognito
-Keyboard: compact keys, dock max ~52vh, less scroll.
+
+PC OS V4:
+- Keyboard taller (~58vh) + extra Esc/Tab/Ctrl/F-keys row
+- Trackpad maps cursor across desktop including top bar
+- Trackpad RIGHT side = context menu (Refresh/Copy/Paste)
+- Windows get titlebar Min / Max / Close (×)
+- Windows stay until × ; z-index above icons
+- Cursor/context menus on top layer
+
+Google login: still need supabase.co callback (not .com) + live project.
