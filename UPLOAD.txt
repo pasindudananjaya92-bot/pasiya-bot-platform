@@ -1,8 +1,1 @@
-මේ ZIP = documentation + n8n import templates.
-GitHub index.html overwrite කරන්න ඕන නැහැ — Settings එකේ Production webhook paste කරන එක ප්‍රධානයි.
-
-n8n එකේ:
-1. Import workflow-pasiya-chat-echo.json
-2. Active ON
-3. Production webhook URL copy
-4. Website Settings → N8N Chat box → SAVE
+Overwrite root index.html → Commit → Incognito test PC trackpad + L/R

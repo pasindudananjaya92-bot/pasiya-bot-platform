@@ -1,0 +1,17 @@
+PASIYA BOT PLATFORM — STATUS CHECK
+
+REPO FILES: OK (index.html 455133, api/search-users.js, api/submit.js, search.html, feedback.html, .github templates)
+
+LIVE:
+- GitHub Pages 200
+- Vercel 200
+- PC_OS_V5 present on live index
+- Mongo search /api/search-users?q=pasindu → success count 1
+
+KNOWN REMAINING:
+- Multiple legacy cursor placers still in same index (V5.1 disables placeCursor)
+- api/feedback.js missing (feedback.html may use different endpoint)
+- api/submit returns 403 without token (expected if protected)
+- deploy.yml still enabled (static site — can disable if Actions fails)
+
+UPLOAD: overwrite index.html only for V5.1

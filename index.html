@@ -2374,6 +2374,11 @@ body.kbd-open{
   z-index:2147483640 !important;
 }
 
+
+/* PC_OS_V5_1 */
+#pcCursor{display:block!important;position:fixed!important;z-index:2147482000!important;pointer-events:none!important;width:18px!important;height:18px!important}
+#page-desktop .pc-work.cursor-on{cursor:none}
+
 </style>
 </head>
 <body>
@@ -9932,7 +9937,7 @@ document.addEventListener('DOMContentLoaded', function(){
     m.style.top=Math.max(6,Math.min(y,innerHeight-h-6))+'px';
   }
 
-  function doClick(dbl){
+  function doClick(dbl){ window.__v5DoClick=function(d){return doClick(d);};
     hideMenus();
     var p=cursorPoint();
     // temporarily hide cursor so elementFromPoint hits real UI
@@ -10004,6 +10009,103 @@ document.addEventListener('DOMContentLoaded', function(){
   setTimeout(boot, 300);
   setTimeout(boot, 1000);
   setTimeout(function(){ singleCursor(); place(); bindLR(); }, 2000);
+})();
+
+</script>
+<script>
+
+/* PC_OS_V5_1_JS */
+(function(){
+  // Disable competing cursor placers that use pcWork-relative coords (causes second ghost / jump)
+  try{
+    if(typeof window.placeCursor === 'function'){
+      window.__oldPlaceCursor = window.placeCursor;
+      window.placeCursor = function(){ /* disabled — V5 single fixed cursor */ };
+    }
+  }catch(e){}
+
+  function $(id){return document.getElementById(id)}
+  function q(s,r){return (r||document).querySelector(s)}
+  function qa(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))}
+
+  function killDupes(){
+    qa('#page-desktop .pc-cursor, #page-desktop [class*="cursor"]').forEach(function(el){
+      if(el.id==='pcCursor' || el.id==='pcCursorToggle') return;
+      el.style.display='none';
+      el.style.visibility='hidden';
+      el.style.opacity='0';
+      el.style.pointerEvents='none';
+    });
+    var c=$('pcCursor');
+    if(c){
+      c.style.display='block';
+      c.style.visibility='visible';
+      c.style.opacity='1';
+      c.style.pointerEvents='none';
+      c.style.position='fixed';
+      c.style.zIndex='2147482000';
+    }
+  }
+
+  // Keep V5 trackpad + L/R if present; re-bind lightly
+  function rebindLR(){
+    qa('button').forEach(function(b){
+      var t=(b.textContent||'').replace(/\s+/g,' ').trim().toUpperCase();
+      if(t.indexOf('L CLICK')>=0 && !b.dataset.v51l){
+        b.dataset.v51l='1';
+        b.addEventListener('click', function(e){
+          e.preventDefault(); e.stopPropagation();
+          if(typeof window.__v5DoClick==='function') window.__v5DoClick(false);
+        }, true);
+      }
+      if((t.indexOf('R MENU')>=0||t.indexOf('R CLICK')>=0) && !b.dataset.v51r){
+        b.dataset.v51r='1';
+        b.addEventListener('click', function(e){
+          e.preventDefault(); e.stopPropagation();
+          if(typeof window.__v5ShowCtx==='function') window.__v5ShowCtx();
+        }, true);
+      }
+    });
+  }
+
+  // Expose hooks from previous V5 if same page
+  // Rebuild minimal doClick if missing
+  if(typeof window.__v5DoClick!=='function'){
+    window.__v5DoClick = function(dbl){
+      var c=$('pcCursor');
+      var x=0,y=0;
+      if(c){
+        var r=c.getBoundingClientRect();
+        x=r.left+4; y=r.top+4;
+      }
+      if(c) c.style.visibility='hidden';
+      var el=document.elementFromPoint(x,y);
+      if(c) c.style.visibility='visible';
+      if(!el) return;
+      try{
+        el.dispatchEvent(new MouseEvent(dbl?'dblclick':'click',{bubbles:true,cancelable:true,clientX:x,clientY:y,view:window}));
+      }catch(err){ try{el.click()}catch(e2){} }
+    };
+  }
+  if(typeof window.__v5ShowCtx!=='function'){
+    window.__v5ShowCtx = function(){
+      var m=$('pcV5Ctx');
+      if(!m) return;
+      var c=$('pcCursor');
+      var x=40,y=80;
+      if(c){ var r=c.getBoundingClientRect(); x=r.left; y=r.top; }
+      m.style.display='block';
+      m.style.left=Math.min(x, innerWidth-200)+'px';
+      m.style.top=Math.min(y, innerHeight-220)+'px';
+    };
+  }
+
+  function boot(){ killDupes(); rebindLR(); }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+  setTimeout(boot, 400);
+  setTimeout(boot, 1200);
+  setInterval(killDupes, 3000);
 })();
 
 </script>
