@@ -1,11 +1,5 @@
-Overwrite root index.html → Commit → Incognito
-
-PC OS V4:
-- Keyboard taller (~58vh) + extra Esc/Tab/Ctrl/F-keys row
-- Trackpad maps cursor across desktop including top bar
-- Trackpad RIGHT side = context menu (Refresh/Copy/Paste)
-- Windows get titlebar Min / Max / Close (×)
-- Windows stay until × ; z-index above icons
-- Cursor/context menus on top layer
-
-Google login: still need supabase.co callback (not .com) + live project.
+Overwrite index.html → Commit → Incognito
+- One cursor only
+- L CLICK opens under cursor
+- R MENU context
+- Trackpad moves single cursor over full PC
