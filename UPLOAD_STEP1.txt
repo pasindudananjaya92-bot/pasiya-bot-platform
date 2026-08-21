@@ -1,0 +1,29 @@
+========================================
+STEP 1 — UPLOAD (GitHub mobile / web)
+========================================
+
+1) Repo එකේ පරණ files සියල්ල DELETE කරන්න (හිස් root).
+
+2) මේ ZIP unzip කරන්න. ඇතුළේ files:
+
+   package.json          ← root එකට
+   next.config.mjs       ← root
+   tsconfig.json         ← root
+   next-env.d.ts         ← root
+   postcss.config.mjs    ← root
+   tailwind.config.ts    ← root
+   README.md             ← root
+   app/globals.css       ← folder name: app   file: globals.css
+   app/layout.tsx        ← folder: app        file: layout.tsx
+   app/page.tsx          ← folder: app        file: page.tsx
+
+3) GitHub "Add file" වලදී file name එකට මෙහෙම ලියන්න:
+   app/layout.tsx
+   (slash එකෙන් app folder එක auto හදනවා)
+
+4) Commit → Vercel auto deploy එනකන් ඉන්න.
+
+5) Deploy GREEN + site එකේ "Step 1 OK" පේනවා නම්
+   repo link එක Grok ට එවන්න → Step 2 ලැබේ.
+
+========================================
