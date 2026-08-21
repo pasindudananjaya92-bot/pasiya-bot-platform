@@ -1,60 +1,67 @@
 "use client";
-import { useEffect, useState } from "react";
-import { TeamMember, loadJSON, saveJSON } from "@/lib/store";
+import { useEffect, useMemo, useState } from "react";
+import { StorageFile, loadJSON, saveJSON } from "@/lib/store";
 
-export default function TeamPage() {
-  const [members, setMembers] = useState<TeamMember[]>([]);
-  const [email, setEmail] = useState("");
-  const [chat, setChat] = useState<{ who: string; text: string; at: number }[]>([]);
-  const [msg, setMsg] = useState("");
+const LIMIT = 10 * 1024 * 1024; // 10MB demo quota in browser (text)
 
-  useEffect(() => {
-    setMembers(loadJSON("pasiya_team", [{ id: "1", email: "you@pasiya.local", role: "owner", status: "active" }]));
-    setChat(loadJSON("pasiya_team_chat", []));
-  }, []);
+export default function StoragePage() {
+  const [files, setFiles] = useState<StorageFile[]>([]);
 
-  function invite() {
-    if (!email.includes("@")) return;
-    const next = [{ id: crypto.randomUUID(), email, role: "member" as const, status: "invited" as const }, ...members];
-    setMembers(next); saveJSON("pasiya_team", next); setEmail("");
+  useEffect(() => { setFiles(loadJSON("pasiya_cloud_files", [])); }, []);
+  const used = useMemo(() => files.reduce((s, f) => s + f.size, 0), [files]);
+
+  function onUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (!f) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const content = String(reader.result || "");
+      const size = content.length;
+      if (used + size > LIMIT) { alert("Demo quota 10MB exceeded"); return; }
+      const next = [{ id: crypto.randomUUID(), name: f.name, size, at: Date.now(), content }, ...files];
+      setFiles(next); saveJSON("pasiya_cloud_files", next);
+    };
+    reader.readAsText(f);
   }
 
-  function send() {
-    if (!msg.trim()) return;
-    const next = [...chat, { who: "You", text: msg.trim(), at: Date.now() }];
-    setChat(next); saveJSON("pasiya_team_chat", next); setMsg("");
+  function download(file: StorageFile) {
+    const blob = new Blob([file.content || ""], { type: "text/plain" });
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = file.name;
+    a.click();
+  }
+
+  function remove(id: string) {
+    const next = files.filter((f) => f.id !== id);
+    setFiles(next); saveJSON("pasiya_cloud_files", next);
   }
 
   return (
-    <div className="grid lg:grid-cols-2 gap-4 max-w-5xl">
-      <div className="space-y-3">
-        <h1 className="text-xl font-bold text-white">Team & Collaboration</h1>
-        <div className="flex gap-2">
-          <input className="input flex-1" placeholder="email@team.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-          <button className="btn-solid" onClick={invite}>Invite</button>
-        </div>
-        <ul className="space-y-2">
-          {members.map((m) => (
-            <li key={m.id} className="card flex justify-between text-sm">
-              <span>{m.email}</span>
-              <span className="text-muted">{m.role} · {m.status}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="space-y-3">
-        <h2 className="font-semibold text-white">Workspace chat</h2>
-        <div className="card h-64 overflow-y-auto text-sm space-y-2">
-          {chat.length === 0 && <div className="text-muted">No messages</div>}
-          {chat.map((c, i) => (
-            <div key={i}><b className="text-accent">{c.who}:</b> {c.text}</div>
-          ))}
-        </div>
-        <div className="flex gap-2">
-          <input className="input flex-1" value={msg} onChange={(e) => setMsg(e.target.value)} onKeyDown={(e) => e.key === "Enter" && send()} />
-          <button className="btn" onClick={send}>Send</button>
+    <div className="max-w-3xl space-y-4">
+      <h1 className="text-xl font-bold text-white">Cloud Storage</h1>
+      <p className="text-sm text-muted">Browser vault demo. Production: Supabase Storage (10GB plan per user via quotas).</p>
+      <div className="card">
+        <div className="text-xs text-muted mb-1">Used {(used / 1024).toFixed(1)} KB / 10 MB demo</div>
+        <div className="h-2 rounded bg-bg-elev overflow-hidden">
+          <div className="h-full bg-accent" style={{ width: `${Math.min(100, (used / LIMIT) * 100)}%` }} />
         </div>
       </div>
+      <label className="btn cursor-pointer w-fit">
+        Upload file
+        <input type="file" className="hidden" onChange={onUpload} />
+      </label>
+      <ul className="space-y-2">
+        {files.map((f) => (
+          <li key={f.id} className="card flex flex-wrap items-center justify-between gap-2 text-sm">
+            <span>{f.name} <span className="text-muted">({(f.size / 1024).toFixed(1)} KB)</span></span>
+            <span className="flex gap-2">
+              <button className="btn" onClick={() => download(f)}>Download</button>
+              <button className="btn" onClick={() => remove(f.id)}>Delete</button>
+            </span>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
