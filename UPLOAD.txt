@@ -1,11 +1,15 @@
-PASiYA PRO OS MODULES
-1. Overwrite GitHub root index.html with this file
-2. Commit changes
-3. Wait 1-2 min · open site in Incognito
-4. Open Virtual PC → new icons: CloudFS, IDE, AI Agent, Notif, Monitor, Widgets, Archive, Automate, DB GUI, Snapshot, Recorder, Docs
+Overwrite GitHub root index.html → Commit → Incognito
 
-NOTE (honest):
-- CloudFS = browser storage + versioning (not Google Drive OAuth yet)
-- IDE = Monaco from CDN
-- Agent = local tools + your n8n Production webhook
-- Full Next.js backends (real Docker/VMs) need separate project migration
+FIX: External links (GitHub, n8n, Replit…) open in desktop WebView iframe window when PC is active.
+
+NEW:
+- Taskbar widgets (weather/stock/sys)
+- Virtual Printer (print to PDF + save CloudFS)
+- Clipboard manager (Ctrl+Shift+V)
+- Window snap (drag to edges)
+- Remote share payload
+- Ctrl+K command palette
+- Daily local backup (+ Supabase if keys in settings)
+- App locker PIN
+- G: virtual drive
+- Performance profiler

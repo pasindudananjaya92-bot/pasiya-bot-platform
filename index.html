@@ -2400,6 +2400,25 @@ body.kbd-open{
 .pro-bar{height:8px;background:#123;border-radius:4px;overflow:hidden;margin:4px 0}
 .pro-bar>i{display:block;height:100%;background:linear-gradient(90deg,#0ff,#08f);width:0%}
 
+
+/* NEW_OS_FEATURES_V2 */
+#pcApp-inframe .pc-win-body{padding:0;display:flex;flex-direction:column;height:calc(100% - 0px);min-height:280px}
+#pcIbToolbar{display:flex;gap:6px;padding:6px;background:#0a1525;border-bottom:1px solid rgba(0,229,255,.25);flex-wrap:wrap}
+#pcIbToolbar input{flex:1;min-width:120px;background:#061018;border:1px solid rgba(0,229,255,.3);color:#e8ffff;border-radius:6px;padding:6px 8px}
+#pcIbFrame{flex:1;width:100%;border:0;min-height:240px;background:#fff}
+.tb-widgets{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:4px 8px;font-size:11px;color:#9fd}
+.tb-widgets .tw{background:rgba(0,30,50,.7);border:1px solid rgba(0,229,255,.2);border-radius:8px;padding:4px 8px;white-space:nowrap}
+#cmdPalette{display:none;position:fixed;z-index:2147483000;left:50%;top:18%;transform:translateX(-50%);width:min(520px,92vw);background:#0a1525;border:1px solid rgba(0,229,255,.5);border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.6);padding:12px}
+#cmdPalette.open{display:block}
+#cmdPalette input{width:100%;padding:12px;border-radius:10px;border:1px solid rgba(0,229,255,.35);background:#061018;color:#fff;font-size:16px}
+#cmdPalette ul{list-style:none;margin:8px 0 0;padding:0;max-height:280px;overflow:auto}
+#cmdPalette li{padding:10px 12px;border-radius:8px;cursor:pointer;color:#cfefff}
+#cmdPalette li:hover,#cmdPalette li.active{background:rgba(0,229,255,.15)}
+#clipMgr{display:none;position:fixed;z-index:2147483001;right:12px;bottom:120px;width:min(320px,90vw);max-height:50vh;overflow:auto;background:#0a1525;border:1px solid rgba(0,229,255,.45);border-radius:12px;padding:10px}
+#clipMgr.open{display:block}
+#clipMgr li{padding:8px;border-bottom:1px solid rgba(0,229,255,.12);cursor:pointer;font-size:12px;color:#dfe;word-break:break-all}
+.snap-guide{pointer-events:none;position:fixed;z-index:2147481000;border:2px dashed rgba(0,229,255,.7);background:rgba(0,229,255,.08);display:none}
+
 </style>
 </head>
 <body>
@@ -3237,6 +3256,15 @@ RULES:
         <button type="button" data-app="settings"><span class="ic">⚙</span>Settings</button>
         
         <!-- PRO_OS_ICONS -->
+        
+        <button type="button" data-app="inframe"><span class="ic">🌐</span>WebView</button>
+        <button type="button" data-app="printer"><span class="ic">🖨</span>Printer</button>
+        <button type="button" data-app="clipmgr"><span class="ic">📋</span>Clipboard</button>
+        <button type="button" data-app="remote"><span class="ic">📡</span>Remote</button>
+        <button type="button" data-app="locker"><span class="ic">🔒</span>Locker</button>
+        <button type="button" data-app="gdrive"><span class="ic">G:</span>Drive</button>
+        <button type="button" data-app="profiler"><span class="ic">🧪</span>Profiler</button>
+
         <button type="button" data-app="profs"><span class="ic">💾</span>CloudFS</button>
         <button type="button" data-app="proide"><span class="ic">💻</span>IDE</button>
         <button type="button" data-app="proagent"><span class="ic">🧠</span>AI Agent</button>
@@ -6449,6 +6477,7 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 
   function openApp(name){
+    if(window.NewOS && NewOS.lock && !NewOS.lock.guard(name)) return;
     if(name==='sysmenu' || name==='start'){ toggleStart(); return; }
     if(name==='settings'){ if(typeof goPage==='function') goPage('settings'); return; }
     var w=$('pcApp-'+name);
@@ -6469,6 +6498,15 @@ document.addEventListener('DOMContentLoaded', function(){
     if(name==='files') renderFiles();
     if(name==='calc'){ buildCalc(); activeInput=$('pcCalcOut'); }
     if(name==='explorer') renderExplorer();
+
+    if(name==='inframe'){ try{ if(window.NewOS) NewOS.focusBrowser(); }catch(e){} }
+    if(name==='printer'){ /* ok */ }
+    if(name==='clipmgr'){ try{ if(window.NewOS) NewOS.clip.render(); }catch(e){} }
+    if(name==='remote'){ /* ok */ }
+    if(name==='locker'){ try{ if(window.NewOS) NewOS.lock.render(); }catch(e){} }
+    if(name==='gdrive'){ try{ if(window.NewOS) NewOS.gdrive.render(); }catch(e){} }
+    if(name==='profiler'){ try{ if(window.NewOS) NewOS.profiler.refresh(); }catch(e){} }
+
 
     if(name==='profs'){ try{ ProOS.fs.render(); }catch(e){} }
     if(name==='proide'){ try{ ProOS.ide.mount(); }catch(e){} }
@@ -7048,7 +7086,7 @@ document.addEventListener('DOMContentLoaded', function(){
     var ban=$('pcAuthBanner');
     if(ban) ban.classList.add('on');
     // popup or tab for Google login / OAuth
-    var w=window.open(url, '_blank', 'noopener,noreferrer');
+    var w=(typeof openInDesktop==='function'?openInDesktop(url,'Link'):(typeof openInDesktop==='function'?openInDesktop(url,'Link'):window.open(url,'_blank','noopener,noreferrer')));
     if(!w){
       // popup blocked — top navigate as last resort is bad; use same tab with return hash
       sessionStorage.setItem('pasiya_return_pc','1');
@@ -9343,9 +9381,7 @@ document.addEventListener('DOMContentLoaded', function(){
     ]
   };
 
-  function openExternal(url){
-    window.open(url, '_blank', 'noopener,noreferrer');
-  }
+  function openExternal(url){ if(typeof openInDesktop==='function') openInDesktop(url,'Browser'); else if(typeof openService==='function') openService(url,'Browser'); else (typeof openInDesktop==='function'?openInDesktop(url,'Link'):window.open(url,'_blank','noopener,noreferrer')); }
 
   function runAct(act){
     hideAll();
@@ -9542,7 +9578,7 @@ document.addEventListener('DOMContentLoaded', function(){
     el.style.left=Math.max(8,Math.min(x!=null?x:12, window.innerWidth-w-8))+'px';
     el.style.top=Math.max(8,Math.min(y!=null?y:56, window.innerHeight-h-8))+'px';
   }
-  function openExternal(url){ window.open(url,'_blank','noopener,noreferrer'); }
+  function openExternal(url){ if(typeof openInDesktop==='function') openInDesktop(url,'Browser'); else if(typeof openService==='function') openService(url,'Browser'); else (typeof openInDesktop==='function'?openInDesktop(url,'Link'):window.open(url,'_blank','noopener,noreferrer')); }
 
   var LINKS = {
     github:'https://github.com/pasindudananjaya92-bot/pasiya-bot-platform',
@@ -10921,6 +10957,535 @@ document.addEventListener('DOMContentLoaded', function(){
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', bind);
   else bind();
   setTimeout(bind, 500);
+})();
+
+</script>
+
+<!-- NEW_OS_V2_UI -->
+<div class="pc-win" id="pcApp-inframe" data-title="In-Desktop Browser">
+  <div class="pc-win-title"><span id="pcIbTitle">Browser</span><div class="pc-win-btns">
+    <button type="button" class="pc-min" data-act="min">_</button>
+    <button type="button" class="pc-max" data-act="max">□</button>
+    <button type="button" class="pc-close" data-act="close">×</button>
+  </div></div>
+  <div class="pc-win-body">
+    <div id="pcIbToolbar">
+      <button type="button" class="pro-btn" id="pcIbBack" title="Back">←</button>
+      <button type="button" class="pro-btn" id="pcIbReload">Reload</button>
+      <input id="pcIbUrlInput" placeholder="https://..." />
+      <button type="button" class="pro-btn" id="pcIbGo">Go</button>
+    </div>
+    <iframe id="pcIbFrame2" sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    <p id="pcIbNote" style="font-size:11px;opacity:.75;padding:6px 10px;margin:0;color:#9ab">Some sites block iframe (X-Frame-Options). Those show a notice — still stays inside OS chrome.</p>
+  </div>
+</div>
+
+<div class="pc-win" id="pcApp-clipmgr" data-title="Clipboard Manager">
+  <div class="pc-win-title"><span>Clipboard History</span><div class="pc-win-btns">
+    <button type="button" class="pc-close" data-act="close">×</button>
+  </div></div>
+  <div class="pc-win-body pro-win-body">
+    <p style="opacity:.8;font-size:12px">Win+V or open this app · last 10 copies</p>
+    <ul class="pro-list" id="clipMgrList"></ul>
+    <button type="button" class="pro-btn" id="clipMgrClear">Clear history</button>
+  </div>
+</div>
+
+<div class="pc-win" id="pcApp-printer" data-title="Virtual Printer">
+  <div class="pc-win-title"><span>Print to PDF</span><div class="pc-win-btns">
+    <button type="button" class="pc-close" data-act="close">×</button>
+  </div></div>
+  <div class="pc-win-body pro-win-body">
+    <div class="pro-row">
+      <select id="printSource"><option value="notepad">Notepad</option><option value="profs">CloudFS current</option><option value="prooffice">Docs</option><option value="page">Whole page</option></select>
+      <button type="button" class="pro-btn" id="printPdfBtn">Print / Save PDF</button>
+    </div>
+    <pre id="printLog" class="pro-mono"></pre>
+  </div>
+</div>
+
+<div class="pc-win" id="pcApp-remote" data-title="Remote Desktop">
+  <div class="pc-win-title"><span>Remote Session</span><div class="pc-win-btns">
+    <button type="button" class="pc-close" data-act="close">×</button>
+  </div></div>
+  <div class="pc-win-body pro-win-body">
+    <p>Share a <b>view-only snapshot link</b> (state encoded). Full live control needs Supabase Realtime backend.</p>
+    <div class="pro-row">
+      <button type="button" class="pro-btn" id="remoteExport">Create share payload</button>
+      <button type="button" class="pro-btn" id="remoteCopy">Copy code</button>
+    </div>
+    <textarea id="remotePayload" class="pro-editor" style="min-height:120px" placeholder="Share code appears here"></textarea>
+    <div class="pro-row">
+      <button type="button" class="pro-btn" id="remoteImport">Load payload into this PC</button>
+    </div>
+    <pre id="remoteLog" class="pro-mono"></pre>
+  </div>
+</div>
+
+<div class="pc-win" id="pcApp-locker" data-title="App Locker">
+  <div class="pc-win-title"><span>Parental / App Locker</span><div class="pc-win-btns">
+    <button type="button" class="pc-close" data-act="close">×</button>
+  </div></div>
+  <div class="pc-win-body pro-win-body">
+    <div class="pro-row">
+      <input id="lockPin" type="password" placeholder="PIN (4+ digits)" style="flex:1">
+      <button type="button" class="pro-btn" id="lockSetPin">Set PIN</button>
+    </div>
+    <div class="pro-row">
+      <input id="lockApp" placeholder="app id e.g. term, browser, proide" style="flex:1">
+      <button type="button" class="pro-btn" id="lockAdd">Lock app</button>
+    </div>
+    <ul class="pro-list" id="lockList"></ul>
+  </div>
+</div>
+
+<div class="pc-win" id="pcApp-gdrive" data-title="Virtual Drive G:">
+  <div class="pc-win-title"><span>Drive Mounter</span><div class="pc-win-btns">
+    <button type="button" class="pc-close" data-act="close">×</button>
+  </div></div>
+  <div class="pc-win-body pro-win-body">
+    <p><b>G:</b> virtual mount (local bridge). Google OAuth full mount needs Supabase Edge + Drive API.</p>
+    <div class="pro-row">
+      <button type="button" class="pro-btn" id="gMount">Mount G: (local)</button>
+      <button type="button" class="pro-btn" id="gUnmount">Unmount</button>
+    </div>
+    <ul class="pro-list" id="gList"></ul>
+    <p style="font-size:11px;opacity:.75">Files under G: sync into CloudFS prefix <code>G:/</code></p>
+  </div>
+</div>
+
+<div class="pc-win" id="pcApp-profiler" data-title="Performance Profiler">
+  <div class="pc-win-title"><span>App Profiler</span><div class="pc-win-btns">
+    <button type="button" class="pc-close" data-act="close">×</button>
+  </div></div>
+  <div class="pc-win-body pro-win-body">
+    <p>Relative cost of open windows (browser-estimated).</p>
+    <ul class="pro-list" id="profList"></ul>
+    <button type="button" class="pro-btn" id="profRefresh">Refresh</button>
+  </div>
+</div>
+
+<div id="cmdPalette">
+  <input id="cmdPalInput" placeholder="Type app, file, or command… (Ctrl+K)" autocomplete="off" />
+  <ul id="cmdPalList"></ul>
+</div>
+<div id="clipMgr"><b style="color:#0ff">Clipboard (Win+V)</b><ul id="clipMgrFloatList"></ul></div>
+<div class="snap-guide" id="snapGuide"></div>
+
+<script>
+
+/* NEW_OS_FEATURES_V2_JS */
+(function(){
+  function $(id){ return document.getElementById(id); }
+  function qa(s,r){ return Array.prototype.slice.call((r||document).querySelectorAll(s)); }
+
+  const CLIP_KEY = 'pasiya_clip_hist_v1';
+  const LOCK_KEY = 'pasiya_app_locks_v1';
+  const PIN_KEY = 'pasiya_lock_pin_v1';
+  const G_KEY = 'pasiya_gdrive_local_v1';
+  const BACKUP_KEY = 'pasiya_last_backup_day';
+
+  const NewOS = {
+    openInDesktop(url, title){
+      if(!url) return;
+      if(!/^https?:\/\//i.test(url)) url = 'https://' + url;
+      const w = $('pcApp-inframe');
+      const fr = $('pcIbFrame2') || $('pcIbFrame');
+      const inp = $('pcIbUrlInput') || $('pcIbUrl');
+      const tit = $('pcIbTitle');
+      if(tit) tit.textContent = title || 'Browser';
+      if(inp) inp.value = url;
+      if(fr){
+        try{ fr.src = url; }catch(e){}
+      }
+      if(typeof openApp === 'function') openApp('inframe');
+      else if(w){ w.classList.add('open'); w.classList.remove('minimized'); }
+      // note if blocked
+      setTimeout(function(){
+        const note = $('pcIbNote');
+        if(note) note.textContent = 'Loaded in desktop window: ' + url + ' — If blank, site blocks iframe (GitHub/Google often do). UI still stays inside OS.';
+      }, 400);
+    },
+    focusBrowser(){
+      const inp = $('pcIbUrlInput'); if(inp) try{ inp.focus(); }catch(e){}
+    },
+    clip: {
+      all(){ try{ return JSON.parse(localStorage.getItem(CLIP_KEY)||'[]'); }catch(e){ return []; } },
+      save(a){ localStorage.setItem(CLIP_KEY, JSON.stringify(a.slice(0,10))); },
+      push(text){
+        text = String(text||'').trim(); if(!text) return;
+        let a = NewOS.clip.all().filter(x=>x!==text);
+        a.unshift(text);
+        NewOS.clip.save(a);
+      },
+      render(){
+        const lists = [$('clipMgrList'), $('clipMgrFloatList')].filter(Boolean);
+        const a = NewOS.clip.all();
+        lists.forEach(ul=>{
+          ul.innerHTML = '';
+          a.forEach(t=>{
+            const li=document.createElement('li');
+            li.textContent = t.slice(0,200);
+            li.onclick = function(){
+              try{ navigator.clipboard.writeText(t); }catch(e){}
+              const active = document.activeElement;
+              if(active && typeof active.value === 'string'){
+                const s = active.selectionStart||active.value.length;
+                active.value = active.value.slice(0,s) + t + active.value.slice(active.selectionEnd||s);
+              }
+              $('clipMgr') && $('clipMgr').classList.remove('open');
+            };
+            ul.appendChild(li);
+          });
+        });
+      },
+      toggleFloat(){
+        const el = $('clipMgr'); if(!el) return;
+        el.classList.toggle('open');
+        NewOS.clip.render();
+      }
+    },
+    lock: {
+      pin(){ return localStorage.getItem(PIN_KEY)||''; },
+      map(){ try{ return JSON.parse(localStorage.getItem(LOCK_KEY)||'{}'); }catch(e){ return {}; } },
+      saveMap(m){ localStorage.setItem(LOCK_KEY, JSON.stringify(m)); },
+      guard(name){
+        const m = NewOS.lock.map();
+        if(!m[name]) return true;
+        const pin = prompt('App locked. Enter PIN:');
+        if(pin && pin === NewOS.lock.pin()) return true;
+        alert('Wrong PIN or cancelled');
+        return false;
+      },
+      render(){
+        const ul = $('lockList'); if(!ul) return;
+        const m = NewOS.lock.map();
+        ul.innerHTML = '';
+        Object.keys(m).forEach(k=>{
+          const li=document.createElement('li');
+          li.innerHTML = '<span>🔒 '+k+'</span>';
+          const b=document.createElement('button'); b.className='pro-btn'; b.textContent='Unlock';
+          b.onclick=function(){ const map=NewOS.lock.map(); delete map[k]; NewOS.lock.saveMap(map); NewOS.lock.render(); };
+          li.appendChild(b); ul.appendChild(li);
+        });
+      }
+    },
+    gdrive: {
+      data(){ try{ return JSON.parse(localStorage.getItem(G_KEY)||'{"mounted":false,"files":{}}'); }catch(e){ return {mounted:false,files:{}}; } },
+      save(d){ localStorage.setItem(G_KEY, JSON.stringify(d)); },
+      mount(){
+        const d = NewOS.gdrive.data();
+        d.mounted = true;
+        if(!Object.keys(d.files||{}).length){
+          d.files = { 'readme.txt': 'Virtual G: drive (local). Connect Google Drive API via Supabase for real files.' };
+        }
+        NewOS.gdrive.save(d);
+        // mirror into CloudFS
+        try{
+          const FS_KEY='pasiya_pro_fs_v1';
+          const fs=JSON.parse(localStorage.getItem(FS_KEY)||'{}');
+          Object.keys(d.files).forEach(n=>{
+            fs['G:/'+n] = { content:d.files[n], versions:[], updated:Date.now() };
+          });
+          localStorage.setItem(FS_KEY, JSON.stringify(fs));
+        }catch(e){}
+        NewOS.gdrive.render();
+        if(window.ProOS && ProOS.notif) ProOS.notif.push('Drive','G: mounted (local)');
+      },
+      unmount(){
+        const d=NewOS.gdrive.data(); d.mounted=false; NewOS.gdrive.save(d); NewOS.gdrive.render();
+      },
+      render(){
+        const ul=$('gList'); if(!ul) return;
+        const d=NewOS.gdrive.data();
+        ul.innerHTML = d.mounted ? '' : '<li>Not mounted</li>';
+        if(d.mounted){
+          Object.keys(d.files||{}).forEach(n=>{
+            const li=document.createElement('li'); li.textContent='G:/'+n; ul.appendChild(li);
+          });
+        }
+      }
+    },
+    profiler: {
+      refresh(){
+        const ul=$('profList'); if(!ul) return;
+        ul.innerHTML='';
+        const wins=qa('#pcWork .pc-win.open, .pc-win.open');
+        const mem = performance.memory;
+        const base = mem ? mem.usedJSHeapSize : 50*1048576;
+        wins.forEach((w,i)=>{
+          const id=w.id||('win'+i);
+          const title=(w.querySelector('.pc-win-title span')||{}).textContent||id;
+          // heuristic weight
+          const weight = 1 + (w.innerHTML||'').length/50000 + (w.querySelector('iframe')?2:0);
+          const est = ((base*weight)/(wins.length+3)/1048576).toFixed(1);
+          const li=document.createElement('li');
+          li.innerHTML='<span>'+title+'</span><span>~'+est+' MB · w'+weight.toFixed(1)+'</span>';
+          ul.appendChild(li);
+        });
+        if(!wins.length) ul.innerHTML='<li>No open windows</li>';
+      }
+    },
+    palette: {
+      items(){
+        const apps = qa('#pcIcons button[data-app]').map(b=>({
+          t: (b.textContent||'').trim(),
+          app: b.getAttribute('data-app')
+        }));
+        const cmds = [
+          { t: 'Toggle clipboard', cmd: 'clip' },
+          { t: 'Mount G: drive', cmd: 'gmount' },
+          { t: 'Save snapshot', cmd: 'snap' },
+          { t: 'Open WebView', app: 'inframe' }
+        ];
+        return apps.concat(cmds);
+      },
+      open(){
+        const el=$('cmdPalette'); if(!el) return;
+        el.classList.add('open');
+        const inp=$('cmdPalInput'); if(inp){ inp.value=''; inp.focus(); }
+        NewOS.palette.filter('');
+      },
+      close(){ const el=$('cmdPalette'); if(el) el.classList.remove('open'); },
+      filter(q){
+        const ul=$('cmdPalList'); if(!ul) return;
+        q=(q||'').toLowerCase();
+        ul.innerHTML='';
+        NewOS.palette.items().filter(it=>!q || (it.t||'').toLowerCase().indexOf(q)>=0).slice(0,30).forEach(it=>{
+          const li=document.createElement('li');
+          li.textContent=it.t;
+          li.onclick=function(){
+            NewOS.palette.close();
+            if(it.app && typeof openApp==='function') openApp(it.app);
+            if(it.cmd==='clip') NewOS.clip.toggleFloat();
+            if(it.cmd==='gmount') NewOS.gdrive.mount();
+            if(it.cmd==='snap' && window.ProOS && ProOS.snap) ProOS.snap.save();
+          };
+          ul.appendChild(li);
+        });
+      }
+    },
+    snapWin: {
+      guide: null,
+      onDragEnd(win, x, y){
+        if(!win) return;
+        const edge=24;
+        const W=window.innerWidth, H=window.innerHeight;
+        if(x<=edge){ // left half
+          win.style.left='0px'; win.style.top='0px'; win.style.width='50vw'; win.style.height='80vh';
+        } else if(x>=W-edge){
+          win.style.left='50vw'; win.style.top='0px'; win.style.width='50vw'; win.style.height='80vh';
+        } else if(y<=edge){
+          win.style.left='0px'; win.style.top='0px'; win.style.width='100%'; win.style.height='85vh';
+        }
+      }
+    },
+    widgets: {
+      start(){
+        // weather
+        fetch('https://api.open-meteo.com/v1/forecast?latitude=6.93&longitude=79.85&current=temperature_2m')
+          .then(r=>r.json()).then(j=>{
+            const el=$('twWeather');
+            if(el && j.current) el.textContent='🌤 '+j.current.temperature_2m+'°C';
+          }).catch(()=>{});
+        // stock proxy-free: show static ticker placeholder + time
+        const tick=()=>{
+          const el=$('twStock');
+          if(el) el.textContent='📈 PASiYA · '+new Date().toLocaleTimeString();
+          const sys=$('twSys');
+          if(sys){
+            const n=document.querySelectorAll('.pc-win.open').length;
+            let mem='';
+            if(performance.memory) mem=' · '+(performance.memory.usedJSHeapSize/1048576).toFixed(0)+'MB';
+            sys.textContent='💻 '+n+' wins'+mem;
+          }
+        };
+        tick(); setInterval(tick, 5000);
+      }
+    },
+    backup: {
+      daily(){
+        const day = new Date().toISOString().slice(0,10);
+        if(localStorage.getItem(BACKUP_KEY)===day) return;
+        const payload = {
+          day,
+          fs: localStorage.getItem('pasiya_pro_fs_v1'),
+          note: localStorage.getItem('pasiya_notepad') || localStorage.getItem('pasiya_note'),
+          settings: localStorage.getItem('pasiya_settings')
+        };
+        localStorage.setItem('pasiya_backup_'+day, JSON.stringify(payload));
+        localStorage.setItem(BACKUP_KEY, day);
+        // optional supabase REST if keys in settings
+        try{
+          const st=JSON.parse(localStorage.getItem('pasiya_settings')||'{}');
+          const url=(st.supabaseUrl||'').replace(/\/$/,'');
+          const key=st.supabaseAnon||st.supabaseKey||'';
+          if(url && key){
+            fetch(url+'/rest/v1/os_backups', {
+              method:'POST',
+              headers:{
+                'Content-Type':'application/json',
+                'apikey': key,
+                'Authorization': 'Bearer '+key,
+                'Prefer': 'return=minimal'
+              },
+              body: JSON.stringify({ day, payload, created_at: new Date().toISOString() })
+            }).catch(function(){});
+          }
+        }catch(e){}
+        if(window.ProOS && ProOS.notif) ProOS.notif.push('Backup', 'Daily local backup '+day);
+      }
+    },
+    print: {
+      run(){
+        const src=(($('printSource')||{}).value)||'notepad';
+        let text='';
+        if(src==='notepad'){
+          const n=$('pcNotepad'); text=n?n.value: '';
+        } else if(src==='profs'){
+          const ed=$('proFsEditor'); text=ed?ed.value:'';
+        } else if(src==='prooffice'){
+          const d=$('proDocBody'); text=d?d.value:'';
+        } else {
+          text=document.body.innerText.slice(0,50000);
+        }
+        const log=$('printLog');
+        const w=window.open('','_blank');
+        if(!w){ if(log) log.textContent='Popup blocked — allow popups for print dialog'; return; }
+        w.document.write('<pre style="font:14px sans-serif;white-space:pre-wrap">'+text.replace(/[<>&]/g,s=>({ '<':'&lt;','>':'&gt;','&':'&amp;' }[s]))+'</pre>');
+        w.document.close();
+        setTimeout(function(){ w.print(); }, 300);
+        // also save to CloudFS
+        try{
+          const FS_KEY='pasiya_pro_fs_v1';
+          const fs=JSON.parse(localStorage.getItem(FS_KEY)||'{}');
+          const name='print-'+Date.now()+'.txt';
+          fs[name]={content:text,versions:[],updated:Date.now()};
+          localStorage.setItem(FS_KEY, JSON.stringify(fs));
+          if(log) log.textContent='Print dialog opened · saved '+name+' to CloudFS (use system PDF printer)';
+        }catch(e){ if(log) log.textContent='Printed'; }
+      }
+    },
+    remote: {
+      export(){
+        const payload={
+          v:1,
+          at:Date.now(),
+          fs:localStorage.getItem('pasiya_pro_fs_v1'),
+          settings:localStorage.getItem('pasiya_settings')
+        };
+        const code=btoa(unescape(encodeURIComponent(JSON.stringify(payload))));
+        const ta=$('remotePayload'); if(ta) ta.value=code;
+        const log=$('remoteLog'); if(log) log.textContent='Share this code (view/restore state). Live multi-user needs Realtime backend.';
+      },
+      copy(){
+        const ta=$('remotePayload'); if(!ta) return;
+        navigator.clipboard.writeText(ta.value||'').then(function(){
+          const log=$('remoteLog'); if(log) log.textContent='Copied';
+        });
+      },
+      import(){
+        try{
+          const ta=$('remotePayload');
+          const payload=JSON.parse(decodeURIComponent(escape(atob((ta.value||'').trim()))));
+          if(payload.fs) localStorage.setItem('pasiya_pro_fs_v1', payload.fs);
+          if(payload.settings) localStorage.setItem('pasiya_settings', payload.settings);
+          const log=$('remoteLog'); if(log) log.textContent='Loaded remote payload';
+        }catch(e){
+          const log=$('remoteLog'); if(log) log.textContent='Invalid payload';
+        }
+      }
+    }
+  };
+
+  window.NewOS = NewOS;
+  window.openInDesktop = function(url, title){ NewOS.openInDesktop(url, title||'Browser'); };
+
+  // Override openExternal globally
+  window.openExternal = function(url){ NewOS.openInDesktop(url, 'External'); };
+
+  // Intercept clicks on target=_blank inside desktop
+  document.addEventListener('click', function(e){
+    const a = e.target.closest && e.target.closest('a[href]');
+    if(!a) return;
+    const href = a.getAttribute('href')||'';
+    if(!/^https?:\/\//i.test(href)) return;
+    // only when PC desktop is active
+    const desk = $('page-desktop');
+    const pcVisible = desk && !desk.classList.contains('hidden') && getComputedStyle(desk).display!=='none';
+    if(!pcVisible && !e.target.closest('.pc-shell')) return;
+    if(a.target==='_blank' || a.hasAttribute('data-os-open')){
+      e.preventDefault();
+      NewOS.openInDesktop(href, (a.textContent||'Link').trim().slice(0,40));
+    }
+  }, true);
+
+  // Clipboard capture
+  document.addEventListener('copy', function(){
+    setTimeout(function(){
+      if(navigator.clipboard && navigator.clipboard.readText){
+        navigator.clipboard.readText().then(function(t){ NewOS.clip.push(t); }).catch(function(){});
+      }
+    }, 50);
+  });
+
+  // Hotkeys
+  document.addEventListener('keydown', function(e){
+    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='k'){
+      e.preventDefault(); NewOS.palette.open();
+    }
+    if((e.metaKey || (e.key==='v' && e.ctrlKey && e.shiftKey)) && e.key.toLowerCase()==='v' && e.shiftKey){
+      /* optional */
+    }
+    // Win+V approximation: Ctrl+Shift+V
+    if((e.ctrlKey||e.metaKey) && e.shiftKey && e.key.toLowerCase()==='v'){
+      e.preventDefault(); NewOS.clip.toggleFloat();
+    }
+    if(e.key==='Escape'){ NewOS.palette.close(); const c=$('clipMgr'); if(c) c.classList.remove('open'); }
+  });
+
+  function bind(){
+    const on=(id,ev,fn)=>{ const el=$(id); if(el) el.addEventListener(ev,fn); };
+    on('pcIbGo','click',function(){ const u=(($('pcIbUrlInput')||{}).value||'').trim(); if(u) NewOS.openInDesktop(u,'Browser'); });
+    on('pcIbUrlInput','keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); const u=this.value.trim(); if(u) NewOS.openInDesktop(u,'Browser'); }});
+    on('pcIbReload','click',function(){ const fr=$('pcIbFrame2'); if(fr) fr.src=fr.src; });
+    on('pcIbBack','click',function(){ try{ history.back(); }catch(e){} });
+    on('clipMgrClear','click',function(){ NewOS.clip.save([]); NewOS.clip.render(); });
+    on('printPdfBtn','click',function(){ NewOS.print.run(); });
+    on('lockSetPin','click',function(){ const p=(($('lockPin')||{}).value||'').trim(); if(p.length>=4){ localStorage.setItem(PIN_KEY,p); alert('PIN set'); }});
+    on('lockAdd','click',function(){ const a=(($('lockApp')||{}).value||'').trim(); if(!a) return; const m=NewOS.lock.map(); m[a]=1; NewOS.lock.saveMap(m); NewOS.lock.render(); });
+    on('gMount','click',function(){ NewOS.gdrive.mount(); });
+    on('gUnmount','click',function(){ NewOS.gdrive.unmount(); });
+    on('profRefresh','click',function(){ NewOS.profiler.refresh(); });
+    on('cmdPalInput','input',function(){ NewOS.palette.filter(this.value); });
+    on('remoteExport','click',function(){ NewOS.remote.export(); });
+    on('remoteCopy','click',function(){ NewOS.remote.copy(); });
+    on('remoteImport','click',function(){ NewOS.remote.import(); });
+
+    // window snap: listen mouseup on windows
+    document.addEventListener('mouseup', function(e){
+      const win = e.target.closest && e.target.closest('.pc-win.open');
+      if(!win) return;
+      const r = win.getBoundingClientRect();
+      NewOS.snapWin.onDragEnd(win, r.left, r.top);
+    });
+
+    NewOS.widgets.start();
+    NewOS.backup.daily();
+    // rebind icons
+    qa('#pcIcons button[data-app]').forEach(function(b){
+      if(b.dataset.v2bound) return;
+      b.dataset.v2bound='1';
+      b.addEventListener('click', function(){
+        const app=b.getAttribute('data-app');
+        if(typeof openApp==='function') openApp(app);
+      });
+    });
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', bind);
+  else bind();
+  setTimeout(bind, 600);
 })();
 
 </script>
