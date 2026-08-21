@@ -1,12 +1,11 @@
 "use client";
-import { useEffect, useState } from "react";
 
-// තාම නැති components ටික comment out කරා
-// import { VirtualPC } from "@/components/VirtualPC";
-// import { AiAgentPanel } from "@/components/AiAgentPanel";
-// import { WebStudio } from "@/components/WebStudio";
-// import { AnalyticsHub } from "@/components/AnalyticsHub";
-// import { FinanceCenter } from "@/components/FinanceCenter";
+import { useEffect, useState } from "react";
+import { VirtualPC } from "@/components/VirtualPC";
+import { AiAgentPanel } from "@/components/AiAgentPanel";
+import { WebStudio } from "@/components/WebStudio";
+import { AnalyticsHub } from "@/components/AnalyticsHub";
+import { FinanceCenter } from "@/components/FinanceCenter";
 
 const PAGES: Record<string, { title: string; desc: string }> = {
   team: { title: "👥 Team & Collaboration", desc: "Invite members, workspace chat (placeholder)." },
@@ -43,9 +42,15 @@ function LinkGrid({ items }: { items: { name: string; href: string }[] }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
       {items.map((item) => (
-        <a key={item.href} href={item.href} target="_blank" rel="noreferrer"
-          className="rounded-xl border border-border bg-panel px-4 py-3 text-sm hover:border-accent/40 transition">
-          {item.name} <span className="block text-[10px] text-white/35 truncate mt-1">{item.href}</span>
+        <a
+          key={item.href}
+          href={item.href}
+          target="_blank"
+          rel="noreferrer"
+          className="rounded-xl border border-border bg-panel px-4 py-3 text-sm hover:border-accent/40 transition"
+        >
+          {item.name}
+          <span className="block text-[10px] text-white/35 truncate mt-1">{item.href}</span>
         </a>
       ))}
     </div>
@@ -67,16 +72,30 @@ function SettingsPanel() {
       localStorage.setItem("pasiya_supabase_url", url.trim());
       localStorage.setItem("pasiya_supabase_anon", key.trim());
       setMsg("Saved on this device");
-    } catch { setMsg("Could not save"); }
+    } catch {
+      setMsg("Could not save");
+    }
   }
   return (
     <div className="space-y-4 max-w-xl">
       <h1 className="text-2xl font-bold text-accent">⚙ Settings</h1>
       <label className="block text-xs text-white/50 mb-1">Supabase Project URL</label>
-      <input className="w-full rounded-xl bg-bg border border-border px-3 py-2 text-sm mb-3" value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://xxxx.supabase.co" />
+      <input
+        className="w-full rounded-xl bg-bg border border-border px-3 py-2 text-sm mb-3"
+        value={url}
+        onChange={(e) => setUrl(e.target.value)}
+        placeholder="https://xxxx.supabase.co"
+      />
       <label className="block text-xs text-white/50 mb-1">Supabase anon public key</label>
-      <input className="w-full rounded-xl bg-bg border-border px-3 py-2 text-sm mb-3" value={key} onChange={(e) => setKey(e.target.value)} placeholder="anon key" />
-      <button type="button" onClick={save} className="rounded-xl bg-accent text-black font-semibold px-4 py-2 text-sm">Save</button>
+      <input
+        className="w-full rounded-xl bg-bg border border-border px-3 py-2 text-sm mb-3"
+        value={key}
+        onChange={(e) => setKey(e.target.value)}
+        placeholder="anon key"
+      />
+      <button type="button" onClick={save} className="rounded-xl bg-accent text-black font-semibold px-4 py-2 text-sm">
+        Save
+      </button>
       {msg && <p className="text-sm text-accent">{msg}</p>}
     </div>
   );
@@ -84,20 +103,30 @@ function SettingsPanel() {
 
 export default function DynamicPage({ params }: { params: { slug: string } }) {
   const slug = params.slug;
-
-  // තාම නැති pages ටික Coming Soon කරා
-  // if (slug === "virtual-pc") return <VirtualPC />;
-  // if (slug === "ai-agent") return <AiAgentPanel />;
-  // if (slug === "web-studio") return <WebStudio />;
-  // if (slug === "analytics") return <AnalyticsHub />;
-  // if (slug === "finance") return <FinanceCenter />;
-
+  if (slug === "virtual-pc") return <VirtualPC />;
+  if (slug === "ai-agent") return <AiAgentPanel />;
+  if (slug === "web-studio") return <WebStudio />;
+  if (slug === "analytics") return <AnalyticsHub />;
+  if (slug === "finance") return <FinanceCenter />;
   if (slug === "settings") return <SettingsPanel />;
-  if (slug === "hosting") return (<div className="space-y-4"><h1 className="text-2xl font-bold text-accent">☁ Hosting</h1><LinkGrid items={HOSTING} /></div>);
-  if (slug === "social") return (<div className="space-y-4"><h1 className="text-2xl font-bold text-accent">📡 Social</h1><LinkGrid items={SOCIAL} /></div>);
-  if (slug === "developer") return (<div className="space-y-4"><h1 className="text-2xl font-bold text-accent">⚙ Developer</h1><LinkGrid items={DEV} /></div>);
-
-  const page = PAGES[slug];
-  if (!page) return (<div><h1 className="text-2xl font-bold text-accent">Coming Soon</h1><p className="text-white/60 text-sm">Page: {slug}</p></div>);
-  return (<div className="space-y-3"><h1 className="text-2xl font-bold text-accent">{page.title}</h1><p className="text-white/60 text-sm">{page.desc}</p></div>);
-} 
+  if (slug === "hosting")
+    return (
+      <div className="space-y-4">
+        <h1 className="text-2xl font-bold text-accent">☁ Hosting</h1>
+        <LinkGrid items={HOSTING} />
+      </div>
+    );
+  if (slug === "social")
+    return (
+      <div className="space-y-4">
+        <h1 className="text-2xl font-bold text-accent">📡 Social</h1>
+        <LinkGrid items={SOCIAL} />
+      </div>
+    );
+  if (slug === "developer")
+    return (
+      <div className="space-y-4">
+        <h1 className="text-2xl font-bold text-accent">⚙ Developer</h1>
+        <LinkGrid items={DEV} />
+      </div>
+   
