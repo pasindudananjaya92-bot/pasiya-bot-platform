@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { VirtualPC } from "@/components/VirtualPC";
 import { AiAgentPanel } from "@/components/AiAgentPanel";
+import { WebStudio } from "@/components/WebStudio";
 
 const PAGES: Record<string, { title: string; desc: string }> = {
-  "web-studio": { title: "✨ Web Studio", desc: "Code editor + website builder (placeholder)." },
   analytics: { title: "📊 Analytics Hub", desc: "Visitors, page views charts — connect data later." },
   finance: { title: "💰 Finance Center", desc: "Income / expenses tracker (placeholder)." },
   team: { title: "👥 Team & Collaboration", desc: "Invite members, workspace chat (placeholder)." },
@@ -88,6 +88,7 @@ export default function DynamicPage({ params }: { params: { slug: string } }) {
   const slug = params.slug;
   if (slug === "virtual-pc") return <VirtualPC />;
   if (slug === "ai-agent") return <AiAgentPanel />;
+  if (slug === "web-studio") return <WebStudio />;
   if (slug === "settings") return <SettingsPanel />;
   if (slug === "hosting") return (<div className="space-y-4"><h1 className="text-2xl font-bold text-accent">☁ Hosting</h1><LinkGrid items={HOSTING} /></div>);
   if (slug === "social") return (<div className="space-y-4"><h1 className="text-2xl font-bold text-accent">📡 Social</h1><LinkGrid items={SOCIAL} /></div>);
