@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import "./globals.css";
 import { DashboardShell } from "@/components/DashboardShell";
 
@@ -7,11 +8,7 @@ export const metadata: Metadata = {
   description: "Professional SaaS Dashboard",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body className="min-h-screen antialiased">
