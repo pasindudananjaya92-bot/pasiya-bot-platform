@@ -1,0 +1,28 @@
+========================================
+STEP 2 — Upload instructions
+========================================
+
+DO NOT delete package.json / next.config / tsconfig / etc.
+
+ADD or REPLACE only these:
+
+  lib/nav.ts                    ← new folder lib
+  components/Sidebar.tsx        ← new
+  components/TopBar.tsx         ← new
+  components/DashboardShell.tsx ← new
+  app/layout.tsx                ← REPLACE (has shell)
+  app/page.tsx                  ← REPLACE (home cards)
+  app/globals.css               ← REPLACE (optional)
+
+GitHub mobile file names:
+  lib/nav.ts
+  components/Sidebar.tsx
+  components/TopBar.tsx
+  components/DashboardShell.tsx
+  app/layout.tsx
+  app/page.tsx
+  app/globals.css
+
+NO spaces in folder names.
+After commit → wait for Vercel green → send repo link for Step 3.
+========================================
