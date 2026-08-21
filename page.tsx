@@ -1,53 +1,27 @@
-import Link from "next/link";
-import { NAV } from "@/lib/nav";
+"use client";
+import { useState } from "react";
 
-export default function HomePage() {
-  const quick = NAV.filter((n) => n.href !== "/").slice(0, 8);
+export default function WebStudioPage() {
+  const [html, setHtml] = useState(
+    `<!DOCTYPE html>\n<html><body style="font-family:sans-serif;background:#0b1220;color:#fff;padding:2rem">\n  <h1>PASiYA Web Studio</h1>\n  <p>Edit HTML on the left · preview on the right.</p>\n</body></html>`
+  );
   return (
-    <div className="space-y-6 max-w-6xl">
+    <div className="space-y-3 h-[calc(100vh-8rem)] flex flex-col">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-white tracking-tight">
-          Command Center
-        </h1>
-        <p className="text-muted mt-1 text-sm">
-          PASiYA MAX // CMD — SaaS dashboard for AI, Virtual PC, hosting & growth tools.
-        </p>
+        <h1 className="text-xl font-bold text-white">Web Studio</h1>
+        <p className="text-xs text-muted">Lightweight site builder · export HTML</p>
       </div>
-
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {[
-          { k: "Services", v: "40+", s: "Linked tools" },
-          { k: "Modules", v: "15", s: "Dashboard pages" },
-          { k: "Stack", v: "Next.js", s: "Vercel + Supabase" },
-          { k: "Status", v: "Online", s: "Production shell" }
-        ].map((c) => (
-          <div key={c.k} className="card">
-            <div className="text-xs text-muted">{c.k}</div>
-            <div className="text-2xl font-bold text-accent mt-1">{c.v}</div>
-            <div className="text-xs text-muted mt-1">{c.s}</div>
-          </div>
-        ))}
+      <div className="grid md:grid-cols-2 gap-3 flex-1 min-h-0">
+        <textarea className="input font-mono text-xs h-full min-h-[320px] resize-none" value={html} onChange={(e) => setHtml(e.target.value)} />
+        <iframe title="preview" className="w-full h-full min-h-[320px] rounded-xl border border-line bg-white" srcDoc={html} />
       </div>
-
-      <div>
-        <h2 className="text-sm font-semibold text-white mb-3">Quick Launch</h2>
-        <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-          {quick.map((n) => (
-            <Link key={n.href} href={n.href} className="card hover:border-accent/40 transition text-sm font-medium">
-              {n.label}
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      <div className="card">
-        <h2 className="font-semibold text-white">Deploy notes</h2>
-        <ol className="mt-2 text-sm text-muted list-decimal pl-5 space-y-1">
-          <li>Copy <code className="text-accent">.env.example</code> → <code className="text-accent">.env.local</code></li>
-          <li>Add Supabase URL + anon key for cloud features</li>
-          <li><code className="text-accent">npm i && npm run dev</code> locally · or import repo to Vercel</li>
-        </ol>
-      </div>
+      <button className="btn w-fit" onClick={() => {
+        const blob = new Blob([html], { type: "text/html" });
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = "pasiya-site.html";
+        a.click();
+      }}>Download HTML</button>
     </div>
   );
 }
