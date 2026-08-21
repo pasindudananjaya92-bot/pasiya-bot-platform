@@ -1,0 +1,19 @@
+STEP 3 — Upload these paths (nested folders via slash in filename):
+
+app/virtual-pc/page.tsx
+app/ai-agent/page.tsx
+app/web-studio/page.tsx
+app/hosting/page.tsx
+app/developer/page.tsx
+app/social/page.tsx
+app/analytics/page.tsx
+app/finance/page.tsx
+app/team/page.tsx
+app/automation/page.tsx
+app/storage/page.tsx
+app/security/page.tsx
+app/marketplace/page.tsx
+app/settings/page.tsx
+
+Do not delete package.json, components/, lib/.
+No spaces in paths.
