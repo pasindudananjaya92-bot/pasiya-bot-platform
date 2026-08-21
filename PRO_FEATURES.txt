@@ -1,0 +1,15 @@
+Added desktop apps:
+CloudFS - virtual files + version history (local)
+IDE - Monaco editor + Run JS + save to CloudFS
+AI Agent - local commands + n8n webhook
+Notif - notification center
+Monitor - browser memory/FPS/network
+Widgets - clock/date/weather sample/quick note
+Archive - ZIP download of CloudFS
+Automate - n8n/Make links + webhook ping + local scheduler
+DB GUI - Mongo search API + dashboard links
+Snapshot - save/restore OS state JSON
+Recorder - screen capture MediaRecorder
+Docs - lightweight text docs → CloudFS
+
+Hotkeys (PC focus): Ctrl+Shift+F FS, Ctrl+Shift+I IDE, Ctrl+Shift+A Agent

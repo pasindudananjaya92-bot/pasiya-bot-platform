@@ -2379,6 +2379,27 @@ body.kbd-open{
 #pcCursor{display:block!important;position:fixed!important;z-index:2147482000!important;pointer-events:none!important;width:18px!important;height:18px!important}
 #page-desktop .pc-work.cursor-on{cursor:none}
 
+
+/* PRO_OS_MODULES */
+.pro-win-body{padding:10px;overflow:auto;height:100%;font-size:13px;color:#cfefff}
+.pro-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.pro-card{background:rgba(0,40,60,.45);border:1px solid rgba(0,229,255,.25);border-radius:10px;padding:10px;cursor:pointer}
+.pro-card:hover{border-color:#00e5ff;background:rgba(0,80,100,.4)}
+.pro-row{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0;align-items:center}
+.pro-row input,.pro-row select,.pro-btn{
+  background:#0a1525;border:1px solid rgba(0,229,255,.35);color:#e8ffff;border-radius:8px;padding:8px 10px;font-size:13px}
+.pro-btn{cursor:pointer;font-weight:700;min-height:40px}
+.pro-btn:hover{background:rgba(0,229,255,.15)}
+.pro-list{list-style:none;margin:0;padding:0}
+.pro-list li{padding:8px 10px;border-bottom:1px solid rgba(0,229,255,.12);display:flex;justify-content:space-between;gap:8px;align-items:center}
+.pro-mono{font-family:ui-monospace,monospace;font-size:12px;white-space:pre-wrap}
+.pro-split{display:grid;grid-template-columns:1fr 1fr;gap:8px;min-height:200px}
+@media(max-width:700px){.pro-split{grid-template-columns:1fr}}
+#proNotifBadge{position:absolute;top:2px;right:2px;background:#f44;color:#fff;border-radius:10px;font-size:10px;padding:1px 5px;display:none}
+.pro-editor{width:100%;min-height:220px;background:#0b1220;color:#d7e8ff;border:1px solid rgba(0,229,255,.3);border-radius:8px;padding:8px}
+.pro-bar{height:8px;background:#123;border-radius:4px;overflow:hidden;margin:4px 0}
+.pro-bar>i{display:block;height:100%;background:linear-gradient(90deg,#0ff,#08f);width:0%}
+
 </style>
 </head>
 <body>
@@ -3214,6 +3235,21 @@ RULES:
         <button type="button" data-app="projects"><span class="ic">📂</span>Projects</button>
         <button type="button" data-app="botlab"><span class="ic">🤖</span>Bot Lab</button>
         <button type="button" data-app="settings"><span class="ic">⚙</span>Settings</button>
+        
+        <!-- PRO_OS_ICONS -->
+        <button type="button" data-app="profs"><span class="ic">💾</span>CloudFS</button>
+        <button type="button" data-app="proide"><span class="ic">💻</span>IDE</button>
+        <button type="button" data-app="proagent"><span class="ic">🧠</span>AI Agent</button>
+        <button type="button" data-app="pronotif"><span class="ic">🔔</span>Notif</button>
+        <button type="button" data-app="promon"><span class="ic">📈</span>Monitor</button>
+        <button type="button" data-app="prowidgets"><span class="ic">🧩</span>Widgets</button>
+        <button type="button" data-app="prozip"><span class="ic">📦</span>Archive</button>
+        <button type="button" data-app="proauto"><span class="ic">⚡</span>Automate</button>
+        <button type="button" data-app="prodb"><span class="ic">🗄</span>DB GUI</button>
+        <button type="button" data-app="prosnap"><span class="ic">📸</span>Snapshot</button>
+        <button type="button" data-app="prorec"><span class="ic">🎥</span>Recorder</button>
+        <button type="button" data-app="prooffice"><span class="ic">📄</span>Docs</button>
+
         <button type="button" data-app="cloud"><span class="ic">☁</span>Cloud IDE</button>
       </div>
 
@@ -3419,7 +3455,232 @@ help | clear | note | agent
           Copy project link from Projects → open in phone browser.
         </div>
       </div>
-    <div class="pc-kbd-dock" id="pcKbdDock">
+    
+<div class="pc-win" id="pcApp-profs" data-title="Cloud FS / Virtual Drive">
+  <div class="pc-win-title"><span>Cloud FS / Virtual Drive</span><div class="pc-win-btns">
+    <button type="button" class="pc-min" data-act="min">_</button>
+    <button type="button" class="pc-max" data-act="max">□</button>
+    <button type="button" class="pc-close" data-act="close">×</button>
+  </div></div>
+  <div class="pc-win-body pro-win-body">
+<div class="pro-row">
+  <input id="proFsName" placeholder="filename.txt" style="flex:1">
+  <button type="button" class="pro-btn" id="proFsSave">Save</button>
+  <button type="button" class="pro-btn" id="proFsNew">New</button>
+  <button type="button" class="pro-btn" id="proFsZip">Export ZIP</button>
+</div>
+<div class="pro-split">
+  <div><b>Files</b><ul class="pro-list" id="proFsList"></ul>
+  <p style="opacity:.7;font-size:11px">Versions: right panel · stored in this browser (IndexedDB/localStorage bridge)</p></div>
+  <div><b>Editor / Version History</b>
+  <textarea id="proFsEditor" class="pro-editor" placeholder="File content..."></textarea>
+  <ul class="pro-list" id="proFsVers"></ul></div>
+</div>
+</div>
+</div>
+
+<div class="pc-win" id="pcApp-proide" data-title="Pro IDE (Monaco)">
+  <div class="pc-win-title"><span>Pro IDE (Monaco)</span><div class="pc-win-btns">
+    <button type="button" class="pc-min" data-act="min">_</button>
+    <button type="button" class="pc-max" data-act="max">□</button>
+    <button type="button" class="pc-close" data-act="close">×</button>
+  </div></div>
+  <div class="pc-win-body pro-win-body">
+<div class="pro-row">
+  <select id="proIdeLang"><option>javascript</option><option>html</option><option>css</option><option>json</option><option>python</option><option>markdown</option></select>
+  <button type="button" class="pro-btn" id="proIdeRun">Run JS</button>
+  <button type="button" class="pro-btn" id="proIdeSave">Save to CloudFS</button>
+</div>
+<div id="proIdeHost" style="height:min(50vh,360px);border:1px solid rgba(0,229,255,.3);border-radius:8px"></div>
+<pre id="proIdeOut" class="pro-mono" style="max-height:100px;overflow:auto;margin-top:6px"></pre>
+</div>
+</div>
+
+<div class="pc-win" id="pcApp-proagent" data-title="System AI Agent">
+  <div class="pc-win-title"><span>System AI Agent</span><div class="pc-win-btns">
+    <button type="button" class="pc-min" data-act="min">_</button>
+    <button type="button" class="pc-max" data-act="max">□</button>
+    <button type="button" class="pc-close" data-act="close">×</button>
+  </div></div>
+  <div class="pc-win-body pro-win-body">
+<p style="opacity:.85">Agent uses your <b>n8n Production webhook</b> (Settings) + local tools (FS, notify, open apps).</p>
+<div id="proAgentLog" class="pro-mono" style="height:160px;overflow:auto;background:#061018;border-radius:8px;padding:8px"></div>
+<div class="pro-row">
+  <input id="proAgentIn" placeholder="Command or question..." style="flex:1">
+  <button type="button" class="pro-btn" id="proAgentSend">Send</button>
+</div>
+<div class="pro-row">
+  <button type="button" class="pro-btn" data-agent-cmd="list files">List files</button>
+  <button type="button" class="pro-btn" data-agent-cmd="snapshot">Snapshot OS</button>
+  <button type="button" class="pro-btn" data-agent-cmd="notify test">Test notify</button>
+  <button type="button" class="pro-btn" data-agent-cmd="open ide">Open IDE</button>
+</div>
+</div>
+</div>
+
+<div class="pc-win" id="pcApp-pronotif" data-title="Notification Center">
+  <div class="pc-win-title"><span>Notification Center</span><div class="pc-win-btns">
+    <button type="button" class="pc-min" data-act="min">_</button>
+    <button type="button" class="pc-max" data-act="max">□</button>
+    <button type="button" class="pc-close" data-act="close">×</button>
+  </div></div>
+  <div class="pc-win-body pro-win-body">
+<div class="pro-row">
+  <button type="button" class="pro-btn" id="proNotifClear">Clear all</button>
+  <button type="button" class="pro-btn" id="proNotifTest">Test notification</button>
+</div>
+<ul class="pro-list" id="proNotifList"></ul>
+</div>
+</div>
+
+<div class="pc-win" id="pcApp-promon" data-title="Performance Monitor">
+  <div class="pc-win-title"><span>Performance Monitor</span><div class="pc-win-btns">
+    <button type="button" class="pc-min" data-act="min">_</button>
+    <button type="button" class="pc-max" data-act="max">□</button>
+    <button type="button" class="pc-close" data-act="close">×</button>
+  </div></div>
+  <div class="pc-win-body pro-win-body">
+<p><b>Browser resources</b> (not host phone CPU)</p>
+<div>JS Heap / Memory: <span id="proMem">—</span></div>
+<div class="pro-bar"><i id="proMemBar"></i></div>
+<div>FPS (approx): <span id="proFps">—</span></div>
+<div class="pro-bar"><i id="proFpsBar"></i></div>
+<div>Online: <span id="proNet">—</span> · Connection: <span id="proConn">—</span></div>
+<div>Open windows: <span id="proWins">—</span></div>
+<pre id="proMonLog" class="pro-mono" style="max-height:120px;overflow:auto"></pre>
+</div>
+</div>
+
+<div class="pc-win" id="pcApp-prowidgets" data-title="Widget Dashboard">
+  <div class="pc-win-title"><span>Widget Dashboard</span><div class="pc-win-btns">
+    <button type="button" class="pc-min" data-act="min">_</button>
+    <button type="button" class="pc-max" data-act="max">□</button>
+    <button type="button" class="pc-close" data-act="close">×</button>
+  </div></div>
+  <div class="pc-win-body pro-win-body">
+<div class="pro-grid">
+  <div class="pro-card"><b>🕐 Clock</b><div id="proWClock" style="font-size:22px;margin-top:8px">—</div></div>
+  <div class="pro-card"><b>📅 Date</b><div id="proWDate" style="margin-top:8px">—</div></div>
+  <div class="pro-card"><b>🌤 Weather</b><div id="proWWeather" style="margin-top:8px;font-size:12px">Tap refresh</div>
+    <button type="button" class="pro-btn" id="proWRefresh" style="margin-top:6px">Refresh</button></div>
+  <div class="pro-card"><b>📌 Quick note</b><textarea id="proWNote" class="pro-editor" style="min-height:80px"></textarea></div>
+</div>
+</div>
+</div>
+
+<div class="pc-win" id="pcApp-prozip" data-title="Archive (ZIP)">
+  <div class="pc-win-title"><span>Archive (ZIP)</span><div class="pc-win-btns">
+    <button type="button" class="pc-min" data-act="min">_</button>
+    <button type="button" class="pc-max" data-act="max">□</button>
+    <button type="button" class="pc-close" data-act="close">×</button>
+  </div></div>
+  <div class="pc-win-body pro-win-body">
+<p>Create ZIP from CloudFS text files (client-side).</p>
+<div class="pro-row">
+  <input id="proZipName" value="pasiya-backup.zip" style="flex:1">
+  <button type="button" class="pro-btn" id="proZipBuild">Build & Download</button>
+</div>
+<pre id="proZipLog" class="pro-mono"></pre>
+</div>
+</div>
+
+<div class="pc-win" id="pcApp-proauto" data-title="Automation Hub">
+  <div class="pc-win-title"><span>Automation Hub</span><div class="pc-win-btns">
+    <button type="button" class="pc-min" data-act="min">_</button>
+    <button type="button" class="pc-max" data-act="max">□</button>
+    <button type="button" class="pc-close" data-act="close">×</button>
+  </div></div>
+  <div class="pc-win-body pro-win-body">
+<div class="pro-grid">
+  <a class="pro-card" href="https://pasiyamax.app.n8n.cloud" target="_blank" rel="noopener"><b>n8n Cloud</b><div>Workflows</div></a>
+  <a class="pro-card" href="https://www.make.com" target="_blank" rel="noopener"><b>Make.com</b><div>Scenarios</div></a>
+  <a class="pro-card" href="https://pipedream.com" target="_blank" rel="noopener"><b>Pipedream</b><div>Workflows</div></a>
+</div>
+<div class="pro-row" style="margin-top:12px">
+  <input id="proAutoHook" placeholder="Production webhook URL" style="flex:1">
+  <button type="button" class="pro-btn" id="proAutoPing">Ping</button>
+</div>
+<pre id="proAutoLog" class="pro-mono"></pre>
+<p style="font-size:11px;opacity:.75">Scheduler (local): runs while this tab is open.</p>
+<div class="pro-row">
+  <input id="proCronMsg" placeholder="Reminder text" style="flex:1">
+  <input id="proCronMin" type="number" min="1" value="5" style="width:70px" title="minutes">
+  <button type="button" class="pro-btn" id="proCronAdd">Schedule</button>
+</div>
+<ul class="pro-list" id="proCronList"></ul>
+</div>
+</div>
+
+<div class="pc-win" id="pcApp-prodb" data-title="Database GUI">
+  <div class="pc-win-title"><span>Database GUI</span><div class="pc-win-btns">
+    <button type="button" class="pc-min" data-act="min">_</button>
+    <button type="button" class="pc-max" data-act="max">□</button>
+    <button type="button" class="pc-close" data-act="close">×</button>
+  </div></div>
+  <div class="pc-win-body pro-win-body">
+<p>Mongo Atlas Search (existing API) + Supabase links.</p>
+<div class="pro-row">
+  <input id="proDbQ" placeholder="search users..." style="flex:1">
+  <button type="button" class="pro-btn" id="proDbSearch">Search</button>
+</div>
+<pre id="proDbOut" class="pro-mono" style="max-height:240px;overflow:auto"></pre>
+<div class="pro-row">
+  <a class="pro-btn" href="https://supabase.com/dashboard" target="_blank" rel="noopener">Supabase Dashboard</a>
+  <a class="pro-btn" href="https://cloud.mongodb.com" target="_blank" rel="noopener">MongoDB Atlas</a>
+</div>
+</div>
+</div>
+
+<div class="pc-win" id="pcApp-prosnap" data-title="System Snapshot">
+  <div class="pc-win-title"><span>System Snapshot</span><div class="pc-win-btns">
+    <button type="button" class="pc-min" data-act="min">_</button>
+    <button type="button" class="pc-max" data-act="max">□</button>
+    <button type="button" class="pc-close" data-act="close">×</button>
+  </div></div>
+  <div class="pc-win-body pro-win-body">
+<p>Save / restore OS UI state (layout flags, CloudFS index, settings keys).</p>
+<div class="pro-row">
+  <button type="button" class="pro-btn" id="proSnapSave">Save snapshot</button>
+  <button type="button" class="pro-btn" id="proSnapRestore">Restore last</button>
+  <button type="button" class="pro-btn" id="proSnapExport">Export JSON</button>
+</div>
+<pre id="proSnapLog" class="pro-mono"></pre>
+</div>
+</div>
+
+<div class="pc-win" id="pcApp-prorec" data-title="Screen Recorder">
+  <div class="pc-win-title"><span>Screen Recorder</span><div class="pc-win-btns">
+    <button type="button" class="pc-min" data-act="min">_</button>
+    <button type="button" class="pc-max" data-act="max">□</button>
+    <button type="button" class="pc-close" data-act="close">×</button>
+  </div></div>
+  <div class="pc-win-body pro-win-body">
+<p>Uses browser <code>getDisplayMedia</code> (permission required).</p>
+<div class="pro-row">
+  <button type="button" class="pro-btn" id="proRecStart">Start</button>
+  <button type="button" class="pro-btn" id="proRecStop">Stop & Save</button>
+</div>
+<video id="proRecPreview" controls style="width:100%;max-height:200px;background:#000;border-radius:8px"></video>
+<pre id="proRecLog" class="pro-mono"></pre>
+</div>
+</div>
+
+<div class="pc-win" id="pcApp-prooffice" data-title="Docs (Lightweight Office)">
+  <div class="pc-win-title"><span>Docs (Lightweight Office)</span><div class="pc-win-btns">
+    <button type="button" class="pc-min" data-act="min">_</button>
+    <button type="button" class="pc-max" data-act="max">□</button>
+    <button type="button" class="pc-close" data-act="close">×</button>
+  </div></div>
+  <div class="pc-win-body pro-win-body">
+<div class="pro-row">
+  <button type="button" class="pro-btn" id="proDocSave">Save to CloudFS</button>
+  <input id="proDocName" value="document.txt" style="flex:1">
+</div>
+<textarea id="proDocBody" class="pro-editor" style="min-height:280px" placeholder="Write here... (rich Office = OnlyOffice embed later on Next.js)"></textarea>
+</div>
+</div>
+
+<div class="pc-kbd-dock" id="pcKbdDock">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
         <span style="font-size:10px;color:#f5c542">KEYBOARD → Address / focused app</span>
         <button type="button" id="btnKbdClose" style="padding:6px 12px;border-radius:6px;border:1px solid #0ff;background:#000;color:#0ff">CLOSE</button>
@@ -6208,6 +6469,20 @@ document.addEventListener('DOMContentLoaded', function(){
     if(name==='files') renderFiles();
     if(name==='calc'){ buildCalc(); activeInput=$('pcCalcOut'); }
     if(name==='explorer') renderExplorer();
+
+    if(name==='profs'){ try{ ProOS.fs.render(); }catch(e){} }
+    if(name==='proide'){ try{ ProOS.ide.mount(); }catch(e){} }
+    if(name==='proagent'){ try{ ProOS.agent.focus(); }catch(e){} }
+    if(name==='pronotif'){ try{ ProOS.notif.render(); }catch(e){} }
+    if(name==='promon'){ try{ ProOS.mon.start(); }catch(e){} }
+    if(name==='prowidgets'){ try{ ProOS.widgets.start(); }catch(e){} }
+    if(name==='prozip'){ try{ ProOS.zip.log('Ready'); }catch(e){} }
+    if(name==='proauto'){ try{ ProOS.auto.init(); }catch(e){} }
+    if(name==='prodb'){ try{ /* db ready */ }catch(e){} }
+    if(name==='prosnap'){ try{ /* snap */ }catch(e){} }
+    if(name==='prorec'){ try{ /* rec */ }catch(e){} }
+    if(name==='prooffice'){ try{ /* office */ }catch(e){} }
+
     if(name==='sysset') renderSysSet('system');
     if(name==='recycle') renderRecycle();
     if(activeInput){ try{ activeInput.focus({preventScroll:true}); }catch(e){} }
@@ -10106,6 +10381,546 @@ document.addEventListener('DOMContentLoaded', function(){
   setTimeout(boot, 400);
   setTimeout(boot, 1200);
   setInterval(killDupes, 3000);
+})();
+
+</script>
+<script>
+
+/* PRO_OS_MODULES_JS */
+(function(){
+  const FS_KEY = 'pasiya_pro_fs_v1';
+  const NOTIF_KEY = 'pasiya_pro_notif_v1';
+  const SNAP_KEY = 'pasiya_pro_snap_v1';
+  const NOTE_KEY = 'pasiya_pro_widget_note';
+
+  function $(id){ return document.getElementById(id); }
+  function loadFS(){
+    try{ return JSON.parse(localStorage.getItem(FS_KEY)||'{}'); }catch(e){ return {}; }
+  }
+  function saveFS(obj){ localStorage.setItem(FS_KEY, JSON.stringify(obj)); }
+
+  const ProOS = {
+    fs: {
+      current: null,
+      render(){
+        const fs = loadFS();
+        const ul = $('proFsList'); if(!ul) return;
+        ul.innerHTML = '';
+        const names = Object.keys(fs).sort();
+        if(!names.length){
+          ul.innerHTML = '<li style="opacity:.6">No files yet — type name + content, Save</li>';
+        }
+        names.forEach(n=>{
+          const li = document.createElement('li');
+          const meta = fs[n];
+          li.innerHTML = '<span>📄 '+n+' <small style="opacity:.6">v'+(meta.versions&&meta.versions.length||1)+'</small></span>';
+          const open = document.createElement('button'); open.className='pro-btn'; open.textContent='Open';
+          open.onclick = ()=> ProOS.fs.open(n);
+          const del = document.createElement('button'); del.className='pro-btn'; del.textContent='Del';
+          del.onclick = ()=>{ delete fs[n]; saveFS(fs); ProOS.fs.render(); ProOS.notif.push('FS', 'Deleted '+n); };
+          const box = document.createElement('span'); box.style.display='flex'; box.style.gap='4px';
+          box.appendChild(open); box.appendChild(del); li.appendChild(box); ul.appendChild(li);
+        });
+      },
+      open(name){
+        const fs = loadFS();
+        const f = fs[name]; if(!f) return;
+        ProOS.fs.current = name;
+        const ed = $('proFsEditor'); if(ed) ed.value = f.content||'';
+        const nameIn = $('proFsName'); if(nameIn) nameIn.value = name;
+        const vu = $('proFsVers'); if(vu){
+          vu.innerHTML = '';
+          (f.versions||[]).slice().reverse().forEach((v,i)=>{
+            const li=document.createElement('li');
+            li.innerHTML = '<span>v'+v.t+' · '+new Date(v.at).toLocaleString()+'</span>';
+            const b=document.createElement('button'); b.className='pro-btn'; b.textContent='Restore';
+            b.onclick=()=>{ ed.value=v.content; ProOS.notif.push('FS','Restored version'); };
+            li.appendChild(b); vu.appendChild(li);
+          });
+        }
+      },
+      save(){
+        const name = (($('proFsName')||{}).value||'').trim() || 'untitled.txt';
+        const content = ($('proFsEditor')||{}).value||'';
+        const fs = loadFS();
+        const prev = fs[name] || { content:'', versions:[] };
+        if(prev.content !== content){
+          prev.versions = prev.versions || [];
+          prev.versions.push({ t: (prev.versions.length+1), at: Date.now(), content: prev.content });
+          if(prev.versions.length > 20) prev.versions = prev.versions.slice(-20);
+        }
+        prev.content = content;
+        prev.updated = Date.now();
+        fs[name] = prev;
+        saveFS(fs);
+        ProOS.fs.current = name;
+        ProOS.fs.render();
+        ProOS.fs.open(name);
+        ProOS.notif.push('CloudFS', 'Saved '+name);
+      }
+    },
+    ide: {
+      editor: null,
+      mount(){
+        const host = $('proIdeHost'); if(!host) return;
+        if(window.monaco && ProOS.ide.editor) return;
+        const boot = ()=>{
+          if(!window.monaco){
+            host.innerHTML = '<textarea id="proIdeFallback" class="pro-editor" style="height:100%;min-height:220px">// Monaco loading failed — fallback editor\nconsole.log("hello");</textarea>';
+            return;
+          }
+          host.innerHTML = '';
+          ProOS.ide.editor = monaco.editor.create(host, {
+            value: localStorage.getItem('pasiya_pro_ide') || '// PASiYA Pro IDE\nconsole.log("hello from Web OS");\n',
+            language: 'javascript',
+            theme: 'vs-dark',
+            automaticLayout: true,
+            minimap: { enabled: false },
+            fontSize: 14
+          });
+        };
+        if(window.monaco){ boot(); return; }
+        if(document.getElementById('proMonacoLoader')){ setTimeout(boot, 800); return; }
+        const s = document.createElement('script');
+        s.id = 'proMonacoLoader';
+        s.src = 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js';
+        s.onload = function(){
+          require.config({ paths: { vs: 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' } });
+          require(['vs/editor/editor.main'], boot);
+        };
+        s.onerror = boot;
+        document.head.appendChild(s);
+        host.innerHTML = '<div style="padding:12px;opacity:.7">Loading Monaco…</div>';
+      },
+      getValue(){
+        if(ProOS.ide.editor) return ProOS.ide.editor.getValue();
+        const fb = $('proIdeFallback'); return fb ? fb.value : '';
+      }
+    },
+    notif: {
+      all(){ try{ return JSON.parse(localStorage.getItem(NOTIF_KEY)||'[]'); }catch(e){ return []; } },
+      save(a){ localStorage.setItem(NOTIF_KEY, JSON.stringify(a.slice(0,100))); },
+      push(title, body){
+        const a = ProOS.notif.all();
+        a.unshift({ title, body, at: Date.now() });
+        ProOS.notif.save(a);
+        ProOS.notif.render();
+        try{
+          if(Notification && Notification.permission==='granted') new Notification(title, { body });
+        }catch(e){}
+      },
+      render(){
+        const ul = $('proNotifList'); if(!ul) return;
+        const a = ProOS.notif.all();
+        ul.innerHTML = a.length ? '' : '<li style="opacity:.6">No notifications</li>';
+        a.forEach(n=>{
+          const li=document.createElement('li');
+          li.innerHTML = '<div><b>'+n.title+'</b><div style="opacity:.75;font-size:12px">'+n.body+'</div><small>'+new Date(n.at).toLocaleString()+'</small></div>';
+          ul.appendChild(li);
+        });
+      }
+    },
+    mon: {
+      timer: null,
+      start(){
+        if(ProOS.mon.timer) clearInterval(ProOS.mon.timer);
+        let frames=0, last=performance.now();
+        function tick(t){
+          frames++;
+          if(t-last>=1000){
+            const fps = frames; frames=0; last=t;
+            const el=$('proFps'); if(el) el.textContent=fps;
+            const bar=$('proFpsBar'); if(bar) bar.style.width=Math.min(100,fps)+'%';
+          }
+          if($('pcApp-promon')&&$('pcApp-promon').classList.contains('open')) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        ProOS.mon.timer = setInterval(()=>{
+          const mem = performance.memory;
+          if(mem){
+            const used = (mem.usedJSHeapSize/1048576).toFixed(1);
+            const tot = (mem.totalJSHeapSize/1048576).toFixed(1);
+            const el=$('proMem'); if(el) el.textContent=used+' / '+tot+' MB';
+            const bar=$('proMemBar'); if(bar) bar.style.width=Math.min(100,(mem.usedJSHeapSize/mem.jsHeapSizeLimit)*100)+'%';
+          } else {
+            const el=$('proMem'); if(el) el.textContent='(not exposed in this browser)';
+          }
+          const net=$('proNet'); if(net) net.textContent=navigator.onLine?'Online':'Offline';
+          const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+          const conn=$('proConn'); if(conn) conn.textContent=c?(c.effectiveType||c.type||'—'):'—';
+          const wins=$('proWins'); if(wins) wins.textContent=document.querySelectorAll('#pcWork .pc-win.open:not(.minimized)').length;
+        }, 1000);
+      }
+    },
+    widgets: {
+      timer: null,
+      start(){
+        const tick=()=>{
+          const d=new Date();
+          const c=$('proWClock'); if(c) c.textContent=d.toLocaleTimeString();
+          const dt=$('proWDate'); if(dt) dt.textContent=d.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+        };
+        tick();
+        if(ProOS.widgets.timer) clearInterval(ProOS.widgets.timer);
+        ProOS.widgets.timer=setInterval(tick,1000);
+        const note=$('proWNote');
+        if(note){
+          note.value=localStorage.getItem(NOTE_KEY)||'';
+          note.oninput=()=>localStorage.setItem(NOTE_KEY, note.value);
+        }
+      }
+    },
+    zip: {
+      log(m){ const el=$('proZipLog'); if(el) el.textContent=m; },
+      async build(){
+        const fs=loadFS();
+        const names=Object.keys(fs);
+        if(!names.length){ ProOS.zip.log('No files in CloudFS'); return; }
+        // minimal ZIP (store only) without external lib
+        function crc32(str){
+          let c=0^(-1);
+          for(let i=0;i<str.length;i++){
+            c^=str.charCodeAt(i);
+            for(let k=0;k<8;k++) c=(c>>>1)^(0xedb88320&-(c&1));
+          }
+          return (c^(-1))>>>0;
+        }
+        function u16(n){ return String.fromCharCode(n&255,(n>>8)&255); }
+        function u32(n){ return String.fromCharCode(n&255,(n>>8)&255,(n>>16)&255,(n>>24)&255); }
+        let parts='', central='', offset=0, count=0;
+        names.forEach(name=>{
+          const data = unescape(encodeURIComponent(fs[name].content||''));
+          const crc = crc32(data);
+          const nameEnc = unescape(encodeURIComponent(name));
+          const local = 'PK\\x03\\x04'+u16(20)+u16(0)+u16(0)+u16(0)+u16(0)+u32(crc)+u32(data.length)+u32(data.length)+u16(nameEnc.length)+u16(0)+nameEnc+data;
+          // fix escapes - use binary via arrays instead
+        });
+        // Use Blob + simple concatenation with Uint8Array for reliability
+        const files = names.map(n=>({name:n, data: new TextEncoder().encode(fs[n].content||'')}));
+        function crc32u(buf){
+          let c=0^(-1);
+          for(let i=0;i<buf.length;i++){
+            c^=buf[i];
+            for(let k=0;k<8;k++) c=(c>>>1)^(0xedb88320&-(c&1));
+          }
+          return (c^(-1))>>>0;
+        }
+        const localParts=[], centralParts=[];
+        let off=0;
+        files.forEach(f=>{
+          const nameBytes=new TextEncoder().encode(f.name);
+          const crc=crc32u(f.data);
+          const local = new Uint8Array(30+nameBytes.length+f.data.length);
+          const view=new DataView(local.buffer);
+          view.setUint32(0,0x04034b50,true);
+          view.setUint16(4,20,true);
+          view.setUint32(14,crc,true);
+          view.setUint32(18,f.data.length,true);
+          view.setUint32(22,f.data.length,true);
+          view.setUint16(26,nameBytes.length,true);
+          local.set(nameBytes,30);
+          local.set(f.data,30+nameBytes.length);
+          localParts.push(local);
+          const central=new Uint8Array(46+nameBytes.length);
+          const cv=new DataView(central.buffer);
+          cv.setUint32(0,0x02014b50,true);
+          cv.setUint16(4,20,true);
+          cv.setUint16(6,20,true);
+          cv.setUint32(16,crc,true);
+          cv.setUint32(20,f.data.length,true);
+          cv.setUint32(24,f.data.length,true);
+          cv.setUint16(28,nameBytes.length,true);
+          cv.setUint32(42,off,true);
+          central.set(nameBytes,46);
+          centralParts.push(central);
+          off+=local.length;
+        });
+        const centralOff=off;
+        const centralSize=centralParts.reduce((s,p)=>s+p.length,0);
+        const end=new Uint8Array(22);
+        const ev=new DataView(end.buffer);
+        ev.setUint32(0,0x06054b50,true);
+        ev.setUint16(8,files.length,true);
+        ev.setUint16(10,files.length,true);
+        ev.setUint32(12,centralSize,true);
+        ev.setUint32(16,centralOff,true);
+        const blob=new Blob([...localParts,...centralParts,end],{type:'application/zip'});
+        const a=document.createElement('a');
+        a.href=URL.createObjectURL(blob);
+        a.download=(($('proZipName')||{}).value||'pasiya-backup.zip');
+        a.click();
+        ProOS.zip.log('ZIP downloaded ('+files.length+' files)');
+        ProOS.notif.push('Archive','ZIP ready');
+      }
+    },
+    auto: {
+      jobs: [],
+      init(){
+        const hook=$('proAutoHook');
+        if(hook && !hook.value){
+          try{
+            const st=JSON.parse(localStorage.getItem('pasiya_settings')||'{}');
+            hook.value=st.n8nChat||localStorage.getItem('pasiya_n8n_chat')||'';
+          }catch(e){}
+        }
+      },
+      async ping(){
+        const url=(($('proAutoHook')||{}).value||'').trim();
+        const log=$('proAutoLog');
+        if(!url){ if(log) log.textContent='Paste Production webhook URL'; return; }
+        try{
+          const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:'ping from PASiYA Pro OS',text:'ping'})});
+          const t=await r.text();
+          if(log) log.textContent=r.status+' '+t.slice(0,500);
+          ProOS.notif.push('Automate','Ping '+r.status);
+        }catch(err){ if(log) log.textContent=String(err); }
+      },
+      schedule(){
+        const msg=(($('proCronMsg')||{}).value||'Reminder').trim();
+        const min=Math.max(1, parseInt((($('proCronMin')||{}).value||'5'),10)||5);
+        const id=setTimeout(()=>{
+          ProOS.notif.push('Scheduler', msg);
+          try{ alert('⏰ '+msg); }catch(e){}
+        }, min*60*1000);
+        ProOS.auto.jobs.push({id, msg, min, at:Date.now()});
+        ProOS.auto.renderJobs();
+        ProOS.notif.push('Scheduler', 'In '+min+' min: '+msg);
+      },
+      renderJobs(){
+        const ul=$('proCronList'); if(!ul) return;
+        ul.innerHTML='';
+        ProOS.auto.jobs.forEach(j=>{
+          const li=document.createElement('li');
+          li.textContent=j.min+' min → '+j.msg;
+          ul.appendChild(li);
+        });
+      }
+    },
+    agent: {
+      log(role, text){
+        const el=$('proAgentLog'); if(!el) return;
+        el.textContent += (role===':user'? 'You: ':'Agent: ')+text+'\n';
+        el.scrollTop=el.scrollHeight;
+      },
+      focus(){ const i=$('proAgentIn'); if(i) try{i.focus()}catch(e){} },
+      async run(cmd){
+        cmd=String(cmd||'').trim(); if(!cmd) return;
+        ProOS.agent.log('user', cmd);
+        const low=cmd.toLowerCase();
+        // local tools
+        if(/list files|ls|files/.test(low)){
+          const names=Object.keys(loadFS());
+          ProOS.agent.log('bot', names.length? names.join(', ') : 'CloudFS empty');
+          return;
+        }
+        if(/snapshot|backup os/.test(low)){
+          ProOS.snap.save();
+          ProOS.agent.log('bot', 'Snapshot saved');
+          return;
+        }
+        if(/notify/.test(low)){
+          ProOS.notif.push('Agent', cmd.replace(/notify/i,'').trim()||'Hello');
+          ProOS.agent.log('bot', 'Notification queued');
+          return;
+        }
+        if(/open ide|open ide/.test(low) || low==='open ide'){
+          if(typeof openApp==='function') openApp('proide');
+          ProOS.agent.log('bot', 'Opened IDE');
+          return;
+        }
+        if(/open fs|cloud/.test(low)){
+          if(typeof openApp==='function') openApp('profs');
+          ProOS.agent.log('bot', 'Opened CloudFS');
+          return;
+        }
+        // n8n
+        let url='';
+        try{
+          const st=JSON.parse(localStorage.getItem('pasiya_settings')||'{}');
+          url=st.n8nChat||localStorage.getItem('pasiya_n8n_chat')||'';
+        }catch(e){}
+        if(!url){
+          ProOS.agent.log('bot', 'No n8n webhook in Settings — local tools only. Save Production URL in Settings.');
+          return;
+        }
+        try{
+          const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:cmd,text:cmd,q:cmd})});
+          const j=await r.json().catch(()=>({}));
+          const reply=j.reply||j.message||j.text||j.output||JSON.stringify(j).slice(0,400);
+          ProOS.agent.log('bot', reply);
+        }catch(err){
+          ProOS.agent.log('bot', 'n8n error: '+err.message);
+        }
+      }
+    },
+    snap: {
+      save(){
+        const data={
+          at:Date.now(),
+          fs:loadFS(),
+          notif:ProOS.notif.all(),
+          settings: localStorage.getItem('pasiya_settings'),
+          ide: localStorage.getItem('pasiya_pro_ide')
+        };
+        localStorage.setItem(SNAP_KEY, JSON.stringify(data));
+        const log=$('proSnapLog'); if(log) log.textContent='Saved '+new Date().toLocaleString();
+        ProOS.notif.push('Snapshot','OS state saved');
+      },
+      restore(){
+        try{
+          const data=JSON.parse(localStorage.getItem(SNAP_KEY)||'null');
+          if(!data){ const log=$('proSnapLog'); if(log) log.textContent='No snapshot'; return; }
+          if(data.fs) saveFS(data.fs);
+          if(data.notif) ProOS.notif.save(data.notif);
+          if(data.settings) localStorage.setItem('pasiya_settings', data.settings);
+          if(data.ide) localStorage.setItem('pasiya_pro_ide', data.ide);
+          const log=$('proSnapLog'); if(log) log.textContent='Restored from '+new Date(data.at).toLocaleString();
+          ProOS.notif.push('Snapshot','Restored');
+          ProOS.fs.render();
+        }catch(e){ const log=$('proSnapLog'); if(log) log.textContent=String(e); }
+      },
+      export(){
+        const raw=localStorage.getItem(SNAP_KEY)||'{}';
+        const a=document.createElement('a');
+        a.href=URL.createObjectURL(new Blob([raw],{type:'application/json'}));
+        a.download='pasiya-os-snapshot.json';
+        a.click();
+      }
+    },
+    rec: {
+      chunks: [],
+      rec: null,
+      async start(){
+        const log=$('proRecLog');
+        try{
+          const stream=await navigator.mediaDevices.getDisplayMedia({video:true,audio:true});
+          ProOS.rec.chunks=[];
+          const rec=new MediaRecorder(stream);
+          ProOS.rec.rec=rec;
+          rec.ondataavailable=e=>{ if(e.data.size) ProOS.rec.chunks.push(e.data); };
+          rec.onstop=()=>{
+            stream.getTracks().forEach(t=>t.stop());
+            const blob=new Blob(ProOS.rec.chunks,{type:'video/webm'});
+            const url=URL.createObjectURL(blob);
+            const v=$('proRecPreview'); if(v) v.src=url;
+            const a=document.createElement('a'); a.href=url; a.download='pasiya-record.webm'; a.click();
+            if(log) log.textContent='Saved webm';
+            ProOS.notif.push('Recorder','Clip saved');
+          };
+          rec.start();
+          if(log) log.textContent='Recording…';
+        }catch(err){ if(log) log.textContent=String(err); }
+      },
+      stop(){ if(ProOS.rec.rec && ProOS.rec.rec.state!=='inactive') ProOS.rec.rec.stop(); }
+    }
+  };
+  window.ProOS = ProOS;
+
+  function bind(){
+    const on=(id, ev, fn)=>{ const el=$(id); if(el) el.addEventListener(ev, fn); };
+    on('proFsSave','click',()=>ProOS.fs.save());
+    on('proFsNew','click',()=>{ const ed=$('proFsEditor'); if(ed) ed.value=''; const n=$('proFsName'); if(n) n.value=''; });
+    on('proFsZip','click',()=>ProOS.zip.build());
+    on('proIdeRun','click',()=>{
+      const code=ProOS.ide.getValue();
+      const out=$('proIdeOut');
+      try{
+        const result=Function('"use strict";'+code)();
+        if(out) out.textContent=String(result===undefined?'(ok)':result);
+      }catch(err){ if(out) out.textContent=String(err); }
+      localStorage.setItem('pasiya_pro_ide', code);
+    });
+    on('proIdeSave','click',()=>{
+      const code=ProOS.ide.getValue();
+      localStorage.setItem('pasiya_pro_ide', code);
+      const fs=loadFS();
+      fs['ide-draft.js']={content:code,versions:[],updated:Date.now()};
+      saveFS(fs);
+      ProOS.notif.push('IDE','Saved to CloudFS ide-draft.js');
+    });
+    on('proIdeLang','change',function(){
+      if(ProOS.ide.editor && window.monaco){
+        monaco.editor.setModelLanguage(ProOS.ide.editor.getModel(), this.value);
+      }
+    });
+    on('proAgentSend','click',()=>{ const i=$('proAgentIn'); ProOS.agent.run(i&&i.value); if(i) i.value=''; });
+    on('proAgentIn','keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); const i=$('proAgentIn'); ProOS.agent.run(i&&i.value); if(i) i.value=''; }});
+    document.querySelectorAll('[data-agent-cmd]').forEach(b=>{
+      b.addEventListener('click',()=>ProOS.agent.run(b.getAttribute('data-agent-cmd')));
+    });
+    on('proNotifClear','click',()=>{ ProOS.notif.save([]); ProOS.notif.render(); });
+    on('proNotifTest','click',()=>{
+      try{ Notification.requestPermission(); }catch(e){}
+      ProOS.notif.push('Test','Pro OS notification center works');
+    });
+    on('proWRefresh','click',async()=>{
+      const el=$('proWWeather');
+      try{
+        // open-meteo no key
+        const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=6.93&longitude=79.85&current=temperature_2m,weather_code');
+        const j=await r.json();
+        if(el) el.textContent=(j.current&&j.current.temperature_2m)+'°C (Colombo area sample)';
+      }catch(err){ if(el) el.textContent='Weather unavailable offline'; }
+    });
+    on('proZipBuild','click',()=>ProOS.zip.build());
+    on('proAutoPing','click',()=>ProOS.auto.ping());
+    on('proCronAdd','click',()=>ProOS.auto.schedule());
+    on('proDbSearch','click',async()=>{
+      const q=(($('proDbQ')||{}).value||'test').trim();
+      const out=$('proDbOut');
+      try{
+        const r=await fetch('/api/search-users?q='+encodeURIComponent(q));
+        const j=await r.json();
+        if(out) out.textContent=JSON.stringify(j,null,2);
+      }catch(err){
+        try{
+          const r=await fetch('https://pasiya-bot-platform.vercel.app/api/search-users?q='+encodeURIComponent(q));
+          const j=await r.json();
+          if(out) out.textContent=JSON.stringify(j,null,2);
+        }catch(e2){ if(out) out.textContent=String(e2); }
+      }
+    });
+    on('proSnapSave','click',()=>ProOS.snap.save());
+    on('proSnapRestore','click',()=>ProOS.snap.restore());
+    on('proSnapExport','click',()=>ProOS.snap.export());
+    on('proRecStart','click',()=>ProOS.rec.start());
+    on('proRecStop','click',()=>ProOS.rec.stop());
+    on('proDocSave','click',()=>{
+      const name=(($('proDocName')||{}).value||'document.txt').trim();
+      const body=(($('proDocBody')||{}).value||'');
+      const fs=loadFS();
+      const prev=fs[name]||{content:'',versions:[]};
+      if(prev.content!==body){ prev.versions=prev.versions||[]; prev.versions.push({t:prev.versions.length+1,at:Date.now(),content:prev.content}); }
+      prev.content=body; prev.updated=Date.now(); fs[name]=prev; saveFS(fs);
+      ProOS.notif.push('Docs','Saved '+name);
+    });
+
+    // hotkeys when PC page focused
+    document.addEventListener('keydown', function(e){
+      if(!(e.ctrlKey||e.metaKey)) return;
+      const desk=$('page-desktop');
+      if(desk && desk.style && desk.style.display==='none') return;
+      if(e.key==='s'){ /* don't block browser */ }
+      if(e.shiftKey && e.key.toLowerCase()==='f' && typeof openApp==='function'){ e.preventDefault(); openApp('profs'); }
+      if(e.shiftKey && e.key.toLowerCase()==='i' && typeof openApp==='function'){ e.preventDefault(); openApp('proide'); }
+      if(e.shiftKey && e.key.toLowerCase()==='a' && typeof openApp==='function'){ e.preventDefault(); openApp('proagent'); }
+    });
+
+    // rebind desktop icons for new apps
+    document.querySelectorAll('#pcIcons button[data-app]').forEach(function(b){
+      if(b.dataset.proBound) return;
+      b.dataset.proBound='1';
+      b.addEventListener('click', function(){
+        const app=b.getAttribute('data-app');
+        if(typeof openApp==='function') openApp(app);
+        else if(typeof pasiyaPcOpenApp==='function') pasiyaPcOpenApp(app);
+      });
+    });
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', bind);
+  else bind();
+  setTimeout(bind, 500);
 })();
 
 </script>

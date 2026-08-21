@@ -1,1 +1,11 @@
-Overwrite root index.html → Commit → Incognito test PC trackpad + L/R
+PASiYA PRO OS MODULES
+1. Overwrite GitHub root index.html with this file
+2. Commit changes
+3. Wait 1-2 min · open site in Incognito
+4. Open Virtual PC → new icons: CloudFS, IDE, AI Agent, Notif, Monitor, Widgets, Archive, Automate, DB GUI, Snapshot, Recorder, Docs
+
+NOTE (honest):
+- CloudFS = browser storage + versioning (not Google Drive OAuth yet)
+- IDE = Monaco from CDN
+- Agent = local tools + your n8n Production webhook
+- Full Next.js backends (real Docker/VMs) need separate project migration
