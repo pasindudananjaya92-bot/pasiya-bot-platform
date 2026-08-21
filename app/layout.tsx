@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { DashboardShell } from "@/components/DashboardShell";
 
 export const metadata: Metadata = {
   title: "PASiYA MAX // CMD",
-  description: "SaaS Dashboard — Step 1 base",
+  description: "Professional SaaS Dashboard",
 };
 
 export default function RootLayout({
@@ -13,7 +14,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-bg antialiased">{children}</body>
+      <body className="min-h-screen antialiased">
+        <DashboardShell>{children}</DashboardShell>
+      </body>
     </html>
   );
-} 
+}
