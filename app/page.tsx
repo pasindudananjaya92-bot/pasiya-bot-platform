@@ -1,19 +1,33 @@
+"use client";
+
 import Link from "next/link";
-import { NAV } from "@/lib/nav";
+import { SearchBar } from "@/components/SearchBar";
+
+const quick = [
+  { href: "/virtual-pc", label: "Virtual PC", icon: "💻", group: "Main" },
+  { href: "/ai-agent", label: "AI Agent", icon: "🤖", group: "Main" },
+  { href: "/web-studio", label: "Web Studio", icon: "✨", group: "Main" },
+  { href: "/analytics", label: "Analytics", icon: "📊", group: "Pro" },
+  { href: "/finance", label: "Finance", icon: "💰", group: "Pro" },
+  { href: "/settings", label: "Settings", icon: "⚙", group: "System" },
+];
 
 export default function HomePage() {
-  const quick = NAV.filter((n) => n.href !== "/").slice(0, 8);
-
   return (
-    <div className="space-y-6 max-w-5xl">
+    <div className="space-y-8">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-accent">
           Home Dashboard
         </h1>
         <p className="text-white/55 mt-1 text-sm">
-          Step 2 OK — Sidebar + Top bar active. Click a menu item (pages come in next steps).
+          Search Supabase profiles · quick launch tools
         </p>
       </div>
+
+      <section className="rounded-2xl border border-border bg-panel p-4 md:p-5 space-y-3">
+        <h2 className="text-sm font-semibold text-white/80">Profile search</h2>
+        <SearchBar />
+      </section>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
         {quick.map((item) => (
@@ -27,12 +41,6 @@ export default function HomePage() {
             <div className="text-[10px] text-white/35 mt-1">{item.group}</div>
           </Link>
         ))}
-      </div>
-
-      <div className="rounded-2xl border border-border bg-panel p-5 text-sm text-white/60">
-        <p className="text-accent font-medium mb-1">Next</p>
-        After Vercel is green, upload <strong>Step 3</strong> — first route pages
-        (Virtual PC, Settings placeholders).
       </div>
     </div>
   );
