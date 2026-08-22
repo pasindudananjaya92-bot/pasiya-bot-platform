@@ -16,6 +16,7 @@ const anon =
   "";
 
 let client: SupabaseClient | null = null;
+let serverClient: SupabaseClient | null = null;
 
 export function getSupabase(): SupabaseClient {
   if (!url || !anon) {
@@ -27,6 +28,30 @@ export function getSupabase(): SupabaseClient {
     client = createClient(url, anon);
   }
   return client;
+}
+
+/** Server-side client — prefers service role when available (Edge / API routes). */
+export function getSupabaseServer(): SupabaseClient {
+  const serviceKey =
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
+    process.env.SUPABASE_ANON_KEY ||
+    "";
+  const u =
+    process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    process.env.SUPABASE_URL ||
+    "";
+  if (!u || !serviceKey) {
+    throw new Error(
+      "Missing Supabase server env. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY (or ANON)."
+    );
+  }
+  if (!serverClient) {
+    serverClient = createClient(u, serviceKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+  }
+  return serverClient;
 }
 
 export type Profile = {
