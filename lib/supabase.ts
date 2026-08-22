@@ -2,12 +2,9 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 /**
  * Client-side Supabase.
- * Vercel Environment Variables (must be NEXT_PUBLIC_ for browser):
+ * Vercel (browser needs NEXT_PUBLIC_ prefix):
  *   NEXT_PUBLIC_SUPABASE_URL
  *   NEXT_PUBLIC_SUPABASE_ANON_KEY
- *
- * If you only have SUPABASE_URL / SUPABASE_ANON_KEY, add the same values
- * again with the NEXT_PUBLIC_ prefix in Vercel → Settings → Environment Variables.
  */
 const url =
   process.env.NEXT_PUBLIC_SUPABASE_URL ||
@@ -36,4 +33,20 @@ export type Profile = {
   id: string;
   username: string | null;
   created_at: string | null;
+  instagram: string | null;
+  facebook: string | null;
+  youtube: string | null;
+  whatsapp: string | null;
+  x: string | null;
+  bluesky: string | null;
+  pinterest: string | null;
+  reddit: string | null;
+  blog1: string | null;
+  blog2: string | null;
+  substack: string | null;
+  website: string | null;
 };
+
+/** Columns selected on every profile search */
+export const PROFILE_SELECT =
+  "id, username, created_at, instagram, facebook, youtube, whatsapp, x, bluesky, pinterest, reddit, blog1, blog2, substack, website";
