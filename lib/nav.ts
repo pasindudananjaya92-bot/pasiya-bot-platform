@@ -8,7 +8,7 @@ export type NavItem = {
 export const NAV: NavItem[] = [
   { href: "/", label: "Home", icon: "⌂", group: "Main" },
   { href: "/virtual-pc", label: "Virtual PC", icon: "💻", group: "Main" },
-  { href: "/ai-agent", label: "AI Agent", icon: "🤖", group: "Main" },
+  { href: "/agent", label: "Agent Workspace", icon: "🛠", group: "Main" },
   { href: "/web-studio", label: "Web Studio", icon: "✨", group: "Main" },
   { href: "/hosting", label: "Hosting · DB", icon: "☁", group: "Platform" },
   { href: "/developer", label: "Developer", icon: "⚙", group: "Platform" },
