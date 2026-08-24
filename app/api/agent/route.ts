@@ -67,8 +67,9 @@ function resolveLLM(): {
   return null;
 }
 
+/** Real newlines required for browser SSE parsing */
 function sse(data: unknown) {
-  return `data: ${JSON.stringify(data)}\\n\\n`;
+  return `data: ${JSON.stringify(data)}\n\n`;
 }
 
 export async function POST(req: Request) {
@@ -101,11 +102,13 @@ export async function POST(req: Request) {
     });
   }
 
+  // Admin kill-switch — OFF = no Gemini calls (saves free quota)
   const enabled = await isAgentEnabled();
   if (!enabled) {
     return new Response(
       JSON.stringify({
-        error: "Agent is OFF. Admin can turn it ON from /agent (Admin controls).",
+        error:
+          "Agent is OFF. Admin can turn it ON from /agent (Admin controls).",
       }),
       { status: 403, headers: { "Content-Type": "application/json" } }
     );
@@ -367,4 +370,4 @@ export async function POST(req: Request) {
       Connection: "keep-alive",
     },
   });
-}
+} 
