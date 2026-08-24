@@ -1,0 +1,40 @@
+========================================
+STEP 13 — Agent ON/OFF (Admin kill-switch)
+========================================
+ඔබ ON කළ වෙලාවට විතරක් Gemini වැඩ කරනවා.
+OFF = visitors use කරන්න බැහැ = free quota ඉතිරි.
+
+----- 1) SUPABASE SQL -----
+00_SQL_AGENT_CONTROL.sql → SQL Editor → Run
+
+----- 2) VERCEL ENV -----
+AGENT_ADMIN_SECRET = ඔබට විතරක් දන්න password එකක්
+(example: pasiya-admin-2026)
+Production + Preview → Save → Redeploy later
+
+----- 3) GITHUB UPLOAD -----
+
+A) lib/
+   4_lib_folder/agent-control.ts
+   = lib/agent-control.ts   (NEW)
+
+B) app/api/agent/  REPLACE
+   2_app_api_agent_folder/route.ts
+   = app/api/agent/route.ts
+
+C) app/api/agent/control/  NEW folder
+   2b_app_api_agent_control/route.ts
+   = app/api/agent/control/route.ts
+
+D) app/agent/  REPLACE
+   1_app_agent_folder/page.tsx
+   = app/agent/page.tsx
+
+----- 4) TEST -----
+1) /agent open
+2) Admin secret type කරලා Turn OFF
+3) Message send → "Agent is OFF"
+4) Turn ON → List files → වැඩ කරනවා
+
+Secret phone එකේ localStorage එකේ save වෙනවා (ඊළඟට type කරන්න ඕනේ නැහැ).
+========================================
