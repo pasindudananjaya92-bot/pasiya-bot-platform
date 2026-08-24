@@ -1,47 +1,64 @@
-"use client";
+'use client';
+import { useState } from 'react';
 
-import Link from "next/link";
-import { SearchBar } from "@/components/SearchBar";
+export default function ChatBubble() {
+  const [open, setOpen] = useState(false);
+  const [msg, setMsg] = useState('');
+  const [chat, setChat] = useState<{role: string, text: string}[]>([]);
+  const [loading, setLoading] = useState(false);
 
-const quick = [
-  { href: "/virtual-pc", label: "Virtual PC", icon: "💻", group: "Main" },
-  { href: "/ai-agent", label: "AI Agent", icon: "🤖", group: "Main" },
-  { href: "/web-studio", label: "Web Studio", icon: "✨", group: "Main" },
-  { href: "/analytics", label: "Analytics", icon: "📊", group: "Pro" },
-  { href: "/finance", label: "Finance", icon: "💰", group: "Pro" },
-  { href: "/settings", label: "Settings", icon: "⚙", group: "System" },
-];
+  async function send() {
+    if (!msg.trim()) return;
+    const userMsg = { role: 'user', text: msg };
+    setChat([...chat, userMsg]);
+    setMsg('');
+    setLoading(true);
+    try {
+      const res = await fetch('/api/chat-bubble', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message: msg })
+      });
+      const data = await res.json();
+      setChat(prev => [...prev, { role: 'bot', text: data.reply || data.error }]);
+    } catch {
+      setChat(prev => [...prev, { role: 'bot', text: 'Chat offline' }]);
+    }
+    setLoading(false);
+  }
 
-export default function HomePage() {
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-accent">
-          Home Dashboard
-        </h1>
-        <p className="text-white/55 mt-1 text-sm">
-          Search Supabase profiles · quick launch tools
-        </p>
-      </div>
-
-      <section className="rounded-2xl border border-border bg-panel p-4 md:p-5 space-y-3">
-        <h2 className="text-sm font-semibold text-white/80">Profile search</h2>
-        <SearchBar />
-      </section>
-
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-        {quick.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="rounded-2xl border border-border bg-panel p-4 hover:border-accent/40 transition"
-          >
-            <div className="text-2xl mb-2">{item.icon}</div>
-            <div className="text-sm font-medium text-white/90">{item.label}</div>
-            <div className="text-[10px] text-white/35 mt-1">{item.group}</div>
-          </Link>
-        ))}
-      </div>
-    </div>
+    <>
+      <button 
+        onClick={() => setOpen(!open)}
+        style={{position: 'fixed', bottom: 20, right: 20, zIndex: 9999, borderRadius: '50%', width: 60, height: 60, background: '#2563eb', color: 'white', border: 'none', fontSize: 24, cursor: 'pointer'}}
+      >
+        💬
+      </button>
+      
+      {open && (
+        <div style={{position: 'fixed', bottom: 90, right: 20, width: 320, height: 400, background: 'white', borderRadius: 12, boxShadow: '0 4px 20px rgba(0,0,0,0.2)', zIndex: 9999, display: 'flex', flexDirection: 'column'}}>
+          <div style={{padding: 12, background: '#2563eb', color: 'white', borderRadius: '12px 12px 0 0', fontWeight: 'bold'}}>Pasiya AI</div>
+          <div style={{flex: 1, padding: 10, overflowY: 'auto'}}>
+            {chat.map((c, i) => (
+              <div key={i} style={{textAlign: c.role === 'user' ? 'right' : 'left', margin: '8px 0'}}>
+                <span style={{background: c.role === 'user' ? '#2563eb' : '#e5e7eb', color: c.role === 'user' ? 'white' : 'black', padding: '6px 10px', borderRadius: 8, display: 'inline-block', maxWidth: '80%'}}>{c.text}</span>
+              </div>
+            ))}
+            {loading && <div>Typing...</div>}
+          </div>
+          <div style={{display: 'flex', padding: 10, borderTop: '1px solid #ddd'}}>
+            <input 
+              value={msg} 
+              onChange={e => setMsg(e.target.value)} 
+              onKeyDown={e => e.key === 'Enter' && send()}
+              placeholder="Type message..." 
+              style={{flex: 1, padding: 8, borderRadius: 8, border: '1px solid #ccc'}}
+            />
+            <button onClick={send} style={{marginLeft: 8, padding: '8px 12px', background: '#2563eb', color: 'white', border: 'none', borderRadius: 8}}>Send</button>
+          </div>
+        </div>
+      )}
+    </>
   );
-}
+} 
