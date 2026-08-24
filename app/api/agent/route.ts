@@ -5,6 +5,7 @@ import {
   executeTool,
 } from "@/lib/tools";
 import { saveMemory, updateMemory } from "@/lib/memory";
+import { isAgentEnabled } from "@/lib/agent-control";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
@@ -48,7 +49,7 @@ function resolveLLM(): {
     return {
       url: "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
       key: gemini,
-      model: process.env.GEMINI_MODEL || "gemini-2.0-flash",
+      model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
       label: "Gemini (free)",
     };
   }
@@ -67,7 +68,7 @@ function resolveLLM(): {
 }
 
 function sse(data: unknown) {
-  return `data: ${JSON.stringify(data)}\n\n`;
+  return `data: ${JSON.stringify(data)}\\n\\n`;
 }
 
 export async function POST(req: Request) {
@@ -98,6 +99,16 @@ export async function POST(req: Request) {
     return new Response(JSON.stringify({ error: "Invalid JSON" }), {
       status: 400,
     });
+  }
+
+  const enabled = await isAgentEnabled();
+  if (!enabled) {
+    return new Response(
+      JSON.stringify({
+        error: "Agent is OFF. Admin can turn it ON from /agent (Admin controls).",
+      }),
+      { status: 403, headers: { "Content-Type": "application/json" } }
+    );
   }
 
   const userMessages = body.messages ?? [];
@@ -356,4 +367,4 @@ export async function POST(req: Request) {
       Connection: "keep-alive",
     },
   });
-} 
+}
