@@ -3,6 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { Sidebar } from "./Sidebar";
 import { TopBar } from "./TopBar";
+import { ChatBubble } from "./ChatBubble";
 
 export function DashboardShell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -14,6 +15,7 @@ export function DashboardShell({ children }: { children: ReactNode }) {
         <TopBar onMenu={() => setOpen(true)} />
         <main className="flex-1 overflow-auto p-4 md:p-6">{children}</main>
       </div>
+      <ChatBubble />
     </div>
   );
-}
+} 
