@@ -1,64 +1,48 @@
-'use client';
-import { useState } from 'react';
+"use client";
 
-export default function ChatBubble() {
-  const [open, setOpen] = useState(false);
-  const [msg, setMsg] = useState('');
-  const [chat, setChat] = useState<{role: string, text: string}[]>([]);
-  const [loading, setLoading] = useState(false);
+import Link from "next/link";
+import { NAV } from "@/lib/nav";
 
-  async function send() {
-    if (!msg.trim()) return;
-    const userMsg = { role: 'user', text: msg };
-    setChat([...chat, userMsg]);
-    setMsg('');
-    setLoading(true);
-    try {
-      const res = await fetch('/api/chat-bubble', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: msg })
-      });
-      const data = await res.json();
-      setChat(prev => [...prev, { role: 'bot', text: data.reply || data.error }]);
-    } catch {
-      setChat(prev => [...prev, { role: 'bot', text: 'Chat offline' }]);
-    }
-    setLoading(false);
-  }
+export default function HomePage() {
+  const items = NAV.filter((n) => n.href !== "/");
 
   return (
-    <>
-      <button 
-        onClick={() => setOpen(!open)}
-        style={{position: 'fixed', bottom: 20, right: 20, zIndex: 9999, borderRadius: '50%', width: 60, height: 60, background: '#2563eb', color: 'white', border: 'none', fontSize: 24, cursor: 'pointer'}}
-      >
-        💬
-      </button>
-      
-      {open && (
-        <div style={{position: 'fixed', bottom: 90, right: 20, width: 320, height: 400, background: 'white', borderRadius: 12, boxShadow: '0 4px 20px rgba(0,0,0,0.2)', zIndex: 9999, display: 'flex', flexDirection: 'column'}}>
-          <div style={{padding: 12, background: '#2563eb', color: 'white', borderRadius: '12px 12px 0 0', fontWeight: 'bold'}}>Pasiya AI</div>
-          <div style={{flex: 1, padding: 10, overflowY: 'auto'}}>
-            {chat.map((c, i) => (
-              <div key={i} style={{textAlign: c.role === 'user' ? 'right' : 'left', margin: '8px 0'}}>
-                <span style={{background: c.role === 'user' ? '#2563eb' : '#e5e7eb', color: c.role === 'user' ? 'white' : 'black', padding: '6px 10px', borderRadius: 8, display: 'inline-block', maxWidth: '80%'}}>{c.text}</span>
+    <div className="space-y-6">
+      <div>
+        <p className="text-[10px] uppercase tracking-[0.2em] text-cyan-500/80">
+          PASIYA MAX // CMD
+        </p>
+        <h1 className="text-2xl font-bold text-accent sm:text-3xl">
+          Command Dashboard
+        </h1>
+        <p className="mt-2 max-w-2xl text-sm text-white/55">
+          Open any service from the cards below or the sidebar. Agent Workspace
+          is the Gemini coding agent. Chat bubble (bottom-right) is n8n support.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {items.map((item) => (
+          <Link
+            key={item.href}
+            href={item.href}
+            className="rounded-2xl border border-border bg-panel px-4 py-4 transition hover:border-accent/40"
+          >
+            <div className="flex items-center gap-3">
+              <span className="text-2xl" aria-hidden>
+                {item.icon}
+              </span>
+              <div>
+                <p className="font-semibold text-white">{item.label}</p>
+                <p className="text-[11px] text-white/40">{item.group || "App"}</p>
               </div>
-            ))}
-            {loading && <div>Typing...</div>}
-          </div>
-          <div style={{display: 'flex', padding: 10, borderTop: '1px solid #ddd'}}>
-            <input 
-              value={msg} 
-              onChange={e => setMsg(e.target.value)} 
-              onKeyDown={e => e.key === 'Enter' && send()}
-              placeholder="Type message..." 
-              style={{flex: 1, padding: 8, borderRadius: 8, border: '1px solid #ccc'}}
-            />
-            <button onClick={send} style={{marginLeft: 8, padding: '8px 12px', background: '#2563eb', color: 'white', border: 'none', borderRadius: 8}}>Send</button>
-          </div>
-        </div>
-      )}
-    </>
+            </div>
+            <p className="mt-2 truncate font-mono text-[10px] text-white/30">
+              {item.href}
+            </p>
+          </Link>
+        ))}
+      </div>
+    </div>
   );
 } 
